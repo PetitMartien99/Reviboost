@@ -211,7 +211,7 @@ function createPack() {
 
 
 function addPack() {
-    const regex = /[*@\[\]{}"',;?]/;
+    const regex = /[*@\[\]{}"'?;]/;
     if (regex.test(def_title.value) || regex.test(def.value)) {
         giga_show("Il y a des caractères interdits");
         return;
