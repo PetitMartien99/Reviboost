@@ -33,13 +33,13 @@ button:disabled {
 }
 
 #see_data_div h2 {
-    margin-bottom: 50px;
+    margin-bottom: 70px;
 }
 
 #see_data_container {
     display: flex;
     justify-content: center;
-    margin-top: 35px;
+    margin-top: 50px;
     height: fit-content;
 }
 
@@ -121,10 +121,11 @@ button:disabled {
     justify-content: center;
     height: 250px;
     margin-top: 100px;
+    margin-left: 4%;
 }
 
-#import_data_div, #add_data_div {
-    margin: 50px;
+#import_data_div, #add_data_div, #create_session_div {
+    margin: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
