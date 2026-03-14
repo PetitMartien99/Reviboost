@@ -1,6 +1,6 @@
 console.log("Here we go !");
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2?bundle";
 
 const supabaseUrl = 'https://bwjdnnnbcctgnegixujz.supabase.co';
 const supabaseAnonKey = 'sb_publishable_TIz-tI0AQgFr5Xa2EgpCjg_50ZlIKre';
