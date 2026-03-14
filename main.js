@@ -433,11 +433,7 @@ function askQuestion() {
     if (questions_type !== "torf") {
         if (interrogation_side === 0) {
             if (about_ask[question_id].kind === "defs") {
-                if (/^[aeiouyAEIOUY]/.test(title)) {
-                    show("Quelle est la définition d\'" + title + " ?");
-                } else {
-                    show("Quelle est la définition de " + title + " ?");
-                }
+                show("Quelle est la définition de \"" + title + "\" ?");            
             } else if (about_ask[question_id].kind === "dates") {
                 if (/^\d/.test(title)) {
                     show("Que s'est-il passé le " + title + " ?");
@@ -445,7 +441,7 @@ function askQuestion() {
                     show("Que s'est-il passé en " + title + " ?");
                 }
             } else if (about_ask[question_id].kind === "egal") {
-                show(title + " est égal à :");
+                show("\"" + title + "\" est égal à :");
             }
         } else {
             if (about_ask[question_id].kind === "defs") {
@@ -453,7 +449,7 @@ function askQuestion() {
             } else if (about_ask[question_id].kind === "dates") {
                 show("Quelle date va avec \"" + title + "\" ?");
             } else if (about_ask[question_id].kind === "egal") {
-                show(title + " est égal à :");
+                show("\"" + title + "\" est égal à :");
             }
         }
     } else {
@@ -481,7 +477,11 @@ function askQuestion() {
 
 
     let reveal = document.createElement("button");
-    reveal.innerText = "Révéler la réponse";
+    if (questions_type === "auto") {
+        reveal.innerText = "Valider";
+    } else {
+        reveal.innerText = "Révéler la réponse";
+    }    
     reveal.className = "shown";
     if (toggle_t === true) {
         reveal.style.color = "white";
@@ -500,28 +500,75 @@ function askQuestion() {
     }
     ask_div.appendChild(next);
     
-    reveal.onclick = () => {
-        if (questions_type === "torf") {
-            show("La réponse était " + torf_var.toLowerCase());
-        } else {
-            show("La réponse était : " + def);
+    if (questions_type != "auto") {
+        reveal.onclick = () => {
+            if (questions_type === "torf") {
+                show("La réponse était " + torf_var.toLowerCase());
+            } else {
+                show("La réponse était : \"" + def + "\"");
+            }
+            reveal.className = "hide";
+            if (questions_type === "write") {
+                asking.value = "";
+                asking.className = "hide";
+            } else {
+                writer.innerHTML = "";
+            }
+            next.className = "shown";
+            next.onclick = () => {
+                askQuestion();
+                next.remove();
+                reveal.remove();
+            };
+            return;
         }
-        reveal.className = "hide";
-        if (questions_type === "write") {
-            asking.value = "";
-            asking.className = "hide";
-        } else {
-            writer.innerHTML = "";
+    } else {
+        reveal.onclick = () => {
+            if (!(asking.value === "")) {
+                let user_answer = asking.value;
+                asking.value = "";
+                asking.className = "hide";
+                if (wash(user_answer) === wash(def)) {
+                    show("C'était la bonne réponse");
+                    reveal.className = "hide";
+                    next.className = "shown";
+                    next.onclick = () => {
+                        askQuestion();
+                        next.remove();
+                        reveal.remove();
+                    };
+                    return;
+                } else {
+                    reveal.className = "hide";
+                    show("Ta réponse était : <br>" + user_answer + "<br> La bonne réponse était : <br> \"" + def + "\"");
+                    let accept = document.createElement("button");
+                    accept.innerText = "Ma réponse est bonne";
+                    ask_div.appendChild(accept);
+                    let refuse = document.createElement("button");
+                    refuse.innerText = "Ma réponse est fausse";
+                    ask_div.appendChild(refuse);
+
+                    accept.onclick = () => {
+                        right_answers += 1;
+                        accept.remove();
+                        refuse.remove();
+                        askQuestion();
+                        next.remove();
+                        reveal.remove();
+                    }
+
+                    refuse.onclick = () => {
+                        accept.remove();
+                        refuse.remove();
+                        askQuestion();
+                        next.remove();
+                        reveal.remove();
+                    }
+                }
+            }
         }
-        next.className = "shown";
-        next.onclick = () => {
-            askQuestion();
-            next.remove();
-            reveal.remove();
-        };
-        return;
-    };
-  
+    }
+
     if (questions_type === "write") {
 
         asking.className = "shown";
@@ -550,6 +597,10 @@ function askQuestion() {
                 }, 700);
             }
         });
+    } else if (questions_type === "auto") {
+        asking.className = "shown";
+        asking.value = "";
+
     } else if (questions_type === "qcm") {
         asking.className = "hide";
 
@@ -653,7 +704,7 @@ function askQuestion() {
                     }
                     playCrossAnimation();
                     setTimeout(() => {
-                        show("Dommage... La bonne réponse était " + def);
+                        show("Dommage... La bonne réponse était \"" + def + "\"");
                         next.className = "shown";
                         next.onclick = () => {
                             askQuestion();
@@ -680,7 +731,7 @@ function askQuestion() {
                     }
                     playCrossAnimation();
                     setTimeout(() => {
-                        show("Dommage... La bonne réponse était " + def);
+                        show("Dommage... La bonne réponse était \"" + def + "\"");
                         next.className = "shown";
                         next.onclick = () => {
                             askQuestion();
@@ -706,7 +757,7 @@ function askQuestion() {
                     }
                     playCrossAnimation();
                     setTimeout(() => {
-                        show("Dommage... La bonne réponse était " + def);
+                        show("Dommage... La bonne réponse était \"" + def + "\"");
                         next.className = "shown";
                         next.onclick = () => {
                             askQuestion();
