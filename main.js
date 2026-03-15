@@ -356,6 +356,18 @@ document.getElementById("quit_lesson").addEventListener("click", () => {
         toggle_files();
     }
     
+    if (!(ask_div.querySelector("#reveal") === null)) {
+        ask_div.removeChild(ask_div.querySelector("#reveal"));
+    }
+    if (!(ask_div.querySelector("#next") === null)) {
+        ask_div.removeChild(ask_div.querySelector("#next"));
+    }
+    if (!(ask_div.querySelector("#accept") === null)) {
+        ask_div.removeChild(ask_div.querySelector("#accept"));
+    }
+    if (!(ask_div.querySelector("#refuse") === null)) {
+        ask_div.removeChild(ask_div.querySelector("#refuse"));
+    }
     asking.className = "hide";
     ask_div.style.opacity = "0";
     msg.style.opacity = "0";
@@ -365,6 +377,30 @@ document.getElementById("quit_lesson").addEventListener("click", () => {
     ultra_container.style.display = "block";
     body.style.overflow = "auto";
 });
+
+function check_input(reveal, next, def) {
+    if (wash(asking.value) === wash(def)) {
+        asking.readOnly = true;
+        setTimeout(() => {
+            asking.readOnly = false;
+            reveal.className = "hide";
+            show("");
+            asking.value = "";
+            asking.className = "hide";
+            right_answers += 1;
+            if (sonor_effects === true) {
+                playSound(correct);
+            }
+            playCheckAnimation();
+            setTimeout(() => {
+                askQuestion();
+                next.remove();
+                reveal.remove();
+                                          
+            }, 1500);
+        }, 700);
+    }
+}
 
 function askQuestion() {
 
@@ -538,7 +574,6 @@ function askQuestion() {
                 next.remove();
                 reveal.remove();
             };
-            return;
         }
     } else {
         reveal.onclick = () => {
@@ -556,10 +591,9 @@ function askQuestion() {
                         next.remove();
                         reveal.remove();
                     };
-                    return;
                 } else {
                     reveal.className = "hide";
-                    show("Ta réponse était : <br>" + user_answer + "<br> La bonne réponse était : <br> \"" + def + "\"");
+                    show("Ta réponse était : <br>\"" + user_answer + "\"<br> La bonne réponse était : <br> \"" + def + "\"");
                     let accept = document.createElement("button");
                     accept.innerText = "Ma réponse est bonne";
                     accept.id = "accept";
@@ -569,21 +603,36 @@ function askQuestion() {
                     refuse.id = "refuse";
                     ask_div.appendChild(refuse);
 
-                    accept.onclick = () => {
+                    accept.onclick = () => { 
                         right_answers += 1;
                         accept.remove();
                         refuse.remove();
-                        askQuestion();
-                        next.remove();
-                        reveal.remove();
+                        if (sonor_effects === true) {
+                            playSound(correct);
+                        }
+                        show("");
+                        playCheckAnimation();
+                        setTimeout(() => {
+                            askQuestion();
+                            next.remove();
+                            reveal.remove();
+                        }, 1900);
                     }
 
                     refuse.onclick = () => {
                         accept.remove();
                         refuse.remove();
-                        askQuestion();
-                        next.remove();
-                        reveal.remove();
+                        if (sonor_effects === true) {
+                            playSound(fail);
+                        }
+                        show("");
+                        playCrossAnimation();
+                        setTimeout(() => {
+                            askQuestion();
+                            next.remove();
+                            reveal.remove();
+                        }, 1900);
+                        
                     }
                 }
             }
@@ -595,28 +644,7 @@ function askQuestion() {
         asking.className = "shown";
         asking.value = "";
         asking.addEventListener("input", () => {
-            if (wash(asking.value) === wash(def)) {
-                asking.readOnly = true;
-                setTimeout(() => {
-                    asking.readOnly = false;
-                    reveal.className = "hide";
-                    show("");
-                    asking.value = "";
-                    asking.className = "hide";
-                    right_answers += 1;
-                    if (sonor_effects === true) {
-                        playSound(correct);
-                    }
-                    playCheckAnimation();
-                    setTimeout(() => {
-                        
-                        askQuestion();
-                        next.remove();
-                        reveal.remove();
-                                                  
-                    }, 1000);
-                }, 700);
-            }
+            check_input(reveal, next, def);
         });
     } else if (questions_type === "auto") {
         asking.className = "shown";
@@ -705,7 +733,7 @@ function askQuestion() {
                         next.remove();
                         reveal.remove();
                         
-                    }, 2000);
+                    }, 1900);
                 });
                 writer.appendChild(p1);
 
@@ -732,7 +760,7 @@ function askQuestion() {
                             next.remove();
                             reveal.remove();
                         };
-                    }, 2000);
+                    }, 1900);
                 })
                 writer.appendChild(p2);
 
@@ -759,7 +787,7 @@ function askQuestion() {
                             next.remove();
                             reveal.remove();
                         };
-                    }, 2000);
+                    }, 1900);
                 })
                 writer.appendChild(p3);
 
@@ -785,7 +813,7 @@ function askQuestion() {
                             next.remove();
                             reveal.remove();
                         };
-                    }, 2000);
+                    }, 1900);
                 })
                 writer.appendChild(p4);
 
@@ -811,7 +839,7 @@ function askQuestion() {
                 next.remove();
                 reveal.remove();
                             
-            }, 2000);
+            }, 1900);
         });
 
         let p2 = document.createElement("p");
@@ -837,7 +865,7 @@ function askQuestion() {
                     next.remove();
                     reveal.remove();
                 };
-            }, 2000);
+            }, 1900);
         });
 
         if (getRandom(0, 2) === 1) {
