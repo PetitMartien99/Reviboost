@@ -106,9 +106,11 @@ option {
     width: 50px;
 }
 
+
+
 @media screen and (width <= 450px) {
     #parameter img{
-        width: 40px;      
+        width: 38px;      
     }
     #parameter {
         bottom: -5px;
@@ -202,7 +204,7 @@ option {
     text-align: left;
 }
 
-@media screen and (width <= 450px) {
+@media screen and (width <= 550px) {
     #inline {
         display: flex;
         align-items: first baseline;

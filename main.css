@@ -198,7 +198,17 @@ body {
     background-color: rgb(106, 239, 124);
 }
 
-@media screen and (width <= 750px) {
+#mobile_down {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 63px;
+    height: 127px;
+    z-index: 70;
+    border-top-left-radius: 8px;
+}
+
+@media screen and (width <= 900px) {
     #container {
         top: 0px;
     }
@@ -237,7 +247,6 @@ body {
         top: 0;
         left: 0;
         right: 0;
-        height: 50px;
         z-index: 70;
     }
 
@@ -245,9 +254,23 @@ body {
         position: fixed;
         bottom: 0;
         right: 0;
-        width: 50px;
-        height: 100px;
         z-index: 70;
+        border-top-left-radius: 8px;
+    }
+}
+
+@media screen and (width <= 450px) {
+    #mobile_up {
+        height: 50px;
+    }
+
+    #mobile_down {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        z-index: 70;
+        height: 100px;
+        width: 50px;
         border-top-left-radius: 8px;
     }
 }
@@ -276,14 +299,14 @@ body {
     font-size: 32px;
 }
 
-@media screen and (width <= 750px) {
+@media screen and (width <= 450px) {
     #ask_div p {
-        font-size: 22px;
-        margin-left: 3px;
-        margin-right: 3px;
+        font-size: 27px;
+        margin-left: 5px;
+        margin-right: 5px;
     }
     #next, #reveal, #continue, #accept, #refuse {
-        font-size: 25px;
+        font-size: 29px;
     }
 }
 
@@ -305,30 +328,6 @@ body {
 }
 
 .phover:hover {
-    transform: scale(1.03);
-}
-
-
-#import_export {
-    position: fixed;
-    bottom: 5px;
-    left: 5px;
-    text-align: left;
-    transition: transform 0.5s ease-in;
-}
-
-@media screen and (width <= 750px) {
-    #import_export {
-        display: none;
-    }
-}
-
-#import_export:hover {
-    transform: scale(1.03);
-}
-
-
-#import_export h2:hover {
     transform: scale(1.03);
 }
 
@@ -399,11 +398,13 @@ body {
     height: 50px;
 }
 
-@media screen and (width <= 750px) {
-    #account_link img{
-        width: 40px;
-        height: 40px;
+
+@media screen and (min-width: 10px) and (max-width: 450px) {
+    #account_link img {
+        width: 35px;
+        height: 35px;
     }
+
     #account_link {
         bottom: 40px;
         right: -4px;
@@ -477,12 +478,24 @@ body {
     margin-bottom: 20px;
 }
 
-@media screen and (width <= 750px) {
+@media screen and (min-width: 451px) and (max-width: 900px) {
+    #help {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media screen and (min-width: 10px) and (max-width: 450px) {
+    #help {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+@media screen and (width <= 900px) {
     #help {
         font-size: 23px; 
         margin: 5px;
-        width: 35px;
-        height: 35px;
     } 
 
     #help_div {
@@ -554,7 +567,7 @@ body {
     display: none;
 }
 
-@media screen and (width <= 750px) {
+@media screen and (width <= 900px) {
     #choosing_stuff {
         margin-top: 65px;
         display: flex;
@@ -567,12 +580,13 @@ body {
     .beetween {
         display: none;
     }
-
-    #quit_lesson img {
-        width: 35px;
-    }
 }
 
+@media screen and (width <= 450px) {
+    #quit_lesson img {
+        width: 40px;
+    }
+}
 
 /* Overlay centré */
 .overlay-check {

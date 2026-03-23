@@ -32,7 +32,7 @@
     margin: 20px;
 }
 
-@media screen and (width <= 450px) {
+@media screen and (width <= 1710px) {
     #signin_div {
         margin-top: 50px;
         margin-bottom: -20px;
@@ -136,6 +136,7 @@ button:disabled {
     right: 8px;
     font-size: 25px;
     transition: color 0.5s, transform 0.5s ease-in;
+    z-index: 500;
 }
 
 #back_to_homepage:hover {
@@ -143,7 +144,7 @@ button:disabled {
 }
 
 #back_to_homepage img {
-    width: 55px;
+    width: 53px;
 }
 
 @media screen and (width <= 450px) {
@@ -185,7 +186,7 @@ button:disabled {
     transform: scale(1.03);
 }
 
-@media screen and (width <= 450px) {
+@media screen and (width <= 1500px) {
     #see_3_connected, #account_small {
         display: none;
     }
@@ -247,10 +248,10 @@ button:disabled {
     top: 20px;
     left: 50%;
     transform: translate(-50%, 0); 
-    z-index: 2;
+    z-index: 500;
 }
 
-@media screen and (width <= 450px) {
+@media screen and (width <= 1150px) {
     #choosing_stuff {
         display: flex;
         flex-direction: row;
@@ -329,14 +330,21 @@ li {
     display: none;
 }
 
-@media screen and (width <= 450px) {
-    #close_account_small {
-        display: block;
-    }
-
+@media screen and (width <= 750px) {
     li {
         font-size: 17px;
         flex-direction: column;  
+    }
+
+    .delete_def {
+        position: absolute;
+        right: 0;
+    }
+}
+
+@media screen and (width <= 1710px) {
+    #close_account_small {
+        display: block;
     }
 
     #mobile_up {
@@ -347,17 +355,17 @@ li {
         height: 50px;
         z-index: 70;
     }
-
+    
     #mobile_down {
         position: fixed;
         bottom: 0;
         right: 0;
-        width: 50px;
-        height: 100px;
         z-index: 70;
+        height: 130px;
+        width: 65px;
         border-top-left-radius: 8px;
     }
-
+    
     #see_account_small {
         display: block;
         position: fixed;
@@ -365,8 +373,9 @@ li {
         right: -4px;
         z-index: 114;
     }
-
+    
     #account_small, #see_3_connected {
+        display: none;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -375,11 +384,11 @@ li {
         width: fit-content;
         transition: border 0.5s;
     }
-
+    
     #account_small:hover, #see_3_connected:hover {
         transform: translate(-50%, -50%);
     }
-
+    
     #import_3_button {
         display: block;
         position: fixed;
@@ -387,17 +396,18 @@ li {
         right: -4px;
         z-index: 114;
     }
-
+    
     #see_account_small img, #import_3_button img {
         width: 43px;
     }
-
+    
     #close_account_small, #close_import {
+        display: block;
         position: absolute;
         top: 0;
         right: 0;
     }
-
+    
     #see_3_connected {
         text-align: center;
         border: 1px solid black;
@@ -407,9 +417,16 @@ li {
         align-items: center;
         height: 300px;
     }
-
+    
     #see_3_connected p {
         width: 300px;
+    }
+}
+
+@media screen and (width <= 450px) {
+    #mobile_down {
+        height: 110px;
+        width: 50px;
     }
 }
 
