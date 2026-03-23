@@ -1,3 +1,4 @@
+- Changer l'ordre des leçons et sessions !!!!!!!!!!
 - Dans la page account, changer les messages de réussite en les accordant en nombre
 - Mettre une limite de taille
 - VERBES IRREGULIERS
@@ -7,6 +8,4 @@
 - Particules;
 - Mode d'interrogation : relier les réponses;
 - Mettre des animations sur mobile account import et account small
-- RESPONSIVE
 - Supprimer le compte (table de requests)
-- Adapter aux tablettes

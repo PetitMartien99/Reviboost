@@ -48,6 +48,7 @@
 }
 
 #see_3_connected {
+    border: none;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -57,12 +58,8 @@
     left: 5px;
     bottom: 10px;
     width: 350px;
-    transition: transform 0.5s ease-in-out;
 }
 
-#see_3_connected:hover {
-    transform: scale(1.03);
-}
 
 #see_3_connected p {
     margin-left: 10px;
