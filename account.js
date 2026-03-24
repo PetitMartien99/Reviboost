@@ -570,11 +570,16 @@ function import_data() {
 
     for (let lesson of session.lessons) {
         if (!(lesson.name === "text_color")) {
-            console.log("there")
+            let secure_name = lesson.name;
+            console.log(lesson.verbs);
+            if (lesson.verbs) {
+                secure_name = "?verbs" + lesson.name;
+                console.log("in");
+            }
             if (typeof lesson.items !== "string") {
-                localStorage.setItem(lesson.name, JSON.stringify(lesson.items));
+                localStorage.setItem(secure_name, JSON.stringify(lesson.items));
             } else {
-                localStorage.setItem(lesson.name, lesson.items);
+                localStorage.setItem(secure_name, lesson.items);
             }
         }   
     }
@@ -698,11 +703,19 @@ async function exporting_data() {
         } catch (e) {
             console.log(e);
         }
-    
-        newStuff.push({
-            name: key,
-            items: items
-        });
+        if (key.startsWith("?verbs")) {
+            newStuff.push({
+                name: key.substring(6, key.length),
+                verbs: true,
+                items: items
+            });
+        } else {
+            newStuff.push({
+                name: key,
+                items: items
+            });
+        }
+            
     }
     newStuff.forEach((e) => {
         if (present_lessons.includes(e.name)) {
@@ -751,8 +764,8 @@ function check_create() {
     const regex = /[<>"'\\]/;
 
     if (input.value === "") {
-        return;
         button.disabled = true;
+        return;  
     }
         
 

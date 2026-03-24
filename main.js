@@ -10,7 +10,6 @@ function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-
 const pack_title_ask = document.getElementById("pack_title_ask");
 const pack_title_add = document.getElementById("pack_title_add");
 const add_p = document.getElementById("add_p");
@@ -133,11 +132,19 @@ function actu_files() {
         let div = document.createElement("div");
         div.className = "file";
         div.style.border = "2px solid " + actual_color;
-        div.innerHTML = "<span>" + name + "</span>";
+        if (name.startsWith("?verbs")) {
+            div.innerHTML = "<span>" + name.substring(6, name.length) + "</span>";
+        } else {
+            div.innerHTML = "<span>" + name + "</span>";
+        }    
         div.addEventListener("click", () => {
-            pack_title_add.value = name;
+            safe_name = name;
+            if (safe_name.startsWith("?verbs")) {
+                safe_name = safe_name.substring(6, safe_name.length);
+            }
+            pack_title_add.value = safe_name;
           
-            pack_title_ask.value = name;
+            pack_title_ask.value = safe_name;
 
             updateTypeUI_add();
         });
@@ -255,18 +262,50 @@ function createPack() {
         return;
     }
     if (pack_title.value != "") {
-        if (!localStorage.getItem(pack_title.value.trim())) {
-            if (pack_title.value.startsWith("-sb") || pack_title.value.startsWith("color") || pack_title.value.startsWith("text_color")) {
-                giga_show("Ce nom est interdit");
+
+        if (document.getElementById("lesson_select") === null) {
+            if (!localStorage.getItem(pack_title.value.trim()) && !localStorage.getItem("?verbs" + pack_title.value.trim())) {
+                if (pack_title.value.startsWith("-sb") || pack_title.value.startsWith("color") || pack_title.value.startsWith("text_color")) {
+                    giga_show("Ce nom est interdit");
+                } else {
+                    localStorage.setItem(pack_title.value, "[]");
+                    pack_title_add.value = pack_title.value;
+                    pack_title.value = "";
+                    actu_files();
+                }
             } else {
-                localStorage.setItem(pack_title.value, "[]");
-                pack_title_add.value = pack_title.value;
-                pack_title.value = "";
-                actu_files();
+                giga_show("Cette leçon existe déjà.");
             }
-        } else {
-            giga_show("Cette leçon existe déjà.");
+            return;
         }
+        if (document.getElementById("lesson_select").value === "normal") {
+            if (!localStorage.getItem(pack_title.value.trim()) && !localStorage.getItem("?verbs" + pack_title.value.trim())) {
+                if (pack_title.value.startsWith("-sb") || pack_title.value.startsWith("color") || pack_title.value.startsWith("text_color")) {
+                    giga_show("Ce nom est interdit");
+                } else {
+                    localStorage.setItem(pack_title.value, "[]");
+                    pack_title_add.value = pack_title.value;
+                    pack_title.value = "";
+                    actu_files();
+                }
+            } else {
+                giga_show("Cette leçon existe déjà.");
+            }
+        } else if (document.getElementById("lesson_select").value === "verbs") {
+            if (!localStorage.getItem(pack_title.value.trim()) && !localStorage.getItem("?verbs" + pack_title.value.trim())) {
+                if (pack_title.value.startsWith("-sb") || pack_title.value.startsWith("color") || pack_title.value.startsWith("text_color")) {
+                    giga_show("Ce nom est interdit");
+                } else {
+                    localStorage.setItem("?verbs" + pack_title.value, "[]");
+                    pack_title_add.value = pack_title.value;
+                    pack_title.value = "";
+                    actu_files();
+                }
+            } else {
+                giga_show("Cette leçon existe déjà.");
+            }
+        }
+
     } else {
        giga_show("Entrez un titre de leçon.");
     }
@@ -280,9 +319,14 @@ function addPack() {
         return;
     }
     if (pack_title_add.value != "" && def_title.value != "" && def.value != "") {
-        if (localStorage.getItem(pack_title_add.value) != null) {
-            let pack = JSON.parse(localStorage.getItem(pack_title_add.value));
-
+        if (localStorage.getItem(pack_title_add.value) != null || localStorage.getItem("?verbs" + pack_title_add.value) != null) {
+            let pack;
+            if (localStorage.getItem(pack_title_add.value) != null) {
+                pack = JSON.parse(localStorage.getItem(pack_title_add.value));
+            } else {
+                pack = JSON.parse(localStorage.getItem("?verbs" + pack_title_add.value));
+            }
+           
             if (pack.some(item => item.title.trim() === def_title.value.trim())) {
                 giga_show("Cette définition existe déjà dans cette leçon.");
                 return;
@@ -291,7 +335,12 @@ function addPack() {
 
             pack.push({title: def_title.value, def: def.value, kind: def_type.value});
             let new_pack = JSON.stringify(pack);
-            localStorage.setItem(pack_title_add.value, new_pack);
+            if (localStorage.getItem(pack_title_add.value) != null) {
+               localStorage.setItem(pack_title_add.value, new_pack); 
+            } else {
+                localStorage.setItem("?verbs" + pack_title_add.value, new_pack); 
+            }
+            
             actu_files();
             def_title.value = "";
             def.value = "";
@@ -307,7 +356,26 @@ function addPack() {
 
 
 function start() {
-    about_ask = JSON.parse(localStorage.getItem(pack_title_ask.value));
+    if (pack_title_ask.value === "") {
+        return;
+    }
+        
+    let verbs;
+    if (localStorage.getItem(pack_title_ask.value)) {
+        verbs = false;
+    } else if (localStorage.getItem("?verbs" + pack_title_ask.value)) {
+        verbs = true;
+    } else {
+        giga_show("Cette leçon n'existe pas");
+        return;
+    }
+
+    if (verbs) {
+        about_ask = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value));
+    } else {
+        about_ask = JSON.parse(localStorage.getItem(pack_title_ask.value));
+    }
+
     questions_type = questions_type_select.value;
     if (questions_type === "qcm") {
         if (about_ask.length < 5) {
@@ -323,14 +391,7 @@ function start() {
 
     questions_number = about_ask.length;
 
-    if (pack_title_ask.value === "") {
-        return;
-    }
     
-    if (!localStorage.getItem(pack_title_ask.value)) {
-        giga_show("Cette leçon n'existe pas");
-        return;
-    }
 
 
     ask_div.style.display = "flex";

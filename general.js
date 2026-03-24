@@ -25,7 +25,7 @@ let parameter_toggle = false;
 let sonor_effects = false;
 
 
-document.getElementById("inline").querySelector("h3").innerText = "Version 3.13.1";
+document.getElementById("inline").querySelector("h3").innerText = "Version 3.13.4";
 
 if (localStorage.getItem("text_color") === null) {
     localStorage.setItem("text_color", "black");
@@ -93,8 +93,7 @@ function actu_color() {
             if (document.getElementById("account_small") != undefined) {
                 document.getElementById("account_small").style.border = "1px solid " + localStorage.getItem("text_color");
             }
-            if (document.getElementById("see_3_connected") != undefined && document.getElementById("see_3_connected").style.border.startsWith("1px solid")) {
-                console.log("hey");
+            if ((document.getElementById("see_3_connected") != undefined) && (window.innerWidth < 1711)) {
                 document.getElementById("see_3_connected").style.border = "1px solid " + localStorage.getItem("text_color");
             }
             if (document.querySelectorAll(".session_div").length != 0) {
