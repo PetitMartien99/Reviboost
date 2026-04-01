@@ -20,6 +20,50 @@
     z-index: 1;
 }
 
+.verbs-grid {
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+}
+
+.verbs-grid .header, .verbs-grid .row {
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(5, minmax(65px, 1fr)) 0.15fr;
+}   
+
+.verbs-grid input {
+    background-color: rgb(248, 248, 248);
+    border-radius: 7px;
+}
+
+.verbs-grid .header input {
+    background-color:rgb(188, 188, 188);
+}
+
+@media screen and (max-width: 500px) {
+
+    .verbs-grid .row input, .verbs-grid .header input {
+        height: 15px;
+        font-size: 13px;
+    }
+
+    .verbs-grid .header, .verbs-grid .row {
+        gap: 1px;
+        height: 26px;
+    }
+
+    .verbs-grid button {
+        font-size: 16px;
+    }
+}
+
+#no_button {
+    width: 28px;
+}
+
+
+
 #account_div {
     display: block;
 }

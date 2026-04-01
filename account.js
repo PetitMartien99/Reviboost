@@ -315,18 +315,27 @@ async function sign_up() {
         email: mail_input.value,
         password: password_input.value,
     });
-    
-    mail_input.value = "";
-    password_input.value = "";
-    signup_message.innerHTML = "Un mail a été envoyé <br> à l'addresse mail <br> renseignée. Cliquez sur le lien, puis revenez sur Synapse et connectez vous.";
+
     if (error) {
-        console.log(error.name);
-        console.log(error.code);
+        console.log(error);
         if (error.code === "email_address_invalid") {
-            signup_message.innerHTML = "Addresse mail invalide";
+            signup_message.innerHTML = "Adresse mail invalide";
         }
+        return;
     }
-    update();
+
+    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+        email: mail_input.value,
+        password: password_input.value
+    });
+
+    if (loginError) {
+        console.log("Erreur login après signup :", loginError);
+        return;
+    }
+
+    user_let = loginData.user;
+    update(); 
 }
 
 
@@ -423,41 +432,126 @@ async function see_profile() {
             delete_lesson.className = "delete_lesson";
             lesson_div.appendChild(delete_lesson);
 
-            let ul = document.createElement("ul");
-            lesson_div.appendChild(ul);
+            if (!(lesson.verbs === true)) {
+                let ul = document.createElement("ul");
+                lesson_div.appendChild(ul);
 
-            if (!lesson.items || !lesson.items.length) {
-                let p = document.createElement("p");
-                p.innerText = "La leçon est vide";
-                lesson_div.appendChild(p);
-                continue;
-            }
-
-            let items = lesson.items;
-           
-
-            for (let k = 0; k < items.length; k++) {
-                const item = items[k];
-                let new_li = document.createElement("li");
-                if (item.kind === "egal") new_li.innerHTML = item.title + " = " + item.def;
-                else {
-                    new_li.innerHTML = "<div class='titles'>" + item.title + " :</div> " + item.def;
+                if (!lesson.items || !lesson.items.length) {
+                    let p = document.createElement("p");
+                    p.innerText = "La leçon est vide";
+                    lesson_div.appendChild(p);
+                    delete_lesson.addEventListener("click", () => delete_object("lesson", lesson_div));
+                    continue;
                 }
 
-                new_li.dataset.session = session.name;
-                new_li.dataset.lesson = lesson.name;
-                new_li.dataset.title = item.title;
-                new_li.dataset.content = item.def;
-                new_li.dataset.kind = item.kind;
+                let items = lesson.items;
+            
 
-                let delete_def = document.createElement("button");
-                delete_def.innerText = "X";
-                delete_def.style.color = localStorage.getItem("text_color");
-                delete_def.className = "delete_def";
-                delete_def.addEventListener("click", () => delete_object("def", new_li));
-                new_li.appendChild(delete_def);
+                for (let k = 0; k < items.length; k++) {
+                    const item = items[k];
+                    let new_li = document.createElement("li");
+                    if (item.kind === "egal") new_li.innerHTML = item.title + " = " + item.def;
+                    else {
+                        new_li.innerHTML = "<div class='titles'>" + item.title + " :</div> " + item.def;
+                    }
 
-                ul.appendChild(new_li);
+                    new_li.dataset.session = session.name;
+                    new_li.dataset.lesson = lesson.name;
+                    new_li.dataset.title = item.title;
+                    new_li.dataset.content = item.def;
+                    new_li.dataset.kind = item.kind;
+
+                    let delete_def = document.createElement("button");
+                    delete_def.innerText = "X";
+                    delete_def.style.color = localStorage.getItem("text_color");
+                    delete_def.className = "delete_def";
+                    delete_def.addEventListener("click", () => delete_object("def", new_li));
+                    new_li.appendChild(delete_def);
+
+                    ul.appendChild(new_li);
+                }
+            } else {
+
+                if (!lesson.items) {
+                    let p = document.createElement("p");
+                    p.innerText = "La leçon est vide";
+                    lesson_div.appendChild(p);
+                    delete_lesson.addEventListener("click", () => delete_object("lesson", lesson_div));
+                    continue;
+                }
+
+                let tab = document.createElement("div");
+                tab.className = "verbs-grid";
+                let verbs = lesson.items;
+                lesson_div.appendChild(tab);
+                let header_div = document.createElement("div");
+                header_div.className = "header";
+                header_div.style.gridTemplateColumns = `repeat(${verbs.columns.length}, minmax(65px, 1fr)) 0.15fr`;
+                tab.appendChild(header_div);
+                verbs.columns.forEach((e, colIndex) => {
+                    let input = document.createElement("input");
+                    header_div.appendChild(input);
+                    input.value = e;
+                    input.addEventListener("change", () => {
+                        changeVerbs("update_col", [session.name, lesson.name], null, colIndex, input.value);
+                    });
+                });
+                
+                if (!(verbs.columns.length > 4)) {
+                    let add_button = document.createElement("button");
+                    add_button.innerText = "+";
+                    add_button.style.color = localStorage.getItem("text_color");
+                    header_div.appendChild(add_button);
+                    add_button.addEventListener("click", () => {
+                    changeVerbs("add_col", [session.name, lesson.name], null, null, null);
+                    });
+                } else {
+                    let no_button = document.createElement("div");
+                    no_button.id = "no_button";
+                    header_div.appendChild(no_button);
+                }
+                
+                if (verbs.verbs.length !== 0) {
+                    verbs.verbs.forEach((e, rowIndex) => {
+                        let row_div = document.createElement("div");
+                        row_div.className = "row";
+                        tab.appendChild(row_div);
+                        e.forEach((v) => {
+                            let input = document.createElement("input");
+                            row_div.appendChild(input);
+                            input.value = v;
+                            input.addEventListener("change", () => {
+                                let value = [];
+                                row_div.querySelectorAll("input").forEach((t) => {
+                                    value.push(t.value);
+                                });
+                                changeVerbs("update_row", [session.name, lesson.name], rowIndex, null, value); 
+                            });
+                        });
+                        let delete_row_button = document.createElement("button");
+                        delete_row_button.innerText = "x"
+                        delete_row_button.style.color = localStorage.getItem("text_color");
+                        row_div.appendChild(delete_row_button);
+                        delete_row_button.addEventListener("click", () => {
+                            changeVerbs("delete_row", [session.name, lesson.name], rowIndex, null, null);
+                        });
+    
+                        row_div.style.gridTemplateColumns = `repeat(${e.length}, minmax(65px, 1fr)) 0.15fr`;
+                    });
+                } 
+                let row_div = document.createElement("div");
+                row_div.className = "row";
+                tab.appendChild(row_div);
+                verbs.columns.forEach((e, colIndex) => {
+                    let button = document.createElement("button");
+                    row_div.appendChild(button);
+                    button.innerText = "x";
+                    button.style.color = localStorage.getItem("text_color");
+                    button.addEventListener("click", () => {
+                        changeVerbs("delete_col", [session.name, lesson.name], null, colIndex, null);
+                    });
+                });
+                row_div.style.gridTemplateColumns = `repeat(${verbs.columns.length}, minmax(65px, 1fr)) 0.15fr`;
             }
 
             delete_lesson.addEventListener("click", () => delete_object("lesson", lesson_div));
@@ -475,7 +569,7 @@ async function see_profile() {
             unsee.innerText = ">";
             unsee.style.color = localStorage.getItem("text_color");
             unsee.className = "unsee";
-            let to_hide = session_div.querySelectorAll(".lesson_div");
+            let to_hide = session_div.querySelectorAll(".lesson_div, .verbs-grid");
             session_div.querySelector("h3").addEventListener("click", () => {
                 const name = session.name;
                 if (to_hide[0].style.display === "none") {
@@ -499,6 +593,51 @@ async function see_profile() {
         }
     }
 }
+
+async function changeVerbs(action, way, rowIndex = null, colIndex = null, value = null) {
+    let data = whole_data.find(s => s.name === way[0]).lessons.find(e => e.name === way[1]).items;
+    if (action === "update_col") {
+        data.columns[colIndex] = value;
+    }
+
+    if (action === "update_row") {
+        data.verbs[rowIndex] = value;
+    }
+
+    if (action === "add_row") {
+        let new_row = [];
+        data.columns.forEach((c) => {
+            new_row.push("");
+        })
+        data.verbs.push(new_row);
+    }
+
+    if (action === "delete_row") {
+        data.verbs.splice(rowIndex, 1);
+    }
+
+    if (action === "delete_col") {
+        data.columns.splice(colIndex, 1);
+        data.verbs.forEach((v) => {
+            v.splice(colIndex, 1);
+        });
+    }
+
+    if (action === "add_col") {
+        data.columns.push("");
+        data.verbs.forEach((v) => {
+            v.push("");
+        });
+    }
+
+    whole_data.find(s => s.name === way[0]).lessons.find(e => e.name === way[1]).items = data;
+    const { error } = await supabase
+        .from("sessions")
+        .update({ json_data: whole_data })
+        .eq("uid", user_let.id);
+    see_profile();
+}
+
 
 
 const import_data_input = getID("import_data_input");
@@ -533,10 +672,16 @@ function check_import() {
     let empty = true;
 
     for (let lesson of session.lessons) {
-
         if (lesson.items && lesson.items.length > 0) {
             empty = false;
             break;
+        }
+        
+        if (lesson.items.verbs) {
+            if (lesson.items.verbs.length > 0) {
+                empty = false;
+                break;
+            }
         }
 
     }
@@ -736,7 +881,7 @@ async function exporting_data() {
         newData.lessons.push(e);
     });
 
-    whole_data.filter(s => s.name === name_input.value).lessons = newData;
+    whole_data.find(s => s.name === name_input.value).lessons = newData.lessons;
 
     const { error: err } = await supabase
         .from("sessions")

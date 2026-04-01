@@ -14,9 +14,9 @@ const pack_title_ask = document.getElementById("pack_title_ask");
 const pack_title_add = document.getElementById("pack_title_add");
 const add_p = document.getElementById("add_p");
 const pack_title = document.getElementById("pack_title");
-const def_title = document.getElementById("def_title");
-const def_type = document.getElementById("def_type");
-const def = document.getElementById("def");
+let def_title = document.getElementById("def_title");
+let def_type = document.getElementById("def_type");
+let def = document.getElementById("def");
 const body = document.querySelector("body");
 const contain_files = document.getElementById("contain_files");
 const asking = document.getElementById("asking");
@@ -33,6 +33,7 @@ let interrogation_time;
 let questions_number;
 let right_answers;
 let time_stat; 
+let verbs_column;
 let help_toggle = false;
 const help_div = document.getElementById("help_div");
 
@@ -45,6 +46,12 @@ const correct = new Audio("Correct.mp3");
 
 
 function updateTypeUI_add() {
+    if (document.getElementById('def_title') === null) {
+        return;
+    }
+    def_title = document.getElementById("def_title");
+    def = document.getElementById("def");
+    document.getElementById("add_pack_button").innerText = "Ajouter à la leçon";
     if (def_type.value === "defs") {
         add_p.innerText = "Nouvelle définition";
         def_title.placeholder = "Nom de la définition";
@@ -61,8 +68,58 @@ function updateTypeUI_add() {
     
 }
 
+function toggle_add_def(what) {
+    if (what === "normal") {
+        document.getElementById("add_switch").innerHTML = '<input id="def_title" type="text" placeholder="Nom de la définition"><textarea id="def" cols="20" rows="5" placeholder="Définition"></textarea><select id="def_type"><option value="defs">Définition</option><option value="dates">Date</option><option value="egal">Égalité</option></select>';
+        def_type = document.getElementById("def_type");
+        def_type.addEventListener("input", updateTypeUI_add);
+        document.getElementById("questions_type_select").innerHTML = '<option value="auto">Autovalidation</option><option value="qcm">Choix multiples</option><option value="write">Restitution écrite</option>';
+        document.getElementById("questions_type_select").value = 'auto';
+        updateTypeUI_add();
+    } else if (what === "verb") {
+        add_p.innerText = "Nouvelle ligne";
+        document.getElementById("add_switch").innerHTML = "";
+        document.getElementById("add_pack_button").innerText = "Ajouter une ligne";
+        document.getElementById("questions_type_select").innerHTML = '<option value="random">Aléatoire</option><option value="choice">Déterminé</option>';
+        document.getElementById("questions_type_select").value = 'random';
+    }
+    toggle_verbs_select();
+}
+
+
 updateTypeUI_add();
 def_type.addEventListener("input", updateTypeUI_add);
+
+pack_title_add.addEventListener("input", () => {
+    console.log("input");
+    if (localStorage.getItem(pack_title_add.value) !== null) {
+        toggle_add_def("normal");
+    } else if (localStorage.getItem("?verbs" + pack_title_add.value) !== null) {
+        toggle_add_def("verb");
+    }
+});
+
+
+document.getElementById("questions_type_select").addEventListener("change", () => {
+    toggle_verbs_select();
+});
+
+function toggle_verbs_select() {
+    let select = document.getElementById("verbs_select");
+    if (document.getElementById("questions_type_select").value === "choice") {
+        select.style.display = "block";
+        select.innerHTML = "";
+        for (let i = 0; i < JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).columns.length; i++) {
+            let option = document.createElement("option");
+            option.value =  JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).columns[i];
+            option.innerText =  JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).columns[i];
+            select.appendChild(option);
+        }
+        
+    } else {
+        select.style.display = "none";
+    }
+}
 
 
 function get_euclide(number) {
@@ -74,7 +131,7 @@ function get_euclide(number) {
     } else if (number === 60) {
         return "1 minute";
     } else if (remainder === 0) {
-        return remainder + " minutes";
+        return quotient + " minutes";
     } else if (number < 120) {
         return "1 minute " + remainder + " secondes";
     } else if (number > 120) {
@@ -84,231 +141,275 @@ function get_euclide(number) {
 
 
 function actu_files() {
-    let actual_color;
-    if (localStorage.getItem("text_color") !== null) {
-        actual_color = localStorage.getItem("text_color");
-    } else {
-        actual_color = "black";
-    }
-
+    let actual_color = localStorage.getItem("text_color") || "black";
     contain_files.innerHTML = "";
 
-    let test_token = true;
-    for (let i = 0; i < localStorage.length; i++) { 
-        if (localStorage.key(i).startsWith("color")) {
-           continue;
+    let hasLessons = false;
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key.startsWith("color") && !key.startsWith("text_color") && !key.startsWith("sb-")) {
+            hasLessons = true;
         }
-        if (localStorage.key(i).startsWith("text_color")) {
-            continue;
-        }
-        if (localStorage.key(i).startsWith("sb-")) {;
-            continue;
-        }
-        test_token = false;
     }
-    if (test_token) {
+    if (!hasLessons) {
         document.getElementById("lessons").style.display = "none";
         return;
     }
 
     document.querySelector("h2").innerText = "Pack de leçons";
 
+    const fragment = document.createDocumentFragment();
 
     for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith("color") || key.startsWith("text_color") || key.startsWith("sb-")) continue;
 
-        let name = localStorage.key(i).split(";")[0];
-        if (name === "color") {
-            continue;
-        } else if (name === "text_color") {
-            continue;
-        }
-        
-        if (localStorage.key(i).startsWith("sb-")) {
-            continue;
-        }
-
-        let good_name = name;
-        let pack = localStorage.key(i);
+        let displayName = key.startsWith("?verbs") ? key.slice(6) : key;
         let div = document.createElement("div");
         div.className = "file";
-        div.style.border = "2px solid " + actual_color;
-        if (name.startsWith("?verbs")) {
-            div.innerHTML = "<span>" + name.substring(6, name.length) + "</span>";
-        } else {
-            div.innerHTML = "<span>" + name + "</span>";
-        }    
+        div.style.border = `2px solid ${actual_color}`;
+        div.innerHTML = `<span>${displayName}</span>`;
+        fragment.appendChild(div);
+
         div.addEventListener("click", () => {
-            safe_name = name;
-            if (safe_name.startsWith("?verbs")) {
-                safe_name = safe_name.substring(6, safe_name.length);
-            }
-            pack_title_add.value = safe_name;
-          
-            pack_title_ask.value = safe_name;
-
-            updateTypeUI_add();
+            let isVerb = key.startsWith("?verbs");
+            let safeName = isVerb ? key.slice(6) : key;
+            pack_title_add.value = safeName;
+            pack_title_ask.value = safeName;
+            toggle_add_def(isVerb ? "verb" : "normal");
         });
-
-
-        contain_files.appendChild(div);
 
         let delete_button = document.createElement("button");
         delete_button.className = "delete_button";
         delete_button.style.color = actual_color;
         delete_button.innerText = "X";
-        delete_button.onclick = function() {
+        delete_button.onclick = () => {
             setTimeout(() => {
                 pack_title_add.value = "";
                 pack_title_ask.value = "";
                 pack_title.value = "";
-            }, 10);     
-            localStorage.removeItem(pack);
+            }, 10);
+            localStorage.removeItem(key);
             actu_files();
         };
-
         div.appendChild(delete_button);
 
-
-        let ul = document.createElement("ul");
-        div.appendChild(ul);
-        if (JSON.parse(localStorage.getItem(pack)).length === 0) {
-            let p = document.createElement("p");
-            p.innerText = "Cette leçon est vide";
-            div.appendChild(p);
-        } else {
-            for (let i = 0; i < JSON.parse(localStorage.getItem(pack)).length; i++) {
-                let title = JSON.parse(localStorage.getItem(pack))[i].title;
-                let def = JSON.parse(localStorage.getItem(pack))[i].def;
-                let type = JSON.parse(localStorage.getItem(pack))[i].kind;
-                let new_li = document.createElement("li");
-                
-                if (type === "egal") {
-                    new_li.innerHTML = title + " = " + def;
-                } else {
-                    new_li.innerHTML = "<div class='titles'>" + title + " :</div>  " + def;
-                }
-                
-                ul.appendChild(new_li);
-
-                let delete_def = document.createElement("button");
-                delete_def.className = "delete_def";
-                delete_def.style.color = actual_color;
-                delete_def.innerText = "X";
-                delete_def.onclick = function() {
-                    let new_pack = JSON.parse(localStorage.getItem(pack));
-                    new_pack.splice(i, 1);
-                    localStorage.setItem(pack, JSON.stringify(new_pack));
-                    actu_files();
-
-                }
-                new_li.appendChild(delete_def);
+        if (!key.startsWith("?verbs")) {
+            const packItems = JSON.parse(localStorage.getItem(key));
+            if (packItems.length === 0) {
+                let p = document.createElement("p");
+                p.innerText = "Cette leçon est vide";
+                div.appendChild(p);
+            } else {
+                let ul = document.createElement("ul");
+                packItems.forEach((item, idx) => {
+                    let li = document.createElement("li");
+                    li.innerHTML = item.kind === "egal" ? `${item.title} = ${item.def}` : `<div class='titles'>${item.title} :</div> ${item.def}`;
+                    
+                    let delete_def = document.createElement("button");
+                    delete_def.className = "delete_def";
+                    delete_def.style.color = actual_color;
+                    delete_def.innerText = "X";
+                    delete_def.onclick = () => {
+                        packItems.splice(idx, 1);
+                        localStorage.setItem(key, JSON.stringify(packItems));
+                        actu_files();
+                    };
+                    li.appendChild(delete_def);
+                    ul.appendChild(li);
+                });
+                div.appendChild(ul);
             }
+        } else {
+            let verbsData = JSON.parse(localStorage.getItem(key));
+            let tab = document.createElement("div");
+            tab.className = "verbs-grid";
+            div.appendChild(tab);
+
+            let header_div = document.createElement("div");
+            header_div.className = "header";
+            header_div.style.gridTemplateColumns = `repeat(${verbsData.columns.length}, minmax(65px, 1fr)) 0.15fr`;
+            verbsData.columns.forEach((col, colIndex) => {
+                let input = document.createElement("input");
+                input.value = col;
+                input.addEventListener("change", () => {
+                    changeVerbs("update_col", key, null, colIndex, input.value);
+                });
+                header_div.appendChild(input);
+            });
+
+            if (verbsData.columns.length <= 4) {
+                let add_button = document.createElement("button");
+                add_button.innerText = "+";
+                add_button.style.color = actual_color;
+                add_button.addEventListener("click", () => changeVerbs("add_col", key));
+                header_div.appendChild(add_button);
+            } else {
+                let no_button = document.createElement("div");
+                no_button.id = "no_button";
+                header_div.appendChild(no_button);
+            }
+
+            tab.appendChild(header_div);
+
+            verbsData.verbs.forEach((rowValues, rowIndex) => {
+                let row_div = document.createElement("div");
+                row_div.className = "row";
+                row_div.style.gridTemplateColumns = `repeat(${rowValues.length}, minmax(65px, 1fr)) 0.15fr`;
+                rowValues.forEach((val, colIndex) => {
+                    let input = document.createElement("input");
+                    input.value = val;
+                    input.addEventListener("change", () => {
+                        let newRow = Array.from(row_div.querySelectorAll("input")).map(e => e.value);
+                        changeVerbs("update_row", key, rowIndex, null, newRow);
+                    });
+                    row_div.appendChild(input);
+                });
+                let delete_row_button = document.createElement("button");
+                delete_row_button.innerText = "x";
+                delete_row_button.style.color = actual_color;
+                delete_row_button.addEventListener("click", () => changeVerbs("delete_row", key, rowIndex));
+                row_div.appendChild(delete_row_button);
+                tab.appendChild(row_div);
+            });
+
+            let addRowDiv = document.createElement("div");
+            addRowDiv.className = "row";
+            addRowDiv.style.gridTemplateColumns = `repeat(${verbsData.columns.length}, minmax(65px, 1fr)) 0.15fr`;
+            verbsData.columns.forEach((_, colIndex) => {
+                let button = document.createElement("button");
+                button.innerText = "x";
+                button.style.color = actual_color;
+                button.addEventListener("click", () => changeVerbs("delete_col", key, null, colIndex));
+                addRowDiv.appendChild(button);
+            });
+            tab.appendChild(addRowDiv);
         }
 
-        if (!(JSON.parse(localStorage.getItem(pack)).length === 0)) {
+        if (!(key.startsWith("?verbs") && JSON.parse(localStorage.getItem(key)).verbs.length === 0)) {
             let unsee = document.createElement("button");
             unsee.innerText = ">";
-            unsee.style.color = localStorage.getItem("text_color");
+            unsee.style.color = actual_color;
             unsee.className = "unsee";
-            let to_hide = div.querySelectorAll("li");
+
+            let contentToHide = key.startsWith("?verbs") ? div.querySelector(".verbs-grid") : div.querySelectorAll("li");
+
             div.querySelector("span").addEventListener("click", () => {
-            if (to_hide[0] === undefined) {
-                return;
-            }
-            if (to_hide[0].style.display === "none") {
-                to_hide.forEach((e) => {e.style.display = "flex"});
-                unsee.innerText = "v";
-                opened_sessions.add(good_name);
-            } else {
-                to_hide.forEach((e) => {e.style.display = "none"});
-                unsee.innerText = ">";
-                opened_sessions.delete(good_name);
-            }
+                if (contentToHide instanceof NodeList) {
+                    contentToHide.forEach(e => e.style.display = e.style.display === "none" ? "flex" : "none");
+                } else {
+                    contentToHide.style.display = contentToHide.style.display === "none" ? "flex" : "none";
+                }
+                unsee.innerText = unsee.innerText === ">" ? "v" : ">";
+                opened_sessions.has(displayName) ? opened_sessions.delete(displayName) : opened_sessions.add(displayName);
             });
-            
-            if (opened_sessions.has(good_name)) {
-                to_hide.forEach(e => e.style.display = "flex");
+
+            if (opened_sessions.has(displayName)) {
+                if (contentToHide instanceof NodeList) contentToHide.forEach(e => e.style.display = "flex");
+                else contentToHide.style.display = "flex";
                 unsee.innerText = "v";
             } else {
-                to_hide.forEach(e => e.style.display = "none");
+                if (contentToHide instanceof NodeList) contentToHide.forEach(e => e.style.display = "none");
+                else contentToHide.style.display = "none";
                 unsee.innerText = ">";
             }
+
             div.querySelector("span").appendChild(unsee);
         }
-
-
     }
 
-    let secure_p = document.createElement("p");
-    let secure_p_2 = document.createElement("p");
-    document.getElementById("contain_files").appendChild(secure_p);
-    document.getElementById("contain_files").appendChild(secure_p_2);
+    fragment.appendChild(document.createElement("p"));
+    fragment.appendChild(document.createElement("p"));
 
-
+    contain_files.appendChild(fragment);
     updateTypeUI_add();
-    all_class_files = document.querySelectorAll(".file");
-    all_small_buttons = document.querySelectorAll(".delete_button");
-    all_delete_buttons = document.querySelectorAll(".delete_def");
 }
 
 actu_files();
 
 
+function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null) {
+    let data = JSON.parse(localStorage.getItem(key));
+
+    if (action === "update_col") {
+        data.columns[colIndex] = value;
+    }
+
+    if (action === "update_row") {
+        data.verbs[rowIndex] = value;
+    }
+
+    if (action === "add_row") {
+        let new_row = [];
+        data.columns.forEach((c) => {
+            new_row.push("");
+        })
+        data.verbs.push(new_row);
+    }
+
+    if (action === "delete_row") {
+        data.verbs.splice(rowIndex, 1);
+    }
+
+    if (action === "delete_col") {
+        data.columns.splice(colIndex, 1);
+        data.verbs.forEach((v) => {
+            v.splice(colIndex, 1);
+        });
+    }
+
+    if (action === "add_col") {
+        data.columns.push("");
+        data.verbs.forEach((v) => {
+            v.push("");
+        });
+    }
+
+    localStorage.setItem(key, JSON.stringify(data));
+    actu_files();
+}
+
 
 function createPack() {
-    const regex = /[*@\[\]{}"';?]/;
-    if (regex.test(pack_title.value)) {
+    const forbiddenRegex = /[*@\[\]{}";?]/;
+    const forbiddenNames = ["-sb", "color", "text_color"];
+    const packName = pack_title.value.trim();
+
+    if (!packName) {
+        giga_show("Entrez un titre de leçon.");
+        return;
+    }
+
+    if (forbiddenRegex.test(packName)) {
         giga_show("Il y a des caractères interdits.");
         return;
     }
-    if (pack_title.value != "") {
 
-        if (document.getElementById("lesson_select") === null) {
-            if (!localStorage.getItem(pack_title.value.trim()) && !localStorage.getItem("?verbs" + pack_title.value.trim())) {
-                if (pack_title.value.startsWith("-sb") || pack_title.value.startsWith("color") || pack_title.value.startsWith("text_color")) {
-                    giga_show("Ce nom est interdit");
-                } else {
-                    localStorage.setItem(pack_title.value, "[]");
-                    pack_title_add.value = pack_title.value;
-                    pack_title.value = "";
-                    actu_files();
-                }
-            } else {
-                giga_show("Cette leçon existe déjà.");
-            }
-            return;
-        }
-        if (document.getElementById("lesson_select").value === "normal") {
-            if (!localStorage.getItem(pack_title.value.trim()) && !localStorage.getItem("?verbs" + pack_title.value.trim())) {
-                if (pack_title.value.startsWith("-sb") || pack_title.value.startsWith("color") || pack_title.value.startsWith("text_color")) {
-                    giga_show("Ce nom est interdit");
-                } else {
-                    localStorage.setItem(pack_title.value, "[]");
-                    pack_title_add.value = pack_title.value;
-                    pack_title.value = "";
-                    actu_files();
-                }
-            } else {
-                giga_show("Cette leçon existe déjà.");
-            }
-        } else if (document.getElementById("lesson_select").value === "verbs") {
-            if (!localStorage.getItem(pack_title.value.trim()) && !localStorage.getItem("?verbs" + pack_title.value.trim())) {
-                if (pack_title.value.startsWith("-sb") || pack_title.value.startsWith("color") || pack_title.value.startsWith("text_color")) {
-                    giga_show("Ce nom est interdit");
-                } else {
-                    localStorage.setItem("?verbs" + pack_title.value, "[]");
-                    pack_title_add.value = pack_title.value;
-                    pack_title.value = "";
-                    actu_files();
-                }
-            } else {
-                giga_show("Cette leçon existe déjà.");
-            }
-        }
-
-    } else {
-       giga_show("Entrez un titre de leçon.");
+    if (forbiddenNames.some(prefix => packName.startsWith(prefix))) {
+        giga_show("Ce nom est interdit");
+        return;
     }
+
+    const lessonSelect = document.getElementById("lesson_select");
+    const type = lessonSelect ? lessonSelect.value : "normal";
+
+    if (localStorage.getItem(packName) || localStorage.getItem("?verbs" + packName)) {
+        giga_show("Cette leçon existe déjà.");
+        return;
+    }
+
+    if (type === "normal") {
+        localStorage.setItem(packName, "[]");
+    } else if (type === "verbs") {
+        localStorage.setItem("?verbs" + packName, JSON.stringify({
+            columns: ["Infinitif", "Présent", "Prétérit", "Participe passé", "Traduction"],
+            verbs: []
+        }));
+    }
+
+    pack_title_add.value = packName;
+    pack_title.value = "";
+    actu_files();
 }
 
 
@@ -318,121 +419,114 @@ function addPack() {
         giga_show("Il y a des caractères interdits");
         return;
     }
-    if (pack_title_add.value != "" && def_title.value != "" && def.value != "") {
-        if (localStorage.getItem(pack_title_add.value) != null || localStorage.getItem("?verbs" + pack_title_add.value) != null) {
-            let pack;
-            if (localStorage.getItem(pack_title_add.value) != null) {
-                pack = JSON.parse(localStorage.getItem(pack_title_add.value));
-            } else {
-                pack = JSON.parse(localStorage.getItem("?verbs" + pack_title_add.value));
-            }
-           
-            if (pack.some(item => item.title.trim() === def_title.value.trim())) {
-                giga_show("Cette définition existe déjà dans cette leçon.");
-                return;
-            }
-            
 
-            pack.push({title: def_title.value, def: def.value, kind: def_type.value});
-            let new_pack = JSON.stringify(pack);
-            if (localStorage.getItem(pack_title_add.value) != null) {
-               localStorage.setItem(pack_title_add.value, new_pack); 
-            } else {
-                localStorage.setItem("?verbs" + pack_title_add.value, new_pack); 
-            }
-            
-            actu_files();
-            def_title.value = "";
-            def.value = "";
-        } else {
+    const packKey = localStorage.getItem("?verbs" + pack_title_add.value) ? "?verbs" + pack_title_add.value : pack_title_add.value;
+
+    if (!localStorage.getItem(packKey)) {
+        if (packKey.startsWith("?verbs")) {
             giga_show("Cette leçon n'existe pas.");
+        } else {
+            giga_show("Tout doit être complété.");
+        }
+        return;
+    }
+
+    if (!packKey.startsWith("?verbs")) {
+        if (!pack_title_add.value || !def_title.value || !def.value) {
+            giga_show("Tout doit être complété.");
             return;
         }
+
+        const pack = JSON.parse(localStorage.getItem(packKey));
+
+        if (pack.some(item => item.title.trim() === def_title.value.trim())) {
+            giga_show("Cette définition existe déjà dans cette leçon.");
+            return;
+        }
+
+        pack.push({ title: def_title.value, def: def.value, kind: def_type.value });
+        localStorage.setItem(packKey, JSON.stringify(pack));
+        def_title.value = "";
+        def.value = "";
+        actu_files();
     } else {
-        giga_show("Tout doit être complété.");
+        changeVerbs("add_row", packKey);
     }
 }
 
 
+let verbs;
 
 function start() {
-    if (pack_title_ask.value === "") {
-        return;
-    }
-        
-    let verbs;
-    if (localStorage.getItem(pack_title_ask.value)) {
-        verbs = false;
-    } else if (localStorage.getItem("?verbs" + pack_title_ask.value)) {
-        verbs = true;
-    } else {
+    if (!pack_title_ask.value) return;
+
+    let verbsKey = localStorage.getItem("?verbs" + pack_title_ask.value);
+    let packExists = localStorage.getItem(pack_title_ask.value);
+
+    if (!packExists && !verbsKey) {
         giga_show("Cette leçon n'existe pas");
         return;
     }
 
+    verbs = !!verbsKey;
     if (verbs) {
-        about_ask = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value));
+        const data = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value));
+        about_ask = data.verbs;
+        if (document.getElementById("questions_type_select") !== null) {
+            data.columns.forEach((e, i) => {
+                if (e === document.getElementById("verbs_select").value) {
+                    verbs_column = i;
+                }
+            });
+        }
     } else {
         about_ask = JSON.parse(localStorage.getItem(pack_title_ask.value));
     }
 
-    questions_type = questions_type_select.value;
-    if (questions_type === "qcm") {
-        if (about_ask.length < 5) {
-            giga_show("Pas assez d'éléments pour être interrogé");
+    if (verbs) {
+        let allRows = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).rows;
+        if (!allRows || allRows.length === 0) {
+            show("Pas de verbes à réviser dans cette leçon !");
             return; 
         }
-    }   else if (questions_type === "torf") {
-        if (about_ask.length < 3) {
-            giga_show("Pas assez d'éléments pour être interrogé");
-            return;
-        }
+    }
+
+    questions_type = questions_type_select.value;
+    if (questions_type === "qcm" && about_ask.length < 5) {
+        giga_show("Pas assez d'éléments pour être interrogé");
+        return;
     }
 
     questions_number = about_ask.length;
 
-    
-
-
     ask_div.style.display = "flex";
-    if (questions_type === "write") {
-        asking.className = "shown";
-    }
-    asked = [];
+    if (questions_type === "write") asking.className = "shown";
 
+    asked = [];
     interrogation_time = 0;
-    time_stat = setInterval(() => {interrogation_time += 0.1;}, 100);
+    time_stat = setInterval(() => { interrogation_time += 0.1; }, 100);
     right_answers = 0;
 
     document.getElementById("quit_lesson").className = "shown";
     ultra_container.style.display = "none";
     body.style.overflow = "hidden";
-    
+
     askQuestion();
 }
 
 document.getElementById("quit_lesson").addEventListener("click", () => {
-    
-    if (!(ask_div.querySelector("#reveal") === null)) {
-        ask_div.removeChild(ask_div.querySelector("#reveal"));
-    }
-    if (!(ask_div.querySelector("#next") === null)) {
-        ask_div.removeChild(ask_div.querySelector("#next"));
-    }
-    if (!(ask_div.querySelector("#accept") === null)) {
-        ask_div.removeChild(ask_div.querySelector("#accept"));
-    }
-    if (!(ask_div.querySelector("#refuse") === null)) {
-        ask_div.removeChild(ask_div.querySelector("#refuse"));
-    }
-    if (!(ask_div.querySelectorAll(".phover") === null || ask_div.querySelectorAll(".phover") === undefined)) {
-        document.querySelectorAll(".phover").forEach((e) => {
+    ["#reveal", "#next", "#accept", "#refuse"].forEach(id => {
+        const el = ask_div.querySelector(id);
+        if (el) ask_div.removeChild(el);
+    });
+
+    document.querySelectorAll(".phover").forEach(e => {
+        if (document.getElementById("writer").contains(e)) {
             document.getElementById("writer").removeChild(e);
-        });
-    }
+        }
+    });
+
     asking.className = "hide";
-    ask_div.style.opacity = "0";
-    msg.style.opacity = "0";
     ask_div.style.display = "none";
     ask_div.style.opacity = "1";
     msg.style.opacity = "1";
@@ -450,61 +544,44 @@ function check_input(reveal, next, def) {
             asking.value = "";
             asking.className = "hide";
             right_answers += 1;
-            if (sonor_effects === true) {
-                playSound(correct);
-            }
+            if (sonor_effects) playSound(correct);
             playCheckAnimation();
             setTimeout(() => {
                 askQuestion();
                 next.remove();
                 reveal.remove();
-                                          
             }, 1900);
         }, 700);
     }
 }
 
+
 function askQuestion() {
-
     if (about_ask.length === asked.length) {
-
-        if (questions_type === "write") {
-            asking.className = "hide";
-        }
-
+        if (questions_type === "write") asking.className = "hide";
         clearInterval(time_stat);
-        let percent = Math.round((right_answers*100) / questions_number);
-        if (sonor_effects === true) {
-            playSound(victory);
-        }
+        let percent = Math.round((right_answers * 100) / questions_number);
+        if (sonor_effects === true) playSound(victory);
         document.getElementById("quit_lesson").className = "hide";
+
         let text = "Bravo, tu as fini de réviser la leçon !<br><div id='results'><div id='speed'><img id='chrono' src='Chronometer.png'><br><div id='animate_time'></div></div><div id='precision'><img id='cible' src='Cible.png'><br><div id='animate_precision'></div>%</div></div>";
         show(text);
         animateNumber("time", document.getElementById("animate_time"), Math.round(interrogation_time));
         animateNumber("percent", document.getElementById("animate_precision"), percent);
-        asking.className = "hide";
-        console.log("here");
+
         let count = 0;
         const interval = setInterval(() => {
             spawnConfetti();
             count++;
-
-            if (count >= 120) {
-                clearInterval(interval);
-            }
+            if (count >= 120) clearInterval(interval);
         }, 30);
 
         let continue_button = document.createElement("button");
-        continue_button.innerText = "Continuer";  
+        continue_button.innerText = "Continuer";
         continue_button.id = "continue";
-        if (toggle_t === true) {
-            continue_button.style.color = "white";
-        } else {
-            continue_button.style.color = "black";
-        }
+        continue_button.style.color = toggle_t ? "white" : "black";
         ask_div.appendChild(continue_button);
-        
-        
+
         continue_button.onclick = () => {
             continue_button.remove();
             ask_div.style.opacity = "0";
@@ -515,22 +592,15 @@ function askQuestion() {
             ultra_container.style.display = "block";
             body.style.overflow = "auto";
         };
-        
         return;
     }
 
     let interrogation_side = getRandom(0, 2);
-
     let question_id = getRandom(0, about_ask.length);
-
-    while (asked.includes(question_id)) {
-        question_id = getRandom(0, about_ask.length);
-    }
+    while (asked.includes(question_id)) question_id = getRandom(0, about_ask.length);
     asked.push(question_id);
 
-    let title;
-    let def;
-    
+    let title, def;
     if (interrogation_side === 0) {
         title = about_ask[question_id].title;
         def = about_ask[question_id].def;
@@ -539,123 +609,96 @@ function askQuestion() {
         title = about_ask[question_id].def;
     }
 
-    let torf_var;
-
-    if (questions_type !== "torf") {
+    if (!verbs) {
         if (interrogation_side === 0) {
-            if (about_ask[question_id].kind === "defs") {
-                show("Quelle est la définition de : <br>\"" + title + "\" ?");            
-            } else if (about_ask[question_id].kind === "dates") {
-                if (/^\d/.test(title)) {
-                    show("Que s'est-il passé le " + title + " ?");
-                } else {
-                    show("Que s'est-il passé en " + title + " ?");
-                }
-            } else if (about_ask[question_id].kind === "egal") {
-                show("\"" + title + "\" est égal à :");
-            }
+            if (about_ask[question_id].kind === "defs") show("Quelle est la définition de : <br>\"" + title + "\" ?");
+            else if (about_ask[question_id].kind === "dates") {
+                if (/^\d/.test(title)) show("Que s'est-il passé le " + title + " ?");
+                else show("Que s'est-il passé en " + title + " ?");
+            } else if (about_ask[question_id].kind === "egal") show("\"" + title + "\" est égal à :");
         } else {
-            if (about_ask[question_id].kind === "defs") {
-                show("Quel est le terme défini par :<br>\"" + title + "\" ?");
-            } else if (about_ask[question_id].kind === "dates") {
-                show("Quelle date va avec \"" + title + "\" ?");
-            } else if (about_ask[question_id].kind === "egal") {
-                show("\"" + title + "\" est égal à :");
-            }
+            if (about_ask[question_id].kind === "defs") show("Quel est le terme défini par :<br>\"" + title + "\" ?");
+            else if (about_ask[question_id].kind === "dates") show("Quelle date va avec \"" + title + "\" ?");
+            else if (about_ask[question_id].kind === "egal") show("\"" + title + "\" est égal à :");
         }
     } else {
-        
-        if (getRandom(0, 2) === 1) {
-            torf_var = "Vrai";
-            if (interrogation_side === 1) {
-                if (title[title.length - 1] === ".") {
-                    title = title.slice(0, -1);
-                }
-                show(title + " : " + def);
-            } else {
-                if (def[def.length - 1] === ".") {
-                    def = def.slice(0, -1);
-                }
-                show(def + " : " + title);
-            }       
-        } else {
-            torf_var = "Faux";
-            let thing_id = getRandom(0, about_ask.length);
-            while (title === about_ask[thing_id].title || title === about_ask[thing_id].def || def === about_ask[thing_id].title || def === about_ask[thing_id].def) {
-                thing_id = getRandom(0, about_ask.length);
-            }
-            if (interrogation_side == 1) {
-                show(title + " : " + about_ask[thing_id].title);
-            } else {
-                show(title + " : " + about_ask[thing_id].def);
-            }
-        }
-    }
+        let show_div = document.createElement("div");
+        show_div.innerHTML = "<p id='complete_verbs_grid'>Complète :</p> <br>";
+        show_div.className = "verbs-grid";
+        let all_columns = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).columns;
+        let the_column;
 
+        let header = document.createElement("div");
+        header.className = "header";
+        header.style.gridTemplateColumns = `repeat(${all_columns.length}, minmax(65px, 1fr))`;
+        all_columns.forEach((c) => {
+            let input = document.createElement("input");
+            input.className = "header_fixed";
+            input.value = c === "" ? "VIDE!" : c;
+            input.disabled = true;
+            header.appendChild(input);
+        });
+        show_div.appendChild(header);
+
+        the_column = questions_type === "random" ? getRandom(0, all_columns.length) : verbs_column;
+
+        let row = document.createElement("div");
+        row.className = "row";
+        row.style.gridTemplateColumns = `repeat(${all_columns.length}, minmax(65px, 1fr))`;
+
+        all_columns.forEach((e, index) => {
+            let input = document.createElement("input");
+            input.className = "ask_verbs_input";
+            if (index === the_column) input.value = about_ask[question_id][the_column] || "VIDE!";
+            row.appendChild(input);
+        });
+        show_div.appendChild(row);
+        show(show_div);
+    }
 
     let reveal = document.createElement("button");
     reveal.id = "reveal";
-    if (questions_type === "auto") {
-        reveal.innerText = "Valider";
-    } else {
-        reveal.innerText = "Révéler la réponse";
-    }    
+    reveal.innerText = (questions_type === "auto" || questions_type === "random" || questions_type === "choice") ? "Valider" : "Révéler la réponse";
     reveal.className = "shown";
-    if (toggle_t === true) {
-        reveal.style.color = "white";
-    } else {
-        reveal.style.color = "black";
-    }
+    reveal.style.color = toggle_t ? "white" : "black";
     ask_div.appendChild(reveal);
 
     let next = document.createElement("button");
     next.innerText = "Suivant";
     next.id = "next";
     next.className = "hide";
-    if (toggle_t === true) {
-        next.style.color = "white";
-    } else {
-        next.style.color = "black";
-    }
+    next.style.color = toggle_t ? "white" : "black";
     ask_div.appendChild(next);
-    
-    if (questions_type != "auto") {
+
+    if (questions_type === "qcm" || questions_type === "write") {
         reveal.onclick = () => {
-            if (questions_type === "torf") {
-                show("La réponse était \"" + torf_var.toLowerCase() + "\"");
-            } else {
-                show("La réponse était : \"" + def + "\"");
-            }
+            show("La réponse était : \"" + def + "\"");
             reveal.className = "hide";
             if (questions_type === "write") {
                 asking.value = "";
                 asking.className = "hide";
-            } else {
-                writer.innerHTML = "";
-            }
+            } else writer.innerHTML = "";
             next.className = "shown";
             next.onclick = () => {
                 askQuestion();
                 next.remove();
                 reveal.remove();
             };
-        }
-    } else {
+        };
+    } else if (questions_type === "auto") {
         reveal.onclick = () => {
-            if (!(asking.value === "")) {
+            if (asking.value !== "") {
                 let user_answer = asking.value;
                 asking.value = "";
                 asking.className = "hide";
                 if (wash(user_answer) === wash(def)) {
-                    if (sonor_effects === true) {
-                        playSound(correct);
-                    }
+                    if (sonor_effects) playSound(correct);
                     show("");
                     reveal.className = "hide";
                     playCheckAnimation();
                     setTimeout(() => {
                         show("C'était la bonne réponse");
-                        right_answers += 1;
+                        right_answers++;
                         next.className = "shown";
                         next.onclick = () => {
                             askQuestion();
@@ -668,30 +711,20 @@ function askQuestion() {
                     show("Ta réponse était : <br>\"" + user_answer + "\"<br> La bonne réponse était : <br> \"" + def + "\"");
                     let accept = document.createElement("button");
                     accept.innerText = "Ma réponse est bonne";
-                    if (toggle_t === true) {
-                        accept.style.color = "white";
-                    } else {
-                        accept.style.color = "black";
-                    }
                     accept.id = "accept";
-                    ask_div.appendChild(accept);
+                    accept.style.color = toggle_t ? "white" : "black";
                     let refuse = document.createElement("button");
                     refuse.innerText = "Ma réponse est fausse";
-                    if (toggle_t === true) {
-                        refuse.style.color = "white";
-                    } else {
-                        refuse.style.color = "black";
-                    }
                     refuse.id = "refuse";
+                    refuse.style.color = toggle_t ? "white" : "black";
+                    ask_div.appendChild(accept);
                     ask_div.appendChild(refuse);
 
-                    accept.onclick = () => { 
-                        right_answers += 1;
+                    accept.onclick = () => {
+                        right_answers++;
                         accept.remove();
                         refuse.remove();
-                        if (sonor_effects === true) {
-                            playSound(correct);
-                        }
+                        if (sonor_effects) playSound(correct);
                         show("");
                         playCheckAnimation();
                         setTimeout(() => {
@@ -699,14 +732,11 @@ function askQuestion() {
                             next.remove();
                             reveal.remove();
                         }, 1900);
-                    }
-
+                    };
                     refuse.onclick = () => {
                         accept.remove();
                         refuse.remove();
-                        if (sonor_effects === true) {
-                            playSound(fail);
-                        }
+                        if (sonor_effects) playSound(fail);
                         show("");
                         playCrossAnimation();
                         setTimeout(() => {
@@ -714,15 +744,67 @@ function askQuestion() {
                             next.remove();
                             reveal.remove();
                         }, 1900);
-                        
-                    }
+                    };
                 }
             }
-        }
+        };
+    } else if (questions_type === "random" || questions_type === "choice") {
+        reveal.onclick = () => {
+            let the_row = about_ask[question_id];
+            let all_correct = true;
+            let row = document.createElement("div");
+            row.className = "row";
+            row.style.gridTemplateColumns = `repeat(${the_row.length}, minmax(65px, 1fr))`;
+
+            ask_div.querySelector(".row").querySelectorAll("input").forEach((e, i) => {
+                let input = document.createElement("input");
+                input.className = "ask_verbs_input";
+                input.disabled = true;
+                input.style.backgroundColor = "transparent";
+
+                if (e.value === the_row[i]) e.style.backgroundColor = "green";
+                else {
+                    e.style.backgroundColor = "red";
+                    all_correct = false;
+                    input.value = the_row[i] || "VIDE!";
+                }
+                row.appendChild(input);
+                ask_div.querySelector(".verbs-grid").appendChild(row);
+            });
+
+            reveal.className = "hide";
+
+            if (all_correct) {
+                if (sonor_effects) playSound(correct);
+                show("");
+                playCheckAnimation();
+                setTimeout(() => {
+                    next.className = "shown";
+                    show("C'était la bonne réponse");
+                    right_answers++;
+                    next.onclick = () => {
+                        askQuestion();
+                        next.remove();
+                        reveal.remove();
+                    };
+                }, 1900);
+            } else {
+                ask_div.querySelector(".verbs-grid").removeChild(ask_div.querySelector(".verbs-grid").querySelector("#complete_verbs_grid"));
+                if (sonor_effects) playSound(fail);
+                playCrossAnimation();
+                setTimeout(() => {
+                    next.className = "shown";
+                    next.onclick = () => {
+                        askQuestion();
+                        next.remove();
+                        reveal.remove();
+                    };
+                }, 1900);
+            }
+        };
     }
 
     if (questions_type === "write") {
-
         asking.className = "shown";
         asking.value = "";
         asking.addEventListener("input", () => {
@@ -731,73 +813,45 @@ function askQuestion() {
     } else if (questions_type === "auto") {
         asking.className = "shown";
         asking.value = "";
-
     } else if (questions_type === "qcm") {
         asking.className = "hide";
 
         let randomise = [];
         randomise.push(getRandom(0, 4));
-
         while (randomise.length < 4) {
             let i = getRandom(0, 4);
-            if (randomise.includes(i)) {
-            } else {
-                randomise.push(i);
-            }
-            
+            if (!randomise.includes(i)) randomise.push(i);
         }
 
-
-        let p2;
-        let p2_text;
-        let p3;
-        let p3_text;
-        let p4;
-        let p4_text;
-
+        let p2, p2_text, p3, p3_text, p4, p4_text;
         if (interrogation_side === 0) {
             p2 = document.createElement("p");
             p2_text = about_ask[getRandom(0, about_ask.length)].def;
-            while (p2_text === def) {
-                p2_text = about_ask[getRandom(0, about_ask.length)].def;
-            }
+            while (p2_text === def) p2_text = about_ask[getRandom(0, about_ask.length)].def;
 
             p3 = document.createElement("p");
             p3_text = about_ask[getRandom(0, about_ask.length)].def;
-            while (p3_text === def || p3_text === p2_text) {
-                p3_text = about_ask[getRandom(0, about_ask.length)].def;
-            }
+            while (p3_text === def || p3_text === p2_text) p3_text = about_ask[getRandom(0, about_ask.length)].def;
 
             p4 = document.createElement("p");
             p4_text = about_ask[getRandom(0, about_ask.length)].def;
-            while (p4_text === def || p4_text === p2_text || p4_text === p3_text) {
-                p4_text = about_ask[getRandom(0, about_ask.length)].def;
-            }
+            while (p4_text === def || p4_text === p2_text || p4_text === p3_text) p4_text = about_ask[getRandom(0, about_ask.length)].def;
         } else {
             p2 = document.createElement("p");
             p2_text = about_ask[getRandom(0, about_ask.length)].title;
-            while (p2_text === def) {
-                p2_text = about_ask[getRandom(0, about_ask.length)].title;
-            }
+            while (p2_text === def) p2_text = about_ask[getRandom(0, about_ask.length)].title;
 
             p3 = document.createElement("p");
             p3_text = about_ask[getRandom(0, about_ask.length)].title;
-            while (p3_text === def || p3_text === p2_text) {
-                p3_text = about_ask[getRandom(0, about_ask.length)].title;
-            }
+            while (p3_text === def || p3_text === p2_text) p3_text = about_ask[getRandom(0, about_ask.length)].title;
 
             p4 = document.createElement("p");
             p4_text = about_ask[getRandom(0, about_ask.length)].title;
-            while (p4_text === def || p4_text === p2_text || p4_text === p3_text) {
-                p4_text = about_ask[getRandom(0, about_ask.length)].title;
-            }
+            while (p4_text === def || p4_text === p2_text || p4_text === p3_text) p4_text = about_ask[getRandom(0, about_ask.length)].title;
         }
 
         for (let i = 0; i < 3; i++) {
-
-            
             if (randomise[0] === 0) {
-
                 let p1 = document.createElement("p");
                 p1.innerText = def;
                 p1.className = "phover";
@@ -805,34 +859,26 @@ function askQuestion() {
                     writer.innerHTML = "";
                     reveal.className = "hide";
                     show("");
-                    right_answers += 1;
-                    if (sonor_effects === true) {
-                        playSound(correct);
-                    }
+                    right_answers++;
+                    if (sonor_effects) playSound(correct);
                     playCheckAnimation();
                     setTimeout(() => {
                         askQuestion();
                         next.remove();
                         reveal.remove();
-                        
                     }, 1900);
                 });
                 writer.appendChild(p1);
-
-
                 randomise.shift();
             }
             if (randomise[0] === 1) {
-
                 p2.innerHTML = p2_text;
                 p2.className = "phover";
                 p2.addEventListener("click", () => {
                     writer.innerHTML = "";
                     reveal.className = "hide";
                     show("");
-                    if (sonor_effects === true) {
-                        playSound(fail);
-                    }
+                    if (sonor_effects) playSound(fail);
                     playCrossAnimation();
                     setTimeout(() => {
                         show("Dommage... La bonne réponse était \"" + def + "\"");
@@ -843,23 +889,18 @@ function askQuestion() {
                             reveal.remove();
                         };
                     }, 1900);
-                })
+                });
                 writer.appendChild(p2);
-
                 randomise.shift();
             }
             if (randomise[0] === 2) {
-                
-                
                 p3.innerHTML = p3_text;
                 p3.className = "phover";
                 p3.addEventListener("click", () => {
                     writer.innerHTML = "";
                     reveal.className = "hide";
                     show("");
-                    if (sonor_effects === true) {
-                        playSound(fail);
-                    }
+                    if (sonor_effects) playSound(fail);
                     playCrossAnimation();
                     setTimeout(() => {
                         show("Dommage... La bonne réponse était \"" + def + "\"");
@@ -870,22 +911,18 @@ function askQuestion() {
                             reveal.remove();
                         };
                     }, 1900);
-                })
+                });
                 writer.appendChild(p3);
-
                 randomise.shift();
             }
             if (randomise[0] === 3) {
-
                 p4.innerHTML = p4_text;
                 p4.className = "phover";
                 p4.addEventListener("click", () => {
                     writer.innerHTML = "";
                     reveal.className = "hide";
                     show("");
-                    if (sonor_effects === true) {
-                        playSound(fail);
-                    }
+                    if (sonor_effects) playSound(fail);
                     playCrossAnimation();
                     setTimeout(() => {
                         show("Dommage... La bonne réponse était \"" + def + "\"");
@@ -896,74 +933,22 @@ function askQuestion() {
                             reveal.remove();
                         };
                     }, 1900);
-                })
+                });
                 writer.appendChild(p4);
-
                 randomise.shift();
             }
         }
-    } else if (questions_type === "torf") {
-
-        let p1 = document.createElement("p");
-        p1.innerText = torf_var;
-        p1.className = "phover";
-        p1.addEventListener("click", () => {
-            writer.innerHTML = "";
-            reveal.className = "hide";
-            show("");
-            right_answers += 1;
-            if (sonor_effects === true) {
-                playSound(correct);
-            }
-            playCheckAnimation();
-            setTimeout(() => {
-                askQuestion();
-                next.remove();
-                reveal.remove();
-                            
-            }, 1900);
-        });
-
-        let p2 = document.createElement("p");
-        if (torf_var === "Vrai") {
-            p2.innerHTML = "Faux";
-        } else {
-            p2.innerHTML = "Vraix";
-        }
-        p2.className = "phover";
-        p2.addEventListener("click", () => {
-            writer.innerHTML = "";
-            reveal.className = "hide";
-            show("");
-            if (sonor_effects === true) {
-                playSound(fail);
-            }
-            playCrossAnimation();
-            setTimeout(() => {
-                show("Dommage... La bonne réponse était \"" + torf_var.toLowerCase() + "\"");
-                next.className = "shown";
-                next.onclick = () => {
-                    askQuestion();
-                    next.remove();
-                    reveal.remove();
-                };
-            }, 1900);
-        });
-
-        if (getRandom(0, 2) === 1) {
-            writer.appendChild(p1);
-            writer.appendChild(p2);
-        } else {
-            writer.appendChild(p2);
-            writer.appendChild(p1);
-        }
-
     }
 }
 
 
 function show(message) {
-    msg.innerHTML = message;
+    msg.innerHTML = "";
+    if (typeof message === "string") {
+        msg.innerHTML = message;
+    } else {
+        msg.appendChild(message);
+    }
 }
 
 

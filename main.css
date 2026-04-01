@@ -4,13 +4,106 @@ body {
     align-self: center;
 }
 
- 
+
+#ask_div input {
+    z-index: 11;
+    font-size: 32px;
+}
+
+#next, #reveal, #continue, #accept, #refuse {
+    z-index: 11;
+    font-size: 35px;
+}
+
+#ask_div p {
+    font-size: 32px;
+}
+
+@media screen and (width <= 450px) {
+    #ask_div p {
+        font-size: 27px;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+    #next, #reveal, #continue, #accept, #refuse {
+        font-size: 29px;
+    }
+}
+
+
+.verbs-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.verbs-grid .header, .verbs-grid .row {
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(5, minmax(65px, 1fr)) 0.15fr;
+}   
+
+.verbs-grid input {
+    background-color: rgb(248, 248, 248);
+    border-radius: 7px;
+}
+
+.verbs-grid br {
+    margin-bottom: 30px;
+}
+
+.verbs-grid .header input, .header .header_fixed {
+    background-color:rgb(188, 188, 188);
+}
+
+.header .header_fixed {
+    border-radius: 7px;
+    padding: 2px;
+    margin: 5px;
+}
+
+#complete_verbs_grid {
+    font-size: 34px;
+}
+
+.verbs-grid .header input:disabled {
+    display: block;
+    color: black;
+}
+
+@media screen and (max-width: 500px) {
+
+    .verbs-grid .row input, #ask_div .ask_verbs_input, #ask_div .header_fixed, .verbs-grid .header input {
+        height: 15px;
+        font-size: 15px;
+    }
+
+    .verbs-grid .header, .verbs-grid .row {
+        gap: 1px;
+        height: 26px;
+    }
+
+    .verbs-grid button {
+        font-size: 16px;
+    }
+}
+
+#no_button {
+    width: 28px;
+}
+
 #create, #add, #ask {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 300px;
+}
+
+#add_switch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .beetween {
@@ -288,31 +381,6 @@ body {
     align-items: center;
     z-index: 200;
     transition: opacity 1s;
-}
-
-#next, #reveal, #continue, #accept, #refuse {
-    z-index: 11;
-    font-size: 35px;
-}
-
-#ask_div p {
-    font-size: 32px;
-}
-
-@media screen and (width <= 450px) {
-    #ask_div p {
-        font-size: 27px;
-        margin-left: 5px;
-        margin-right: 5px;
-    }
-    #next, #reveal, #continue, #accept, #refuse {
-        font-size: 29px;
-    }
-}
-
-#ask_div input {
-    z-index: 11;
-    font-size: 32px;
 }
 
 
