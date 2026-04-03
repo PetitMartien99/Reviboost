@@ -4,15 +4,6 @@ function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-let all_buttons = document.querySelectorAll("button");
-const all_selects = document.querySelectorAll("select");
-const beetweens = document.querySelectorAll(".beetween");
-const links = document.querySelectorAll("a");
-let all_class_files;
-let all_small_buttons;
-let all_delete_buttons;
-const ask_div = document.getElementById("ask_div");
-const ultra_container = document.getElementById("ultra_container");
 const parameter_div = document.getElementById("parameter_div");
 const color = document.getElementById("color");
 let first = 1;
@@ -25,7 +16,7 @@ let parameter_toggle = false;
 let sonor_effects = false;
 
 
-document.getElementById("inline").querySelector("h3").innerText = "Version 3.15.0 BETA";
+document.getElementById("inline").querySelector("h3").innerText = "Version 3.16.4 BETA";
 
 if (localStorage.getItem("text_color") === null) {
     localStorage.setItem("text_color", "black");
@@ -44,64 +35,11 @@ function actu_color() {
                 color_safe =  "#" + localStorage.getItem("color");
             }
                 
-            document.querySelector("body").style.backgroundColor = color_safe;
-            if (!(ultra_container === null)) {
-                ultra_container.style.backgroundColor = color_safe;
-            }
-            parameter_div.style.backgroundColor = color_safe;
-            if (!(ask_div === null)) {
-                ask_div.style.backgroundColor = color_safe;
-            }
-            if (!(document.getElementById("mobile_up") === null)) {         
-                document.getElementById("mobile_up").style.backgroundColor = color_safe;
-            }
-            if (!(document.getElementById("mobile_down") === null)) {
-                document.getElementById("mobile_down").style.backgroundColor = color_safe;
-            }
-            if (!(document.getElementById("account_small") === null)) {
-                document.getElementById("account_small").style.backgroundColor = color_safe;
-            }
-            if (!(document.getElementById("see_3_connected") === null)) {
-                document.getElementById("see_3_connected").style.backgroundColor = color_safe;
-            }
-            if (document.getElementById("help_div")) {
-                document.getElementById("help_div").style.backgroundColor = color_safe;
-                document.getElementById("help_div").style.border = "solid 1px " + localStorage.getItem("text_color");
-            }
+            document.querySelector("body").style.setProperty("--background-color", color_safe);
         }
 
         if (localStorage.getItem("text_color") !== null) {
-            all_buttons = document.querySelectorAll("button");
-            document.querySelector("body").style.color = localStorage.getItem("text_color");
-            all_buttons.forEach((i) => {i.style.color = localStorage.getItem("text_color")});
-            all_selects.forEach((i) => {i.style.color = localStorage.getItem("text_color")});
-            beetweens.forEach((i) => {i.style.backgroundColor = localStorage.getItem("text_color")});
-            links.forEach((i) => {i.style.color = localStorage.getItem("text_color")});
-
-            all_class_files = document.querySelectorAll(".file");
-            
-            if (!(all_class_files === undefined)) {
-                all_class_files.forEach((i) => {i.style.border = "solid 2px " + localStorage.getItem("text_color");});
-            }
-            document.querySelectorAll("li").forEach((i) => {i.style.color = localStorage.getItem("text_color")});
-            parameter_div.style.border = "solid 1px " + localStorage.getItem("text_color");
-
-            if (!(document.getElementById("help") === null)) {
-                document.getElementById("help").style.border = "solid 2px " + localStorage.getItem("text_color");
-            }
-
-            if (document.getElementById("account_small") != undefined) {
-                document.getElementById("account_small").style.border = "1px solid " + localStorage.getItem("text_color");
-            }
-            if ((document.getElementById("see_3_connected") != undefined) && (window.innerWidth < 1711)) {
-                document.getElementById("see_3_connected").style.border = "1px solid " + localStorage.getItem("text_color");
-            }
-            if (document.querySelectorAll(".session_div").length != 0) {
-                document.querySelectorAll(".session_div").forEach((e) => {e.style.border = "2px solid " + localStorage.getItem("text_color")});
-            }
-            if (document.querySelectorAll(".lesson_div").length != 0) {
-                document.querySelectorAll(".lesson_div").forEach((e) => {e.style.border = "1px solid " + localStorage.getItem("text_color")});
-            }
+            document.querySelector("body").style.setProperty("--text-color", localStorage.getItem("text_color"));
 
             if (localStorage.getItem("text_color") === "white") {
                 toggle_t = true;
@@ -141,6 +79,8 @@ function getPack(baseName) {
     return null;
 }
 
+document.getElementById("parameter_cover").addEventListener("click", parameter);
+
 function parameter() {
     if (parameter_toggle === false) {
         parameter_div.style.display = "block";
@@ -162,26 +102,7 @@ function parameter() {
 
 color.addEventListener("input", () => {
     if (first === 0) {
-        document.querySelector("body").style.backgroundColor = color.value;
-        if (!(ultra_container === null)) {
-            ultra_container.style.backgroundColor = color.value;
-        }
-        parameter_div.style.backgroundColor = color.value;
-        if (!(ask_div === null)) {
-            ask_div.style.backgroundColor = color.value;
-        }
-        if (!(document.getElementById("mobile_up") === null)) {         
-            document.getElementById("mobile_up").style.backgroundColor = color.value;
-        }
-        if (!(document.getElementById("mobile_down") === null)) {
-            document.getElementById("mobile_down").style.backgroundColor = color.value;
-        }
-        if (!(document.getElementById("account_small") === null)) {
-            document.getElementById("account_small").style.backgroundColor = color.value;
-        }
-        if (!(document.getElementById("see_3_connected") === null)) {
-            document.getElementById("see_3_connected").style.backgroundColor = color.value;
-        }
+        document.querySelector("body").style.setProperty("--background-color", color.value);
         let safe_color = color.value.replace("#", "");
         localStorage.setItem("color", safe_color);
     } else {

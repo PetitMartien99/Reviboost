@@ -15,6 +15,7 @@ let opened_sessions = new Set();
 let whole_data = null; 
 let toggle_account_small = true;
 let toggle_import_3 = true;
+const selects_sessions = [document.getElementById("add_data_input"), document.getElementById("import_data_input")]
 
 
 getID("see_defs_3").addEventListener("click", see_3_unconnected);
@@ -41,7 +42,7 @@ async function see_3_unconnected() {
         const session = new_data[i];
         let session_div = document.createElement("div");
         session_div.className = "session_div";
-        session_div.style.border = "solid 2px " + localStorage.getItem("text_color");
+        session_div.style.border = "solid 2px var(--text-color)";
         session_div.innerHTML = "<h3>" + session.name + "</h3>";
         data_div.appendChild(session_div);
 
@@ -52,7 +53,7 @@ async function see_3_unconnected() {
             }
             let lesson_div = document.createElement("div");
             lesson_div.className = "lesson_div";
-            lesson_div.style.border = "solid 1px " + localStorage.getItem("text_color");
+            lesson_div.style.border = "solid 1px var(--text-color)";
             lesson_div.innerHTML = "<h4>" + lesson.name + "</h4>";
             session_div.appendChild(lesson_div);
 
@@ -86,7 +87,7 @@ async function see_3_unconnected() {
         if (session.lessons.length >= 1) {
             let unsee = document.createElement("button");
             unsee.innerText = ">";
-            unsee.style.color = localStorage.getItem("text_color");
+            unsee.style.color = "var(--text-color)";
             unsee.className = "unsee";
             let to_hide = session_div.querySelectorAll(".lesson_div");
             session_div.querySelector("h3").addEventListener("click", () => {
@@ -352,11 +353,11 @@ async function signOut() {
 
 
 /*
- --------------------
-|                    |
-|     SEE PROFILE    |
-|                    |
- --------------------
+    ----------------------
+    |                    |
+    |     SEE PROFILE    |
+    |                    |
+    ----------------------
 */
 
 async function see_profile() {
@@ -379,14 +380,25 @@ async function see_profile() {
         return;
     }
 
+    selects_sessions.forEach((e) => {
+        e.value = "";
+    });
+
     for (let i = 0; i < whole_data.length; i++) {
         const session = whole_data[i];
         let session_div = document.createElement("div");
         session_div.className = "session_div";
-        session_div.style.border = "solid 2px " + localStorage.getItem("text_color");
+        session_div.style.border = "solid 2px var(--text-color)";
         session_div.innerHTML = "<h3>" + session.name + "</h3>";
         see_div.appendChild(session_div);
         session_div.dataset.session = session.name;
+
+        selects_sessions.forEach((e) => {
+            let option = document.createElement("option");
+            option.value = session.name;
+            option.innerText = session.name;
+            e.appendChild(option);
+        });
 
         session_div.addEventListener("click", () => {
             getID("import_data_input").value = session.name;
@@ -406,7 +418,7 @@ async function see_profile() {
             session_div.innerHTML += "<p>Cette session est vide</p>";
             let delete_session = document.createElement("button");
             delete_session.innerText = "X";
-            delete_session.style.color = localStorage.getItem("text_color");
+            delete_session.style.color = "var(--text-color)";
             delete_session.className = "delete_session";
             session_div.appendChild(delete_session);
             delete_session.addEventListener("click", e => { e.stopPropagation(); delete_object("session", session_div); });
@@ -420,7 +432,7 @@ async function see_profile() {
             }
             let lesson_div = document.createElement("div");
             lesson_div.className = "lesson_div";
-            lesson_div.style.border = "solid 1px " + localStorage.getItem("text_color");
+            lesson_div.style.border = "solid 1px var(--text-color)";
             lesson_div.innerHTML = "<h4>" + lesson.name + "</h4>";
             session_div.appendChild(lesson_div);
             lesson_div.dataset.session = session.name;
@@ -428,7 +440,7 @@ async function see_profile() {
 
             let delete_lesson = document.createElement("button");
             delete_lesson.innerText = "X";
-            delete_lesson.style.color = localStorage.getItem("text_color");
+            delete_lesson.style.color = "var(--text-color)";
             delete_lesson.className = "delete_lesson";
             lesson_div.appendChild(delete_lesson);
 
@@ -463,7 +475,7 @@ async function see_profile() {
 
                     let delete_def = document.createElement("button");
                     delete_def.innerText = "X";
-                    delete_def.style.color = localStorage.getItem("text_color");
+                    delete_def.style.color = "var(--text-color)";
                     delete_def.className = "delete_def";
                     delete_def.addEventListener("click", () => delete_object("def", new_li));
                     new_li.appendChild(delete_def);
@@ -500,7 +512,7 @@ async function see_profile() {
                 if (!(verbs.columns.length > 4)) {
                     let add_button = document.createElement("button");
                     add_button.innerText = "+";
-                    add_button.style.color = localStorage.getItem("text_color");
+                    add_button.style.color = "var(--text-color)";
                     header_div.appendChild(add_button);
                     add_button.addEventListener("click", () => {
                     changeVerbs("add_col", [session.name, lesson.name], null, null, null);
@@ -530,7 +542,7 @@ async function see_profile() {
                         });
                         let delete_row_button = document.createElement("button");
                         delete_row_button.innerText = "x"
-                        delete_row_button.style.color = localStorage.getItem("text_color");
+                        delete_row_button.style.color = "var(--text-color)";
                         row_div.appendChild(delete_row_button);
                         delete_row_button.addEventListener("click", () => {
                             changeVerbs("delete_row", [session.name, lesson.name], rowIndex, null, null);
@@ -546,7 +558,7 @@ async function see_profile() {
                     let button = document.createElement("button");
                     row_div.appendChild(button);
                     button.innerText = "x";
-                    button.style.color = localStorage.getItem("text_color");
+                    button.style.color = "var(--text-color)";
                     button.addEventListener("click", () => {
                         changeVerbs("delete_col", [session.name, lesson.name], null, colIndex, null);
                     });
@@ -559,7 +571,7 @@ async function see_profile() {
 
         let delete_session = document.createElement("button");
         delete_session.innerText = "X";
-        delete_session.style.color = localStorage.getItem("text_color");
+        delete_session.style.color = "var(--text-color)";
         delete_session.className = "delete_session";
         session_div.appendChild(delete_session);
         delete_session.addEventListener("click", e => { e.stopPropagation(); delete_object("session", session_div); });
@@ -567,7 +579,7 @@ async function see_profile() {
         if (session.lessons.length >= 1) {
             let unsee = document.createElement("button");
             unsee.innerText = ">";
-            unsee.style.color = localStorage.getItem("text_color");
+            unsee.style.color = "var(--text-color)";
             unsee.className = "unsee";
             let to_hide = session_div.querySelectorAll(".lesson_div, .verbs-grid");
             session_div.querySelector("h3").addEventListener("click", () => {
@@ -700,7 +712,6 @@ function check_import() {
 
 
 getID("import_data_button").addEventListener("click", import_data);
-getID("import_data_button").disabled = true;
 
 function import_data() {
     for (let i = 0; i < localStorage.length; i++) {
@@ -729,7 +740,6 @@ function import_data() {
         }   
     }
 
-    import_data_input.value = "";
     check_add();
     check_create();
     check_import();
@@ -775,16 +785,17 @@ async function delete_object(type, element) {
 
     if (!error) see_profile();
 
-    getID("add_data_input").value = "";
-    getID("import_data_input").value = "";
-    getID("import_data_p").innerHTML = "";
-    getID("add_data_p").innerHTML = "";
-    getID("add_data_button").disabled = true;
-    getID("import_data_button").disabled = true;
+    if (type === 'session') {
+        getID("add_data_input").value = "";
+        getID("import_data_input").value = "";
+        getID("import_data_p").innerHTML = "";
+        getID("add_data_p").innerHTML = "";
+        getID("add_data_button").disabled = true;
+        getID("import_data_button").disabled = true; 
+    }
 }
 
 
-getID("add_data_button").disabled = true;
 const name_input = getID("add_data_input");
 name_input.addEventListener("input", check_add);
 

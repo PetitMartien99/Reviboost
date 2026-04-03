@@ -25,6 +25,7 @@ asking.value = "";
 const msg = document.getElementById("msg");
 const writer = document.getElementById("writer");
 const pack_type = document.getElementById("pack_type");
+const selects_lessons = [pack_title_add, pack_title_ask];
 let asked = [];
 let questions_type_select = document.getElementById("questions_type_select");
 let questions_type;
@@ -73,13 +74,19 @@ function toggle_add_def(what) {
         document.getElementById("add_switch").innerHTML = '<input id="def_title" type="text" placeholder="Nom de la définition"><textarea id="def" cols="20" rows="5" placeholder="Définition"></textarea><select id="def_type"><option value="defs">Définition</option><option value="dates">Date</option><option value="egal">Égalité</option></select>';
         def_type = document.getElementById("def_type");
         def_type.addEventListener("input", updateTypeUI_add);
-        document.getElementById("questions_type_select").innerHTML = '<option value="auto">Autovalidation</option><option value="qcm">Choix multiples</option><option value="write">Restitution écrite</option>';
-        document.getElementById("questions_type_select").value = 'auto';
         updateTypeUI_add();
     } else if (what === "verb") {
         add_p.innerText = "Nouvelle ligne";
         document.getElementById("add_switch").innerHTML = "";
         document.getElementById("add_pack_button").innerText = "Ajouter une ligne";
+    }
+}
+
+function toggle_ask_def(what) {
+    if (what === "normal") {
+        document.getElementById("questions_type_select").innerHTML = '<option value="auto">Autovalidation</option><option value="qcm">Choix multiples</option><option value="write">Restitution écrite</option>';
+        document.getElementById("questions_type_select").value = 'auto';
+    } else if (what === "verb") {
         document.getElementById("questions_type_select").innerHTML = '<option value="random">Aléatoire</option><option value="choice">Déterminé</option>';
         document.getElementById("questions_type_select").value = 'random';
     }
@@ -91,7 +98,6 @@ updateTypeUI_add();
 def_type.addEventListener("input", updateTypeUI_add);
 
 pack_title_add.addEventListener("input", () => {
-    console.log("input");
     if (localStorage.getItem(pack_title_add.value) !== null) {
         toggle_add_def("normal");
     } else if (localStorage.getItem("?verbs" + pack_title_add.value) !== null) {
@@ -99,6 +105,13 @@ pack_title_add.addEventListener("input", () => {
     }
 });
 
+pack_title_ask.addEventListener("input", () => {
+    if (localStorage.getItem(pack_title_ask.value) !== null) {
+        toggle_ask_def("normal");
+    } else if (localStorage.getItem("?verbs" + pack_title_ask.value) !== null) {
+        toggle_ask_def("verb");
+    }
+});
 
 document.getElementById("questions_type_select").addEventListener("change", () => {
     toggle_verbs_select();
@@ -141,6 +154,7 @@ function get_euclide(number) {
 
 
 function actu_files() {
+
     let actual_color = localStorage.getItem("text_color") || "black";
     contain_files.innerHTML = "";
 
@@ -160,14 +174,28 @@ function actu_files() {
 
     const fragment = document.createDocumentFragment();
 
+    selects_lessons.forEach((e) => {
+        e.innerHTML = "";
+    });
+
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key.startsWith("color") || key.startsWith("text_color") || key.startsWith("sb-")) continue;
 
         let displayName = key.startsWith("?verbs") ? key.slice(6) : key;
+
+        
+        selects_lessons.forEach((e) => {
+            let option = document.createElement("option");
+            option.value = displayName;
+            option.innerText = displayName;
+            e.appendChild(option);
+        });
+
+
         let div = document.createElement("div");
         div.className = "file";
-        div.style.border = `2px solid ${actual_color}`;
+        div.style.border = `solid 2px var(--text-color)`;
         div.innerHTML = `<span>${displayName}</span>`;
         fragment.appendChild(div);
 
@@ -177,11 +205,12 @@ function actu_files() {
             pack_title_add.value = safeName;
             pack_title_ask.value = safeName;
             toggle_add_def(isVerb ? "verb" : "normal");
+            toggle_ask_def(isVerb ? "verb" : "normal");
         });
 
         let delete_button = document.createElement("button");
         delete_button.className = "delete_button";
-        delete_button.style.color = actual_color;
+        delete_button.style.color = "var(--text-color)";
         delete_button.innerText = "X";
         delete_button.onclick = () => {
             setTimeout(() => {
@@ -267,7 +296,7 @@ function actu_files() {
                 });
                 let delete_row_button = document.createElement("button");
                 delete_row_button.innerText = "x";
-                delete_row_button.style.color = actual_color;
+                delete_row_button.style.color = "var(--text-color)";
                 delete_row_button.addEventListener("click", () => changeVerbs("delete_row", key, rowIndex));
                 row_div.appendChild(delete_row_button);
                 tab.appendChild(row_div);
@@ -279,7 +308,7 @@ function actu_files() {
             verbsData.columns.forEach((_, colIndex) => {
                 let button = document.createElement("button");
                 button.innerText = "x";
-                button.style.color = actual_color;
+                button.style.color = "var(--text-color)";
                 button.addEventListener("click", () => changeVerbs("delete_col", key, null, colIndex));
                 addRowDiv.appendChild(button);
             });
@@ -289,7 +318,7 @@ function actu_files() {
         if (!(key.startsWith("?verbs") && JSON.parse(localStorage.getItem(key)).verbs.length === 0)) {
             let unsee = document.createElement("button");
             unsee.innerText = ">";
-            unsee.style.color = actual_color;
+            unsee.style.color = "var(--text-color)";
             unsee.className = "unsee";
 
             let contentToHide = key.startsWith("?verbs") ? div.querySelector(".verbs-grid") : div.querySelectorAll("li");
@@ -407,9 +436,10 @@ function createPack() {
         }));
     }
 
-    pack_title_add.value = packName;
+    
     pack_title.value = "";
     actu_files();
+    pack_title_add.value = packName;
 }
 
 
@@ -484,9 +514,9 @@ function start() {
     }
 
     if (verbs) {
-        let allRows = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).rows;
+        let allRows = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs;
         if (!allRows || allRows.length === 0) {
-            show("Pas de verbes à réviser dans cette leçon !");
+            giga_show("Pas de verbes à réviser dans cette leçon !");
             return; 
         }
     }
@@ -510,7 +540,7 @@ function start() {
     document.getElementById("quit_lesson").className = "shown";
     ultra_container.style.display = "none";
     body.style.overflow = "hidden";
-
+    console.log("here");
     askQuestion();
 }
 
@@ -962,7 +992,7 @@ function wash(text) {
     return washed;
 }
 
-
+document.getElementById("help_cover").addEventListener("click", help);
 
 
 function help() {
@@ -984,57 +1014,39 @@ function help() {
 
 
 function choose(element) {
-    let create_button = document.getElementById("choosing_create");
-    let add_button = document.getElementById("choosing_add");
-    let ask_button = document.getElementById("choosing_learn");
-    let create = document.getElementById("create");
-    let add = document.getElementById("add");
-    let ask = document.getElementById("ask");
+    const buttons = {
+        create: document.getElementById("choosing_create"),
+        add: document.getElementById("choosing_add"),
+        ask: document.getElementById("choosing_learn")
+    };
 
-    if (element === "create") {
-        create_button.style.textDecoration = "underline";
-        add_button.style.textDecoration = "none";
-        ask_button.style.textDecoration = "none";
-        create.style.display = "flex";
-        add.style.display = "none";
-        ask.style.display = "none";
-    }
-    if (element === "add") {
-        create_button.style.textDecoration = "none";
-        add_button.style.textDecoration = "underline";
-        ask_button.style.textDecoration = "none";
-        create.style.display = "none";
-        add.style.display = "flex";
-        ask.style.display = "none";
-    }
-    if (element === "ask") {
-        create_button.style.textDecoration = "none";
-        add_button.style.textDecoration = "none";
-        ask_button.style.textDecoration = "underline";
-        create.style.display = "none";
-        add.style.display = "none";
-        ask.style.display = "flex";
-    }
+    const sections = {
+        create: document.getElementById("create"),
+        add: document.getElementById("add"),
+        ask: document.getElementById("ask")
+    };
+
+    Object.keys(buttons).forEach(key => {
+        buttons[key].style.textDecoration = key === element ? "underline" : "none";
+        sections[key].style.display = key === element ? "flex" : "none";
+    });
 }
 
 function choose_help(element) {
-    let first_button = document.getElementById("choosing_help1");
-    let second_button = document.getElementById("choosing_help2");
-    let first = document.getElementById("help_1");
-    let second = document.getElementById("help_2");
+    const buttons = {
+        "1": document.getElementById("choosing_help1"),
+        "2": document.getElementById("choosing_help2")
+    };
 
-    if (element === "1") {
-        first_button.style.textDecoration = "underline";
-        second_button.style.textDecoration = "none";
-        first.style.display = "block";
-        second.style.display = "none";
-    }
-    if (element === "2") {
-        first_button.style.textDecoration = "none";
-        second_button.style.textDecoration = "underline";
-        first.style.display = "none";
-        second.style.display = "block";
-    }
+    const sections = {
+        "1": document.getElementById("help_1"),
+        "2": document.getElementById("help_2")
+    };
+
+    Object.keys(buttons).forEach(key => {
+        buttons[key].style.textDecoration = key === element ? "underline" : "none";
+        sections[key].style.display = key === element ? "block" : "none";
+    });
 }
 
 
@@ -1086,9 +1098,6 @@ function playCheckAnimation() {
   }, 20); // ← ce petit délai est clé pour que le stroke s'anime
 }
   
-  
-
-
 
 function playCrossAnimation() {
 

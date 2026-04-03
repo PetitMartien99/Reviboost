@@ -1,3 +1,9 @@
+body {
+    --background-color: rgb(106, 239, 124);
+    --text-color: black;
+    color: var(--text-color);
+}
+
 
 p, h4, h3, h2, h1, input, ul, select, span, label {
     transition: color 0.5s, transform 0.5s ease-in;
@@ -8,6 +14,10 @@ input, button {
     margin: 5px;
 }
 
+button {
+    color: var(--text-color);
+}
+
 textarea, input {
     transition: background-color 0.6s ease-in-out;
 }
@@ -16,8 +26,12 @@ textarea:hover, input:hover {
     background-color: #dddddd;
 }
 
+select {
+    text-align: center;
+}
+
 body {
-    background-color: rgb(106, 239, 124);
+    background-color: var(--background-color);
     text-align: center;
 }
 
@@ -73,6 +87,7 @@ p {
 select {
     background-color: transparent;
     border: transparent;
+    color: var(--text-color);
     transition: 0.35s;
     font-size: 18px;
     border-radius: 10px;
@@ -123,14 +138,14 @@ option {
     opacity: 0;
     width: fit-content;
     height: fit-content;
-    border: solid 2px black;
+    border: solid 2px var(--text-color);
     border-radius: 10px;
     padding: 10px;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgb(106, 239, 124);
+    background-color: var(--background-color);
     text-align: center;
     transition: opacity 0.3s, border 0.5s;
     z-index: 500;

@@ -1,3 +1,9 @@
+body {
+    --background-color: rgb(106, 239, 124);
+    --text-color: black;
+}
+
+
 #sign_div {
     display: flex;
     flex-direction: row;
@@ -11,7 +17,7 @@
 }
 
 #ultra_container {
-    background-color: rgb(106, 239, 124);
+    background-color: var(--background-color);
     position: fixed;
     top: 0;
     left: 0;
@@ -364,7 +370,7 @@ li {
 }
 
 #mobile_up, #mobile_down, #account_small, #see_3_connected {
-    background-color: rgb(106, 239, 124);
+    background-color: var(--background-color);
 }
 
 #see_account_small, #close_account_small, #import_3_button, #close_import {
@@ -419,6 +425,7 @@ li {
         display: none;
         top: 50%;
         left: 50%;
+        border: solid 1px var(--text-color);
         transform: translate(-50%, -50%);
         border-radius: 10px;
         padding: 10px;
@@ -451,7 +458,7 @@ li {
     
     #see_3_connected {
         text-align: center;
-        border: 1px solid black;
+        border: 1px solid var(--text-color);
         border-radius: 10px;
         z-index: 114;
         justify-content: center;
