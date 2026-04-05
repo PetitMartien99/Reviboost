@@ -1,0 +1,241 @@
+body {
+    --background-color: rgb(106, 239, 124);
+    --text-color: black;
+    color: var(--text-color);
+}
+
+
+p, h4, h3, h2, h1, input, ul, select, span, label {
+    transition: color 0.5s, transform 0.5s ease-in;
+}
+
+input, button {
+    display: block;
+    margin: 5px;
+}
+
+button {
+    color: var(--text-color);
+}
+
+textarea, input {
+    transition: background-color 0.6s ease-in-out;
+}
+
+textarea:hover, input:hover {
+    background-color: #dddddd;
+}
+
+select {
+    text-align: center;
+}
+
+body {
+    background-color: var(--background-color);
+    text-align: center;
+}
+
+
+button {
+    border: none;
+    border-radius: 10px;
+    background-color: transparent;
+    font-size: 20px;
+    transition: 0.5s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+
+input {
+    border: none;
+    border-radius: 5px;
+    padding: 3px;
+    font-size: 18px;
+}
+
+h1 {
+    font-size: 40px;
+    margin-top: 0;
+    width: 200px;
+}
+
+h2 {
+    margin: 7px;
+}
+
+p {
+    font-size: 20px;
+}
+
+#giga_msg {
+    position: fixed;
+    top: 385px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 35px;
+    transition: opacity 0.3s;
+    background-color: transparent;
+    border-radius: 20px;
+    padding: 10px;
+    z-index: 20000;
+}
+
+
+select {
+    background-color: transparent;
+    border: transparent;
+    color: var(--text-color);
+    transition: 0.35s;
+    font-size: 18px;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+select:hover {
+    transform: scale(1.05);
+}
+
+#close_parameter {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+option {
+    font-size: 16px;
+}
+
+#parameter {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 114;
+    font-size: 22px;
+}
+
+#parameter img {
+    width: 50px;
+}
+
+
+
+@media screen and (width <= 450px) {
+    #parameter img{
+        width: 38px;      
+    }
+    #parameter {
+        bottom: -5px;
+        right: -5px;
+    }
+}
+
+#parameter_div {
+    display: none;
+    opacity: 0;
+    width: fit-content;
+    height: fit-content;
+    border: solid 2px var(--text-color);
+    border-radius: 10px;
+    padding: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--background-color);
+    text-align: center;
+    transition: opacity 0.3s, border 0.5s;
+    z-index: 500;
+}
+
+#parameter_cover {
+    position: fixed;
+    z-index: 112;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: none;
+}
+
+#parameter_div h2 {
+    margin-top: 0px;
+}
+
+
+#parameter_div h2:hover {
+    transform: scale(1.05);
+}
+
+#parameter_div p {
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin-left: 10px;
+    margin-bottom: -5px;
+}
+
+#parameter_div p:hover {
+    transform: scale(1.03);
+}
+
+#parameter_div input {
+    display: inline;
+    margin: 5px;
+    background-color: transparent;
+    border: solid black 1px;
+    border-radius: 5px;
+}
+
+#parameter_div button {
+    font-family: "Times roman";
+    margin: 5px;
+    margin-left: 9px;
+}
+
+#parameter_sound {
+    margin-left: 5px;
+    display: flex;
+}
+
+
+#for_toggle_sound {
+    font-family: "Times New Roman";
+    font-size: 20px;
+    text-align: left;
+}
+
+#inline {
+    position: fixed;
+    top: 5px;
+    left: 8px;
+    z-index: 400;
+    transition: transform 0.5s ease-in-out;
+    text-align: left;
+}
+
+@media screen and (width <= 550px) {
+    #inline {
+        display: flex;
+        align-items: first baseline;
+    }
+
+    #inline h1{
+        font-size: 35px;
+        
+    }
+    #inline h3 {
+        font-size: 20px;
+        margin-left: -55px;
+        margin-top: -15px;
+    }
+}
+
+#inline:hover {
+    transform: scale(1.03);
+}
