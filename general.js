@@ -16,7 +16,7 @@ let parameter_toggle = false;
 let sonor_effects = false;
 
 
-document.getElementById("inline").querySelector("h3").innerText = "Version 3.16.8 BETA";
+document.getElementById("inline").querySelector("h3").innerText = "Version 3.17.0";
 
 if (localStorage.getItem("text_color") === null) {
     localStorage.setItem("text_color", "black");

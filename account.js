@@ -20,19 +20,19 @@ const selects_sessions = [document.getElementById("add_data_input"), document.ge
 
 getID("see_defs_3").addEventListener("click", see_3_unconnected);
 async function see_3_unconnected() {
+    let id = Number.parseInt(document.getElementById("import_stuff_select").value);
+
     const { data, error } = await supabase
         .from('public_data')
         .select('json_data') 
-        .eq('id', 1);
+        .eq('id', id);
 
    if (error) console.log(error);
-    
 
-   getID("see_defs_3").style.display = "none";
-   getID("see_3").querySelector("p").style.display = "none";
-   getID("see_3").querySelector("h2").innerText = "Defs de 3ème";
 
-   const new_data = data[0].json_data; 
+    const new_data = data[0].json_data; 
+
+    let we_are_verbs = false;
 
     let data_div = document.createElement("div");
     data_div.className = "see_data_div_3";
@@ -61,26 +61,70 @@ async function see_3_unconnected() {
             lesson_div.appendChild(ul);
 
             if (!lesson.items || !lesson.items.length) {
-                let p = document.createElement("p");
-                p.innerText = "La leçon est vide";
-                lesson_div.appendChild(p);
-                continue;
+                if (!lesson.verbs) {
+                    let p = document.createElement("p");
+                    p.innerText = "La leçon est vide";
+                    lesson_div.appendChild(p);
+                    continue;
+                }
             }
 
             let items = lesson.items;
         
+            if (!lesson.verbs) {
+                for (let k = 0; k < items.length; k++) {
+                    const item = items[k];
+                    let new_li = document.createElement("li");
+                    if (item.kind === "egal") new_li.innerHTML = item.title + " = " + item.def;
+                    else {
+                        new_li.innerHTML = "<div class='titles'>" + item.title + " :</div> " + item.def;
+                    }
 
-            for (let k = 0; k < items.length; k++) {
-                const item = items[k];
-                let new_li = document.createElement("li");
-                if (item.kind === "egal") new_li.innerHTML = item.title + " = " + item.def;
-                else {
-                    new_li.innerHTML = "<div class='titles'>" + item.title + " :</div> " + item.def;
+
+                    ul.appendChild(new_li);
                 }
+            } else {
 
+                we_are_verbs = true;
 
-                ul.appendChild(new_li);
-            }
+                let tab = document.createElement("div");
+                tab.className = "verbs-grid";
+                let verbs = lesson.items;
+                lesson_div.appendChild(tab);
+                let header_div = document.createElement("div");
+                header_div.className = "header";
+                header_div.style.gridTemplateColumns = `repeat(${verbs.columns.length}, minmax(65px, 1fr)) 0.15fr`;
+                tab.appendChild(header_div);
+                verbs.columns.forEach((e, colIndex) => {
+                    let input = document.createElement("input");
+                    header_div.appendChild(input);
+                    input.value = e;
+                });
+
+                if (verbs.verbs.length !== 0) {
+                    verbs.verbs.forEach((e, rowIndex) => {
+                        let row_div = document.createElement("div");
+                        row_div.className = "row";
+                        tab.appendChild(row_div);
+                        e.forEach((v) => {
+                            let input = document.createElement("input");
+                            row_div.appendChild(input);
+                            input.value = v;
+                        });
+    
+                        row_div.style.gridTemplateColumns = `repeat(${e.length}, minmax(65px, 1fr)) 0.15fr`;
+                    });
+                }            
+            }    
+        }
+        
+        if (we_are_verbs) {
+           let delete_session = document.createElement("button");
+            delete_session.innerText = "X";
+            delete_session.style.color = "var(--text-color)";
+            delete_session.className = "delete_session";
+            session_div.appendChild(delete_session); 
+            delete_session.addEventListener("click", e => { e.stopPropagation(); getID("see_3").removeChild(data_div); });   
         }
 
 
@@ -112,15 +156,42 @@ async function see_3_unconnected() {
             session_div.querySelector("h3").appendChild(unsee);
         }
     }
+
+    if (we_are_verbs) {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith("sb-") || key.startsWith("color") || key.startsWith("text_color")) continue;
+            localStorage.removeItem(key);
+            i--;
+        }
+
+        const session = new_data[0];
+    
+        for (let lesson of session.lessons) {
+            if (!(lesson.name === "text_color")) {
+                let secure_name = lesson.name;
+                if (lesson.verbs) {
+                    secure_name = "?verbs" + lesson.name;
+                }
+                if (typeof lesson.items !== "string") {
+                    localStorage.setItem(secure_name, JSON.stringify(lesson.items));
+                } else {
+                    localStorage.setItem(secure_name, lesson.items);
+                }
+            }   
+        }
+    }
 }
 
 
 getID("see_defs_3_connected").addEventListener("click", see_3_connected);
 async function see_3_connected() {
+    let id = Number.parseInt(document.getElementById("import_stuff_select_connected").value);
+
     const { data, error } = await supabase
         .from('public_data')
         .select('json_data') 
-        .eq('id', 1);
+        .eq('id', id);
 
    if (error) console.log(error);
 

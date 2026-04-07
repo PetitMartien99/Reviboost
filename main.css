@@ -223,6 +223,16 @@ body {
 }
 
 /* ===== Containers principaux ===== */
+#ask_length {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#ask_length p {
+    margin-left: 10px;
+}
+
 #container {
     display: flex;
     align-items: center;

@@ -85,11 +85,29 @@ function toggle_add_def(what) {
 function toggle_ask_def(what) {
     if (what === "normal") {
         document.getElementById("questions_type_select").innerHTML = '<option value="auto">Autovalidation</option><option value="qcm">Choix multiples</option><option value="write">Restitution écrite</option>';
+       
         document.getElementById("questions_type_select").value = 'auto';
+        document.getElementById("ask_length_input").max = JSON.parse(localStorage.getItem(pack_title_ask.value)).length;
+
+        if (JSON.parse(localStorage.getItem(pack_title_ask.value)).length === 0) {
+            document.getElementById("ask_length").style.display = "none";
+        } else {
+            document.getElementById("ask_length").style.display = "flex";
+        }
     } else if (what === "verb") {
         document.getElementById("questions_type_select").innerHTML = '<option value="random">Aléatoire</option><option value="choice">Déterminé</option>';
         document.getElementById("questions_type_select").value = 'random';
+        
+        document.getElementById("ask_length_input").max = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length;
+        document.getElementById("ask_length_input").value = document.getElementById("ask_length_input").max;
+       
+        if (JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length === 0) {
+            document.getElementById("ask_length").style.display = "none";
+        } else {
+            document.getElementById("ask_length").style.display = "flex";
+        }
     }
+    document.getElementById("ask_length_p").innerText = "Max";
     toggle_verbs_select();
 }
 
@@ -106,6 +124,7 @@ pack_title_add.addEventListener("input", () => {
 });
 
 pack_title_ask.addEventListener("input", () => {
+
     if (localStorage.getItem(pack_title_ask.value) !== null) {
         toggle_ask_def("normal");
     } else if (localStorage.getItem("?verbs" + pack_title_ask.value) !== null) {
@@ -134,6 +153,15 @@ function toggle_verbs_select() {
     }
 }
 
+let ask_length_input = document.getElementById("ask_length_input");
+document.getElementById("ask_length_p").innerHTML = ask_length_input.value;
+ask_length_input.addEventListener("input", () => {
+    if (ask_length_input.value >= Number.parseInt(ask_length_input.max)) {
+        document.getElementById("ask_length_p").innerText = "Max";
+        return;
+    }
+    document.getElementById("ask_length_p").innerHTML = ask_length_input.value;
+});
 
 function get_euclide(number) {
     const quotient = Math.floor(number/60);
@@ -224,6 +252,7 @@ function actu_files() {
         div.appendChild(delete_button);
 
         if (!key.startsWith("?verbs")) {
+
             const packItems = JSON.parse(localStorage.getItem(key));
             if (packItems.length === 0) {
                 let p = document.createElement("p");
@@ -249,7 +278,9 @@ function actu_files() {
                 });
                 div.appendChild(ul);
             }
+
         } else {
+
             let verbsData = JSON.parse(localStorage.getItem(key));
             let tab = document.createElement("div");
             tab.className = "verbs-grid";
@@ -313,6 +344,7 @@ function actu_files() {
                 addRowDiv.appendChild(button);
             });
             tab.appendChild(addRowDiv);
+
         }
 
         if (!(key.startsWith("?verbs") && JSON.parse(localStorage.getItem(key)).verbs.length === 0)) {
@@ -359,6 +391,15 @@ function actu_files() {
     fragment.appendChild(document.createElement("p"));
 
     contain_files.appendChild(fragment);
+
+    if (localStorage.getItem(selects_lessons[1].value) !== null) {
+        toggle_add_def("normal");
+        toggle_ask_def("normal");
+    } else if (localStorage.getItem("?verbs" + selects_lessons[1].value) !== null){
+        toggle_add_def("verb");
+        toggle_ask_def("verb");
+    }
+
     updateTypeUI_add();
 }
 
@@ -461,7 +502,6 @@ function createPack() {
         }
     }
 
-    console.log(localStorage.getItem("?verbs" + packName.toUpperCase()));
     if (exists_test) {
         giga_show("Cette leçon existe déjà.");
         return;
@@ -549,9 +589,27 @@ function start() {
     }
 
     verbs = !!verbsKey;
+
+
+    if (verbs) {
+        let allRows = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs;
+        if (!allRows || allRows.length === 0) {
+            giga_show("Pas de verbes à réviser dans cette leçon !");
+            return; 
+        }
+    }
+    about_ask = [];
     if (verbs) {
         const data = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value));
-        about_ask = data.verbs;
+
+        for (let i = 0; i < document.getElementById("ask_length_input").value; i++) {
+            let new_item = data.verbs[getRandom(0, data.verbs.length)];
+            while (about_ask.includes(new_item)) {
+                new_item = data.verbs[getRandom(0, data.verbs.length)];
+            }
+            about_ask.push(new_item);
+        }
+
         if (document.getElementById("questions_type_select") !== null) {
             data.columns.forEach((e, i) => {
                 if (e === document.getElementById("verbs_select").value) {
@@ -560,15 +618,23 @@ function start() {
             });
         }
     } else {
-        about_ask = JSON.parse(localStorage.getItem(pack_title_ask.value));
+        const data = JSON.parse(localStorage.getItem(pack_title_ask.value));
+
+        if (!data.length === 0) {
+
+            for (let i = 0; i < document.getElementById("ask_length_input").value; i++) {
+                let new_item = data[getRandom(0, data.length)];
+                while (about_ask.includes(new_item)) {
+                    new_item = data[getRandom(0, data.length)];
+                }
+                about_ask.push(new_item);
+            }
+        }
     }
 
-    if (verbs) {
-        let allRows = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs;
-        if (!allRows || allRows.length === 0) {
-            giga_show("Pas de verbes à réviser dans cette leçon !");
-            return; 
-        }
+    if (about_ask.length === 0) {
+        giga_show("Cette leçon est vide");
+        return;
     }
 
     questions_type = questions_type_select.value;
