@@ -62,8 +62,9 @@
                     <select style="display: none" id="verbs_select">
 
                     </select>
+                    <p id="length_p">Longueur :</p>
                     <div id="ask_length">
-                        <input min="3" id="ask_length_input" type="range">
+                        <input min="1" id="ask_length_input" type="range">
                         <p id="ask_length_p"></p>
                     </div>    
                     <button id="ask_button" onclick="start()">M'interroger</button>
@@ -95,6 +96,13 @@
                 <input type="checkbox" id="toggle_sound" onclick="toggle_sound()">
                 <label id="for_toggle_sound" for="toggle_sound">Effets sonores</label>
             </div>
+            <h2 id="credit_h2">À propos</h2>
+            <p>Synapse est un projet que j'ai commencé un dimanche après-midi quand je m'ennuyais. Près de 200 heures de codage plus tard, c'est le site que vous consultez.
+                <br>Je travaille encore dessus dès que j'ai le temps ; de nouvelles fonctionalités arrivent régulièrement. 
+                <br>Et, petit rappel : ce site reste un petit (enfin plus si petit...) projet extrascolaire, pas une entreprise professionnelle. Les bugs arrivent, tout n'est pas parfait, mais je fais ce que je peux. 
+                <br>Merci à vous d'utiliser mon site : c'était un rêve d'enfant !
+                <br><br>Alban (le 3ème)
+            </p>
         </div>
 
         <div id="help_div">
@@ -114,35 +122,43 @@
             <p>
                 <div id="help_1"><h4>PAGE : L'ACCUEIL</h4>
                 C'est ton "établi" : là où tu crées, tu modifies et tu révises tes leçons en direct.<br>
-                <ul>
-                    <li>Le "Cours" : C'est ce que tu as "sous la main". Tes données y restent même si tu fermes l'onglet.</li>
-                    <li>Onglet "Créer une leçon" : Tu donnes un titre (ex: 1ère Guerre Mondiale) pour organiser tes futures fiches.</li>
-                    <li>Onglet "Ajouter" : Tu remplis ta leçon avec 3 types de contenus :
-                        <ul>
-                            <li>Définitions (Concept : Explication)
-                            <li>Dates (Année : Évènemment)
-                            <li>Égalités (Formule A : Formule B)
-                        </ul>
-                    </li>
-                    <li>
-                        Onglet "S'interroger" : Choisis une leçon et lance un test.
-                        <ul>
-                            <li>3 Modes : QCM, Écrit...</li>
-                            <li>Mode Conseillé : L'Auto-validation. Tu réponds, tu vérifies, et tu décides si tu as le point. Le top pour apprendre vite.</li>
-                        </ul>
-                    </li>
-                </ul></div>
+                    <ul>
+                        <li><b>Le "Cours"</b> : tes données actuelles (elles restent même si tu quittes la page).</li>
+                
+                        <li><b>Créer une leçon</b> : choisis un titre et un type (définitions, dates et égalités ou verbes irréguliers).</li>
+                
+                        <li><b>Ajouter</b> :
+                            <ul>
+                                <li>Verbes : ajoute des lignes au tableau</li>
+                                <li>Autres :
+                                    <ul>
+                                        <li>Définition : concept → explication</li>
+                                        <li>Date : année → événement</li>
+                                        <li>Égalité : A → B</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                
+                        <li><b>S’interroger</b> : choisis une leçon + nombre de questions.<br>Modes :
+                            <ul>
+                                <li>Non-verbes : auto, QCM ou écrit</li>
+                                <li>Verbes : aléatoire ou colonne choisie</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
                 <div id="help_2"><h4>PAGE : LE COMPTE</h4>
                 C'est ton "archiveur" : là où tu sauvegardes tes cours sur le cloud pour ne jamais les perdre.
                 <ul>
                     <li>La "session" : C'est un dossier permanent (ex: Session SVT ou Session Maths).</li>
-                    <li>Créer une session : Prépare un grand tiroir vide dans ton compte.</li>
-                    <li>Ajouter le cours actuel : Envoie tout ce qui est sur ta page d'accueil dans une session choisie.</li>
+                    <br><li>Créer une session : Prépare un grand tiroir vide dans ton compte.</li>
+                    <br><li>Ajouter le cours actuel : Envoie tout ce qui est sur ta page d'accueil dans une session choisie.</li>
                         Note : Si une leçon existe déjà dans la session, elle est mise à jour avec tes nouveaux ajouts.
-                    <li>Importer une session : Récupère une session enregistrée et remplace ton cours actuel par elle.</li>
+                    <br><br><li>Importer une session : Récupère une session enregistrée et remplace ton cours actuel par elle.</li>
                         Attention : Cela écrase ton travail en cours sur l'accueil, donc si tu veux le garder, enregistre le avant !
                 </ul></div>   
-                </p>
+            </p>
         </div>
 
         <div id="help_cover"></div>

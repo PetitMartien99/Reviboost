@@ -166,7 +166,7 @@ button:disabled {
 }
 
 .session_div:hover, .lesson_div:hover {
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 .titles {
@@ -463,7 +463,7 @@ li {
         z-index: 114;
         justify-content: center;
         align-items: center;
-        height: 300px;
+        height: 350px;
     }
     
     #see_3_connected p {

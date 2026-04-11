@@ -124,7 +124,7 @@ body {
 }
 
 .file:hover {
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 .file span {
@@ -178,6 +178,12 @@ body {
     margin: 0;
     font-size: 25px;
     color: var(--text-color);
+}
+
+/* ===== Trucs randoms ===== */
+
+#length_p {
+    margin-bottom: -10px;
 }
 
 /* ===== Titres ===== */
@@ -286,8 +292,15 @@ body {
     right: 0;
     width: 63px;
     height: 127px;
-    z-index: 70;
     border-top-left-radius: 8px;
+}
+
+#mobile_up {
+    position: fixed;
+    top: 0;
+    height: 55px;
+    left: 0;
+    right: 0;
 }
 
 .beetween { 
@@ -386,7 +399,7 @@ body {
     position: fixed; 
     top: 0; 
     right: 0; 
-    z-index: 111; 
+    z-index: 100; 
     font-size: 30px; 
     border: solid var(--text-color) 2px; 
     width: 50px; height: 50px; 
@@ -467,10 +480,6 @@ body {
     display: none;
 }
 
-#help_div {
-    display: none;
-}
-
 #quit_lesson img {
     width: 50px;
     position: fixed;
@@ -497,10 +506,6 @@ body {
     }
     #next, #reveal, #continue, #accept, #refuse {
         font-size: 29px;
-    }
-
-    #mobile_up {
-        height: 50px;
     }
 
     #mobile_down {
@@ -557,8 +562,8 @@ body {
 @media screen and (max-width: 900px) {
 
     #help { 
-        width: 50px; 
-        height: 50px; 
+        width: 40px; 
+        height: 40px; 
         font-size: 23px; 
         margin: 5px; 
     }
@@ -604,12 +609,12 @@ body {
         margin-top: 10px;
     }
 
-    #mobile_up, #mobile_down {
+    #mobile_up {
         z-index: 70;
     }
 
     #help {
-        font-size: 23px; 
+        font-size: 27px; 
         margin: 5px;
     }
 
@@ -645,6 +650,13 @@ body {
         display: none;
     }
 }
+
+@media screen and (max-width: 1500px) {
+    #mobile_down {
+        z-index: 70;
+    }
+}
+
 
 /* Overlay centré */
 .overlay-check {
@@ -747,6 +759,14 @@ body {
 .overlay-cross #group {
     transform-origin: center;
     transition: transform 0.3s ease-out 0.8s;
+}
+
+.overlay-check canvas,
+.overlay-cross canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
 }
 
 /* Confetti */

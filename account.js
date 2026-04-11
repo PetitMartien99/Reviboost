@@ -115,7 +115,17 @@ async function see_3_unconnected() {
                         row_div.style.gridTemplateColumns = `repeat(${e.length}, minmax(65px, 1fr)) 0.15fr`;
                     });
                 }            
-            }    
+            } 
+            
+            if (!we_are_verbs) {
+                let delete_session = document.createElement("button");
+                delete_session.innerText = "X";
+                delete_session.style.color = "var(--text-color)";
+                delete_session.className = "delete_session";
+                session_div.appendChild(delete_session); 
+                delete_session.addEventListener("click", e => { e.stopPropagation(); data_div.removeChild(session_div); });
+            }
+
         }
         
         if (we_are_verbs) {

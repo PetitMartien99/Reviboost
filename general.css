@@ -149,6 +149,9 @@ option {
     text-align: center;
     transition: opacity 0.3s, border 0.5s;
     z-index: 500;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #parameter_cover {
@@ -162,7 +165,7 @@ option {
 }
 
 #parameter_div h2 {
-    margin-top: 0px;
+    margin-top: 5px;
 }
 
 
@@ -175,6 +178,7 @@ option {
     height: fit-content;
     display: flex;
     align-items: center;
+    text-align: left;
     font-size: 20px;
     margin-left: 10px;
     margin-bottom: -5px;
@@ -203,11 +207,14 @@ option {
     display: flex;
 }
 
-
 #for_toggle_sound {
     font-family: "Times New Roman";
     font-size: 20px;
     text-align: left;
+}
+
+#credit_h2 {
+    margin-top: 30px !important;
 }
 
 #inline {
@@ -219,7 +226,7 @@ option {
     text-align: left;
 }
 
-@media screen and (width <= 550px) {
+@media screen and (width <= 900px) {
     #inline {
         display: flex;
         align-items: first baseline;

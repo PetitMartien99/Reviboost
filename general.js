@@ -16,7 +16,7 @@ let parameter_toggle = false;
 let sonor_effects = false;
 
 
-document.getElementById("inline").querySelector("h3").innerText = "Version 3.17.0";
+document.getElementById("inline").querySelector("h3").innerText = "Version 3.18.1";
 
 if (localStorage.getItem("text_color") === null) {
     localStorage.setItem("text_color", "black");
@@ -83,7 +83,7 @@ document.getElementById("parameter_cover").addEventListener("click", parameter);
 
 function parameter() {
     if (parameter_toggle === false) {
-        parameter_div.style.display = "block";
+        parameter_div.style.display = "flex";
         parameter_div.style.opacity = 1;
         parameter_toggle = true;
         document.getElementById("parameter_cover").style.display = "block";

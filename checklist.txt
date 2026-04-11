@@ -1,7 +1,7 @@
 - Changer l'ordre des leçons et sessions 
 - Mode d'interrogation : relier les réponses;
 - Se faire interroger sur plusieurs leçons en même temps
-- Faire un système ou avec une faute, une question revient plus souvent
 - Éditer les noms
-- Cliquer sur #inline donne une petite présentation rapide
-- Mettre des delete sur see_3_unconnected
+- Taper les verbes d'allemand
+- Refactor account.js
+- BUGBUGBUG quand on supprime une leçon

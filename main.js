@@ -37,6 +37,11 @@ let time_stat;
 let verbs_column;
 let help_toggle = false;
 const help_div = document.getElementById("help_div");
+let bonus_mode = false;
+let wrong_questions = [];
+let remaining_bonus = 0;
+let data_source = [];
+
 
 let opened_sessions = new Set();
 
@@ -85,29 +90,35 @@ function toggle_add_def(what) {
 function toggle_ask_def(what) {
     if (what === "normal") {
         document.getElementById("questions_type_select").innerHTML = '<option value="auto">Autovalidation</option><option value="qcm">Choix multiples</option><option value="write">Restitution écrite</option>';
-       
         document.getElementById("questions_type_select").value = 'auto';
-        document.getElementById("ask_length_input").max = JSON.parse(localStorage.getItem(pack_title_ask.value)).length;
+
+        document.getElementById("ask_length_input").max = JSON.parse(localStorage.getItem(pack_title_ask.value)).length * 2;
+        document.getElementById("ask_length_input").value = JSON.parse(localStorage.getItem(pack_title_ask.value)).length;
 
         if (JSON.parse(localStorage.getItem(pack_title_ask.value)).length === 0) {
             document.getElementById("ask_length").style.display = "none";
+            document.getElementById("length_p").style.display = "none";
         } else {
             document.getElementById("ask_length").style.display = "flex";
+            document.getElementById("length_p").style.display = "flex";
         }
     } else if (what === "verb") {
         document.getElementById("questions_type_select").innerHTML = '<option value="random">Aléatoire</option><option value="choice">Déterminé</option>';
         document.getElementById("questions_type_select").value = 'random';
         
-        document.getElementById("ask_length_input").max = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length;
-        document.getElementById("ask_length_input").value = document.getElementById("ask_length_input").max;
+        document.getElementById("ask_length_input").max = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length * 2;
+        document.getElementById("ask_length_input").value = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length;
        
         if (JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length === 0) {
             document.getElementById("ask_length").style.display = "none";
+            document.getElementById("length_p").style.display = "none";
         } else {
             document.getElementById("ask_length").style.display = "flex";
+            document.getElementById("length_p").style.display = "flex";
         }
     }
-    document.getElementById("ask_length_p").innerText = "Max";
+
+    document.getElementById("ask_length_p").innerText = document.getElementById("ask_length_input").value;
     toggle_verbs_select();
 }
 
@@ -410,11 +421,12 @@ function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null
     let data = JSON.parse(localStorage.getItem(key));
 
     if (action === "update_col") {
-        data.columns[colIndex] = value.trim();
+        data.columns[colIndex] = value;
+        actu_files();
     }
 
     if (action === "update_row") {
-        data.verbs[rowIndex] = value.trim();
+        data.verbs[rowIndex] = value;
     }
 
     if (action === "add_row") {
@@ -423,10 +435,12 @@ function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null
             new_row.push("");
         })
         data.verbs.push(new_row);
+        actu_files();
     }
 
     if (action === "delete_row") {
         data.verbs.splice(rowIndex, 1);
+        actu_files();
     }
 
     if (action === "delete_col") {
@@ -434,6 +448,7 @@ function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null
         data.verbs.forEach((v) => {
             v.splice(colIndex, 1);
         });
+        actu_files();
     }
 
     if (action === "add_col") {
@@ -441,10 +456,10 @@ function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null
         data.verbs.forEach((v) => {
             v.push("");
         });
+        actu_files();
     }
 
     localStorage.setItem(key, JSON.stringify(data));
-    actu_files();
 }
 
 
@@ -590,6 +605,7 @@ function start() {
 
     verbs = !!verbsKey;
 
+    let ask_length_number = parseInt(document.getElementById("ask_length_input").value);
 
     if (verbs) {
         let allRows = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs;
@@ -601,13 +617,22 @@ function start() {
     about_ask = [];
     if (verbs) {
         const data = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value));
+        data_source = data.verbs;
 
-        for (let i = 0; i < document.getElementById("ask_length_input").value; i++) {
-            let new_item = data.verbs[getRandom(0, data.verbs.length)];
-            while (about_ask.includes(new_item)) {
-                new_item = data.verbs[getRandom(0, data.verbs.length)];
+        let base_length = data_source.length;
+        bonus_mode = ask_length_number > base_length;
+        remaining_bonus = ask_length_number - base_length;
+
+        if (!bonus_mode) {
+            for (let i = 0; i < ask_length_number; i++) {
+                let new_item = data_source[getRandom(0, data_source.length)];
+                while (about_ask.includes(new_item)) {
+                    new_item = data_source[getRandom(0, data_source.length)];
+                }
+                about_ask.push(new_item);
             }
-            about_ask.push(new_item);
+        } else {
+            about_ask = [...data_source];
         }
 
         if (document.getElementById("questions_type_select") !== null) {
@@ -619,16 +644,25 @@ function start() {
         }
     } else {
         const data = JSON.parse(localStorage.getItem(pack_title_ask.value));
+        data_source = data;
 
-        if (!data.length === 0) {
+        about_ask = [];
 
-            for (let i = 0; i < document.getElementById("ask_length_input").value; i++) {
-                let new_item = data[getRandom(0, data.length)];
+        let base_length = data_source.length;
+        bonus_mode = ask_length_number > base_length;
+        remaining_bonus = ask_length_number - base_length;
+
+
+        if (!bonus_mode) {
+            for (let i = 0; i < ask_length_number; i++) {
+                let new_item = data_source[getRandom(0, data_source.length)];
                 while (about_ask.includes(new_item)) {
-                    new_item = data[getRandom(0, data.length)];
+                    new_item = data_source[getRandom(0, data_source.length)];
                 }
                 about_ask.push(new_item);
             }
+        } else {
+            about_ask = [...data_source];
         }
     }
 
@@ -643,12 +677,13 @@ function start() {
         return;
     }
 
-    questions_number = about_ask.length;
+    questions_number = 0;
 
     ask_div.style.display = "flex";
     if (questions_type === "write") asking.className = "shown";
 
     asked = [];
+    wrong_questions = [];
     interrogation_time = 0;
     time_stat = setInterval(() => { interrogation_time += 0.1; }, 100);
     right_answers = 0;
@@ -704,6 +739,30 @@ function check_input(reveal, next, def) {
 
 function askQuestion() {
     if (about_ask.length === asked.length) {
+
+        if (bonus_mode && remaining_bonus > 0) {
+
+            let next_batch = [];
+    
+            if (wrong_questions.length > 0) {
+                next_batch = [...wrong_questions];
+            } else {
+                for (let i = 0; i < remaining_bonus; i++) {
+                    next_batch.push(data_source[getRandom(0, data_source.length)]);
+                }
+            }
+    
+            remaining_bonus -= next_batch.length;
+            if (remaining_bonus < 0) remaining_bonus = 0;
+    
+            about_ask = next_batch;
+            asked = [];
+            wrong_questions = [];
+    
+            return askQuestion();
+        }
+
+
         if (questions_type === "write") asking.className = "hide";
         clearInterval(time_stat);
         let percent = Math.round((right_answers * 100) / questions_number);
@@ -719,8 +778,8 @@ function askQuestion() {
         const interval = setInterval(() => {
             spawnConfetti();
             count++;
-            if (count >= 120) clearInterval(interval);
-        }, 30);
+            if (count >= 150) clearInterval(interval);
+        }, 25);
 
         let continue_button = document.createElement("button");
         continue_button.innerText = "Continuer";
@@ -740,6 +799,8 @@ function askQuestion() {
         };
         return;
     }
+
+    questions_number += 1;
 
     let interrogation_side = getRandom(0, 2);
     let question_id = getRandom(0, about_ask.length);
@@ -804,7 +865,7 @@ function askQuestion() {
 
     let reveal = document.createElement("button");
     reveal.id = "reveal";
-    reveal.innerText = (questions_type === "auto" || questions_type === "random" || questions_type === "choice") ? "Valider" : "Révéler la réponse";
+    reveal.innerText = (questions_type === "auto" || questions_type === "random" || questions_type === "choice") ? "Valider" : "Voir la réponse";
     reveal.className = "shown";
     reveal.style.color = toggle_t ? "white" : "black";
     ask_div.appendChild(reveal);
@@ -819,6 +880,9 @@ function askQuestion() {
     if (questions_type === "qcm" || questions_type === "write") {
         reveal.onclick = () => {
             show("La réponse était : \"" + def + "\"");
+            if (bonus_mode) {
+                wrong_questions.push(about_ask[question_id]);
+            }
             reveal.className = "hide";
             if (questions_type === "write") {
                 asking.value = "";
@@ -882,6 +946,9 @@ function askQuestion() {
                     refuse.onclick = () => {
                         accept.remove();
                         refuse.remove();
+                        if (bonus_mode) {
+                            wrong_questions.push(about_ask[question_id]);
+                        }
                         if (sonor_effects) playSound(fail);
                         show("");
                         playCrossAnimation();
@@ -936,7 +1003,11 @@ function askQuestion() {
                 }, 1900);
             } else {
                 ask_div.querySelector(".verbs-grid").removeChild(ask_div.querySelector(".verbs-grid").querySelector("#complete_verbs_grid"));
+                ask_div.querySelector(".verbs-grid").removeChild(ask_div.querySelector(".verbs-grid").querySelector("br"));
                 if (sonor_effects) playSound(fail);
+                if (bonus_mode) {
+                    wrong_questions.push(about_ask[question_id]);
+                }
                 playCrossAnimation();
                 setTimeout(() => {
                     next.className = "shown";
@@ -1025,6 +1096,9 @@ function askQuestion() {
                     reveal.className = "hide";
                     show("");
                     if (sonor_effects) playSound(fail);
+                    if (bonus_mode) {
+                        wrong_questions.push(about_ask[question_id]);
+                    }
                     playCrossAnimation();
                     setTimeout(() => {
                         show("Dommage... La bonne réponse était \"" + def + "\"");
@@ -1047,6 +1121,9 @@ function askQuestion() {
                     reveal.className = "hide";
                     show("");
                     if (sonor_effects) playSound(fail);
+                    if (bonus_mode) {
+                        wrong_questions.push(about_ask[question_id]);
+                    }
                     playCrossAnimation();
                     setTimeout(() => {
                         show("Dommage... La bonne réponse était \"" + def + "\"");
@@ -1069,6 +1146,9 @@ function askQuestion() {
                     reveal.className = "hide";
                     show("");
                     if (sonor_effects) playSound(fail);
+                    if (bonus_mode) {
+                        wrong_questions.push(about_ask[question_id]);
+                    }
                     playCrossAnimation();
                     setTimeout(() => {
                         show("Dommage... La bonne réponse était \"" + def + "\"");
@@ -1166,11 +1246,66 @@ function choose_help(element) {
 }
 
 
+function createParticles(canvas, color) {
+    const ctx = canvas.getContext("2d");
+    const particles = [];
+  
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2 + 30;
+  
+    const gravity = 0.15;
+  
+    for (let i = 0; i < 40; i++) {
+      particles.push({
+        x: centerX,
+        y: centerY,
+        vx: (Math.random() - 0.5) * 4,
+        vy: Math.random() * -4 - 2,
+        size: Math.random() * 4 + 5,
+        life: 1,
+        angle: Math.random() * Math.PI * 2
+      });
+    }
+  
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+      particles.forEach(p => {
+        p.vy += gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+  
+        p.life -= 0.015;
+  
+        ctx.globalAlpha = Math.max(p.life, 0);
+  
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+  
+        ctx.fillStyle = color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+  
+        ctx.restore();
+      });
+  
+      ctx.globalAlpha = 1;
+  
+      if (particles.some(p => p.life > 0.01)) {
+        requestAnimationFrame(animate);
+      }
+    }
+  
+    animate();
+}
+
+
 function playCheckAnimation() {
   // 1️⃣ Crée l'overlay
   const overlay = document.createElement('div');
   overlay.className = 'overlay-check';
   overlay.innerHTML = `
+   <canvas></canvas>
     <svg viewBox="0 0 60 60">
       <g id="group">
         <circle id="circle" cx="30" cy="30" r="25"/>
@@ -1179,6 +1314,10 @@ function playCheckAnimation() {
     </svg>
   `;
   document.body.appendChild(overlay);
+
+    const canvas = overlay.querySelector('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
   // 2️⃣ Récupère les éléments
   const circle = overlay.querySelector('#circle');
@@ -1198,6 +1337,10 @@ function playCheckAnimation() {
     setTimeout(() => {
       group.style.transform = 'scale(1)';
     }, 1200);
+
+    setTimeout(() => {
+        createParticles(canvas, "#2ecc71");
+    }, 300);
 
     // Disparition overlay
     setTimeout(() => {
@@ -1220,6 +1363,7 @@ function playCrossAnimation() {
     const overlay = document.createElement('div');
     overlay.className = 'overlay-cross';
     overlay.innerHTML = `
+    <canvas></canvas>
     <svg viewBox="0 0 60 60">
             <g id="group">
             <circle id="circle" cx="30" cy="30" r="25"/>
@@ -1231,6 +1375,10 @@ function playCrossAnimation() {
     </svg>
     `;
     document.body.appendChild(overlay);
+
+    const canvas = overlay.querySelector('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   
     const circle = overlay.querySelector('#circle');
     const lines  = overlay.querySelectorAll('.cross-line');
@@ -1250,8 +1398,12 @@ function playCrossAnimation() {
 
       setTimeout(() => {
         group.style.transform = 'scale(1)';
+        
       }, 1000);
-  
+
+    setTimeout(() => {
+        createParticles(canvas, "#e74c3c");
+    }, 300);
     
       setTimeout(() => {
         overlay.style.transition = 'transform 0.4s ease-in, opacity 0.4s ease-in';
