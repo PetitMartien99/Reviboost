@@ -10,6 +10,7 @@ function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
+
 const pack_title_ask = document.getElementById("pack_title_ask");
 const pack_title_add = document.getElementById("pack_title_add");
 const add_p = document.getElementById("add_p");
@@ -1206,6 +1207,12 @@ function help() {
         }, 500);
         
     }
+}
+
+const params = new URLSearchParams(window.location.search);
+
+if (params.has("help")) {
+    help();
 }
 
 
