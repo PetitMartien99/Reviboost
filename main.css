@@ -492,42 +492,6 @@ body {
     transform: scale(1.03);
 }
 
-/* Petit écran ≤ 450px */
-@media screen and (max-width: 450px) {
-    #help { 
-        width: 35px; 
-        height: 35px; 
-    }
-
-    #ask_div p {
-        font-size: 27px;
-        margin-left: 5px;
-        margin-right: 5px;
-    }
-    #next, #reveal, #continue, #accept, #refuse {
-        font-size: 29px;
-    }
-
-    #mobile_down {
-        height: 100px;
-        width: 50px;
-    }
-
-    #account_link img {
-        width: 35px;
-        height: 35px;
-    }
-
-    #account_link {
-        bottom: 40px;
-        right: -4px;
-    }
-
-    #quit_lesson img {
-        width: 40px;
-    }
-}
-
 /* Moyens écrans ≤ 500px */
 @media screen and (max-width: 500px) {
     .verbs-grid .row input, #ask_div .ask_verbs_input, #ask_div .header_fixed, .verbs-grid .header input {
@@ -654,6 +618,48 @@ body {
 @media screen and (max-width: 1500px) {
     #mobile_down {
         z-index: 70;
+    }
+}
+
+
+/* Petit écran ≤ 450px */
+@media screen and (max-width: 450px) {
+    #help { 
+        width: 35px; 
+        height: 35px; 
+    }
+
+    #help_div {
+        font-size: 14px;
+        height: 90%;
+    }
+
+    #ask_div p {
+        font-size: 27px;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+    #next, #reveal, #continue, #accept, #refuse {
+        font-size: 29px;
+    }
+
+    #mobile_down {
+        height: 100px;
+        width: 50px;
+    }
+
+    #account_link img {
+        width: 35px;
+        height: 35px;
+    }
+
+    #account_link {
+        bottom: 40px;
+        right: -4px;
+    }
+
+    #quit_lesson img {
+        width: 40px;
     }
 }
 
