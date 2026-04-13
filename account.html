@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="general.css">
         <link rel="stylesheet" href="account.css">
         <meta name="robots" content="noindex,nofollow">
+        <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
@@ -32,11 +33,11 @@
             </div>
 
             <div id="see_3">
-                <h2>Defs de 3ème</h2>
-                <p>Note : pour interargir avec les defs et se faire interroger,<br> veuillez créer un compte.<br>Attention : voir des verbes remplacera votre travail en cours sur l'acceuil; pensez à enregistrer !</p>
+                <h2>Contenu préenregistré</h2>
+                <p>Note : pour interargir avec les defs et se faire interroger,<br> veuillez créer un compte.<br>Attention : ouvrir les verbes remplacera votre travail en cours sur l'accueil; pensez à enregistrer !</p>
                 <select id="import_stuff_select">
                     <option value="1">Defs de 3eme</option>
-                    <option value="2">Verbes de 3eme</option>
+                    <option value="2">Verbes allemands de 3eme</option>
                 </select>
                 <button id="see_defs_3">Voir les defs</button>
             </div>
@@ -57,29 +58,29 @@
             <h1 id="special_h1">Compte</h1>
             <div id="choosing_stuff">
                 <button id="choosing_create">Créer</button>
-                <button id="choosing_add">Ajouter</button>
-                <button id="choosing_import">Importer</button>
+                <button id="choosing_add">Sauvegarder</button>
+                <button id="choosing_import">Ouvrir</button>
             </div>
             <div id="changing_div">
                 <div id="create_session_div">
-                    <h2 id="create_session_h3">Créer une nouvelle session</h2>
-                    <input placeholder="Nom de la session" id="create_session_input">
+                    <h2 id="create_session_h3">Créer un nouveau pack de leçons</h2>
+                    <input placeholder="Nom du pack" id="create_session_input">
                     <p id="create_session_p"></p>
                     <button disabled="true" id="create_session_button">Créer</button>
                 </div>
 
                 <div id="add_data_div">
-                    <h2 id="add_data_h3">Ajouter le cours actuel</h2>
+                    <h2 id="add_data_h3">Sauvegarder les leçons ouvertes</h2>
                     <select id="add_data_input"></select>   
-                    <p id="danger_export">Note: (Si il y a un doublon, la leçon venant du cours aura la priorité)</p>
+                    <p id="danger_export">Note: si il y a une leçon en double, celle du pack est mise à jour</p>
                     <p id="add_data_p"></p>
-                    <button id="add_data_button">Ajouter</button>
+                    <button id="add_data_button">Sauvegarder</button>
                 </div>
 
                 <div id="import_data_div">
-                    <h2 id="import_data_h3">Ouvrir une session</h2>
+                    <h2 id="import_data_h3">Ouvrir un pack</h2>
                     <select id="import_data_input"></select>
-                    <p id="danger_import">Note: (Si le cours actuel n'a pas été enregistré, il sera supprimé)</p>
+                    <p id="danger_import">Note: si les leçons ouvertes n'ont pas été enregistrées, elles seront supprimées</p>
                     <p id="import_data_p"></p>
                     <button id="import_data_button">Ouvrir</button>
                 </div>
@@ -94,10 +95,10 @@
             <div id="see_3_connected">
                 <button id="close_import">X</button>
                 <h2>Defs de 3ème</h2>
-                <p>Note : Si vous avez des sessions appelées Maths, Français, Technologie, Physique, SVT, Géographie, Histoire, ou Verbes irréguliers, les sessions de 3ème correspondantes ne seront pas importées.</p>
+                <p>Note : Si vous avez des packs appelés Maths, Français, Technologie, Physique, SVT, Géographie, Histoire, ou Verbes irréguliers, les sessions de 3ème correspondantes ne seront pas importées.</p>
                 <select id="import_stuff_select_connected">
                     <option value="1">Defs de 3eme</option>
-                    <option value="2">Verbes de 3eme</option>
+                    <option value="2">Verbes d'allemand de 3eme</option>
                 </select>
                 <button id="see_defs_3_connected">Importer les defs</button>
             </div>

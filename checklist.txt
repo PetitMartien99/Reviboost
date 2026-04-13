@@ -4,4 +4,7 @@
 - Éditer les noms
 - Taper les verbes d'allemand
 - Refactor account.js
-- BUGBUGBUG quand on supprime une leçon
+
+
+- Compte : voir verbes, voir defs bouton x2
+- X = poubelle

@@ -454,10 +454,10 @@ async function see_profile() {
 
     whole_data = data[0].json_data || []; 
     const see_div = getID("see_data_div_id");
-    see_div.innerHTML = "<h2>Sessions</h2>";
+    see_div.innerHTML = "<h2>Packs de leçons</h2>";
 
     if (!whole_data.length) {
-        see_div.innerHTML += "<p>Il n'y a pas de sessions dans le compte</p>";
+        see_div.innerHTML += "<p>Il n'y a pas de packs de leçons dans le compte</p>";
         return;
     }
 
@@ -496,7 +496,7 @@ async function see_profile() {
         })
 
         if (check_empty) {
-            session_div.innerHTML += "<p>Cette session est vide</p>";
+            session_div.innerHTML += "<p>Ce pack est vide</p>";
             let delete_session = document.createElement("button");
             delete_session.innerText = "X";
             delete_session.style.color = "var(--text-color)";
@@ -690,11 +690,11 @@ async function see_profile() {
 async function changeVerbs(action, way, rowIndex = null, colIndex = null, value = null) {
     let data = whole_data.find(s => s.name === way[0]).lessons.find(e => e.name === way[1]).items;
     if (action === "update_col") {
-        data.columns[colIndex] = value.trim();
+        data.columns[colIndex] = value;
     }
 
     if (action === "update_row") {
-        data.verbs[rowIndex] = value.trim();
+        data.verbs[rowIndex] = value;
     }
 
     if (action === "add_row") {

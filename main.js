@@ -76,6 +76,24 @@ function updateTypeUI_add() {
 }
 
 function toggle_add_def(what) {
+
+    pack_title_add.style.display = "block";
+
+    let hasLessons = false;
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key.startsWith("color") && !key.startsWith("text_color") && !key.startsWith("sb-")) {
+            hasLessons = true;
+        }
+    }
+
+    if (!hasLessons) {
+        pack_title_add.style.display = "none";
+        document.getElementById("add_switch").innerHTML = '<p>Aucune leçon présente</p>';
+        document.getElementById("add_pack_button").innerText = "";
+        return;
+    }
+
     if (what === "normal") {
         document.getElementById("add_switch").innerHTML = '<input id="def_title" type="text" placeholder="Nom de la définition"><textarea id="def" cols="20" rows="5" placeholder="Définition"></textarea><select id="def_type"><option value="defs">Définition</option><option value="dates">Date</option><option value="egal">Égalité</option></select>';
         def_type = document.getElementById("def_type");
@@ -89,7 +107,42 @@ function toggle_add_def(what) {
 }
 
 function toggle_ask_def(what) {
+
+    let hasLessons = false;
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key.startsWith("color") && !key.startsWith("text_color") && !key.startsWith("sb-")) {
+            hasLessons = true;
+        }
+    }
+
+    if (!hasLessons) {
+
+        pack_title_ask.style.display = "none";
+        document.getElementById("questions_type_select").style.display = "none";
+        document.getElementById("ask_length_input").style.display = "none";
+        document.getElementById("ask_length").style.display = "none";
+        document.getElementById("ask_button").style.display = "none";
+        document.getElementById("length_p").style.display = "flex"
+        document.getElementById("length_p").innerText = "Aucune leçon présente";
+        return;
+    }
+
+    document.getElementById("questions_type_select").style.display = "inline";
+    document.getElementById("ask_button").style.display = "block";
+    pack_title_ask.style.display = "block";
+
     if (what === "normal") {
+        if (JSON.parse(localStorage.getItem(pack_title_ask.value)).length === 0) {
+            document.getElementById("questions_type_select").style.display = "none";
+            document.getElementById("ask_length_input").style.display = "none";
+            document.getElementById("ask_length").style.display = "none";
+            document.getElementById("ask_button").style.display = "none";
+            document.getElementById("length_p").style.display = "flex"
+            document.getElementById("length_p").innerText = "La leçon est vide";
+            return;
+        }
+
         document.getElementById("questions_type_select").innerHTML = '<option value="auto">Autovalidation</option><option value="qcm">Choix multiples</option><option value="write">Restitution écrite</option>';
         document.getElementById("questions_type_select").value = 'auto';
 
@@ -104,6 +157,17 @@ function toggle_ask_def(what) {
             document.getElementById("length_p").style.display = "flex";
         }
     } else if (what === "verb") {
+
+        if (JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length === 0) {
+            document.getElementById("questions_type_select").style.display = "none";
+            document.getElementById("ask_length_input").style.display = "none";
+            document.getElementById("ask_length").style.display = "none";
+            document.getElementById("ask_button").style.display = "none";
+            document.getElementById("length_p").style.display = "flex"
+            document.getElementById("length_p").innerText = "La leçon est vide";
+            return;
+        }
+
         document.getElementById("questions_type_select").innerHTML = '<option value="random">Aléatoire</option><option value="choice">Déterminé</option>';
         document.getElementById("questions_type_select").value = 'random';
         
@@ -122,6 +186,9 @@ function toggle_ask_def(what) {
     document.getElementById("ask_length_p").innerText = document.getElementById("ask_length_input").value;
     toggle_verbs_select();
 }
+
+toggle_add_def();
+toggle_ask_def();
 
 
 updateTypeUI_add();
@@ -205,12 +272,15 @@ function actu_files() {
             hasLessons = true;
         }
     }
+
+    document.getElementById("lessons").innerText = "Leçons ouvertes";
+
     if (!hasLessons) {
-        document.getElementById("lessons").style.display = "none";
+        contain_files.innerHTML = "<p>Il n'y a aucune leçon</p>"
         return;
     }
 
-    document.querySelector("h2").innerText = "Cours";
+    
 
     const fragment = document.createDocumentFragment();
 
@@ -251,7 +321,7 @@ function actu_files() {
         let delete_button = document.createElement("button");
         delete_button.className = "delete_button";
         delete_button.style.color = "var(--text-color)";
-        delete_button.innerText = "X";
+        delete_button.innerHTML = "<div class='file_big_image'></div>";
         delete_button.onclick = () => {
             setTimeout(() => {
                 pack_title_add.value = "";
@@ -423,7 +493,6 @@ function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null
 
     if (action === "update_col") {
         data.columns[colIndex] = value;
-        actu_files();
     }
 
     if (action === "update_row") {
@@ -436,12 +505,10 @@ function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null
             new_row.push("");
         })
         data.verbs.push(new_row);
-        actu_files();
     }
 
     if (action === "delete_row") {
         data.verbs.splice(rowIndex, 1);
-        actu_files();
     }
 
     if (action === "delete_col") {
@@ -449,7 +516,6 @@ function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null
         data.verbs.forEach((v) => {
             v.splice(colIndex, 1);
         });
-        actu_files();
     }
 
     if (action === "add_col") {
@@ -457,10 +523,12 @@ function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null
         data.verbs.forEach((v) => {
             v.push("");
         });
-        actu_files();
     }
 
     localStorage.setItem(key, JSON.stringify(data));
+    if (!(action === "update_row")) {
+        actu_files();
+    }
 }
 
 

@@ -171,13 +171,32 @@ body {
 
 .delete_button {
     position: absolute;
-    top: 0;
+    top: 2px;
     right: 0;
-    background-color: transparent;
     border: transparent;
     margin: 0;
     font-size: 25px;
-    color: var(--text-color);
+    transition: none;
+}
+
+.delete_button:hover {
+    top: -3px;
+    transform: none;
+}
+
+.delete_button div {
+    width: 20px;
+    height: 20px;
+    background-image: url("poubelle.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.delete_button:hover div {
+    height: 25px;
+    width: 22px;
+    background-image: url("poubelle ouverte.png");
 }
 
 /* ===== Trucs randoms ===== */
