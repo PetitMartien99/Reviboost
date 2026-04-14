@@ -2,9 +2,4 @@
 - Mode d'interrogation : relier les réponses;
 - Se faire interroger sur plusieurs leçons en même temps
 - Éditer les noms
-- Taper les verbes d'allemand
 - Refactor account.js
-
-
-- Compte : voir verbes, voir defs bouton x2
-- X = poubelle

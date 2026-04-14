@@ -94,6 +94,12 @@ function toggle_add_def(what) {
         return;
     }
 
+    if (pack_title_add.value === "" || pack_title_add.value === null) {
+        if (pack_title_add.querySelectorAll("option")[0].value) {
+           pack_title_add.value = pack_title_add.querySelectorAll("option")[0].value;  
+        }
+    }
+
     if (what === "normal") {
         document.getElementById("add_switch").innerHTML = '<input id="def_title" type="text" placeholder="Nom de la définition"><textarea id="def" cols="20" rows="5" placeholder="Définition"></textarea><select id="def_type"><option value="defs">Définition</option><option value="dates">Date</option><option value="egal">Égalité</option></select>';
         def_type = document.getElementById("def_type");
@@ -128,11 +134,13 @@ function toggle_ask_def(what) {
         return;
     }
 
+
     document.getElementById("questions_type_select").style.display = "inline";
     document.getElementById("ask_button").style.display = "block";
     pack_title_ask.style.display = "block";
 
     if (what === "normal") {
+
         if (JSON.parse(localStorage.getItem(pack_title_ask.value)).length === 0) {
             document.getElementById("questions_type_select").style.display = "none";
             document.getElementById("ask_length_input").style.display = "none";
@@ -142,6 +150,9 @@ function toggle_ask_def(what) {
             document.getElementById("length_p").innerText = "La leçon est vide";
             return;
         }
+
+        document.getElementById("length_p").innerText = "Nombre de questions :";
+        document.getElementById("ask_length_input").style.display = "inline";
 
         document.getElementById("questions_type_select").innerHTML = '<option value="auto">Autovalidation</option><option value="qcm">Choix multiples</option><option value="write">Restitution écrite</option>';
         document.getElementById("questions_type_select").value = 'auto';
@@ -158,7 +169,7 @@ function toggle_ask_def(what) {
         }
     } else if (what === "verb") {
 
-        if (JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length === 0) {
+        if (JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)) === null) {
             document.getElementById("questions_type_select").style.display = "none";
             document.getElementById("ask_length_input").style.display = "none";
             document.getElementById("ask_length").style.display = "none";
@@ -187,14 +198,16 @@ function toggle_ask_def(what) {
     toggle_verbs_select();
 }
 
-toggle_add_def();
+/*toggle_add_def();
 toggle_ask_def();
+*/
 
 
 updateTypeUI_add();
 def_type.addEventListener("input", updateTypeUI_add);
 
-pack_title_add.addEventListener("input", () => {
+pack_title_add.addEventListener("change", () => {
+    console.log("add_change");
     if (localStorage.getItem(pack_title_add.value) !== null) {
         toggle_add_def("normal");
     } else if (localStorage.getItem("?verbs" + pack_title_add.value) !== null) {
@@ -202,8 +215,8 @@ pack_title_add.addEventListener("input", () => {
     }
 });
 
-pack_title_ask.addEventListener("input", () => {
-
+pack_title_ask.addEventListener("change", () => {
+    console.log("ask_change");
     if (localStorage.getItem(pack_title_ask.value) !== null) {
         toggle_ask_def("normal");
     } else if (localStorage.getItem("?verbs" + pack_title_ask.value) !== null) {
@@ -280,7 +293,6 @@ function actu_files() {
         return;
     }
 
-    
 
     const fragment = document.createDocumentFragment();
 
@@ -302,32 +314,32 @@ function actu_files() {
             e.appendChild(option);
         });
 
+        selects_lessons.forEach((e) => {
+            if (e.options.length > 0) {
+                e.value = e.options[0].value;
+            }
+        });
 
         let div = document.createElement("div");
         div.className = "file";
         div.style.border = `solid 2px var(--text-color)`;
         div.innerHTML = `<span>${displayName}</span>`;
-        fragment.appendChild(div);
-
-        div.addEventListener("click", () => {
-            let isVerb = key.startsWith("?verbs");
-            let safeName = isVerb ? key.slice(6) : key;
-            pack_title_add.value = safeName;
-            pack_title_ask.value = safeName;
-            toggle_add_def(isVerb ? "verb" : "normal");
-            toggle_ask_def(isVerb ? "verb" : "normal");
+        fragment.appendChild(div); 
+        
+        div.addEventListener("click", () => { 
+            let isVerb = key.startsWith("?verbs"); 
+            let safeName = isVerb ? key.slice(6) : key; 
+            pack_title_add.value = safeName; 
+            pack_title_ask.value = safeName; 
+            toggle_add_def(isVerb ? "verb" : "normal"); 
+            toggle_ask_def(isVerb ? "verb" : "normal"); 
         });
 
         let delete_button = document.createElement("button");
         delete_button.className = "delete_button";
-        delete_button.style.color = "var(--text-color)";
         delete_button.innerHTML = "<div class='file_big_image'></div>";
-        delete_button.onclick = () => {
-            setTimeout(() => {
-                pack_title_add.value = "";
-                pack_title_ask.value = "";
-                pack_title.value = "";
-            }, 10);
+        delete_button.onclick = (e) => {
+            e.stopPropagation();
             localStorage.removeItem(key);
             actu_files();
         };
@@ -348,8 +360,7 @@ function actu_files() {
                     
                     let delete_def = document.createElement("button");
                     delete_def.className = "delete_def";
-                    delete_def.style.color = actual_color;
-                    delete_def.innerText = "X";
+                    delete_def.innerHTML = "<div class='file_small_image'></div>";
                     delete_def.onclick = () => {
                         packItems.splice(idx, 1);
                         localStorage.setItem(key, JSON.stringify(packItems));
@@ -408,8 +419,8 @@ function actu_files() {
                     row_div.appendChild(input);
                 });
                 let delete_row_button = document.createElement("button");
-                delete_row_button.innerText = "x";
-                delete_row_button.style.color = "var(--text-color)";
+                delete_row_button.className = "delete_row";
+                delete_row_button.innerHTML = "<div class='file_small_image'></div>";
                 delete_row_button.addEventListener("click", () => changeVerbs("delete_row", key, rowIndex));
                 row_div.appendChild(delete_row_button);
                 tab.appendChild(row_div);
@@ -420,16 +431,19 @@ function actu_files() {
             addRowDiv.style.gridTemplateColumns = `repeat(${verbsData.columns.length}, minmax(65px, 1fr)) 0.15fr`;
             verbsData.columns.forEach((_, colIndex) => {
                 let button = document.createElement("button");
-                button.innerText = "x";
-                button.style.color = "var(--text-color)";
+                button.className = "delete_col";
+                button.innerHTML = "<div class='file_big_image'></div>";
                 button.addEventListener("click", () => changeVerbs("delete_col", key, null, colIndex));
                 addRowDiv.appendChild(button);
             });
+            let nothing_div = document.createElement("div");
+            nothing_div.style.width = "35px";
+            addRowDiv.appendChild(nothing_div);
+
             tab.appendChild(addRowDiv);
 
         }
 
-        if (!(key.startsWith("?verbs") && JSON.parse(localStorage.getItem(key)).verbs.length === 0)) {
             let test = true;
             if (!(key.startsWith("?verbs"))) {
                 if (JSON.parse(localStorage.getItem(key)).length === 0) {
@@ -466,9 +480,8 @@ function actu_files() {
 
                 div.querySelector("span").appendChild(unsee);
             }
-        }
     }
-
+    
     fragment.appendChild(document.createElement("p"));
     fragment.appendChild(document.createElement("p"));
 
@@ -538,7 +551,7 @@ function createPack() {
     const packName = pack_title.value.trim();
 
     if (!packName) {
-        giga_show("Entrez un titre de leçon.");
+        giga_show("Il faut entrer un titre de leçon");
         return;
     }
 

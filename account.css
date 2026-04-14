@@ -39,6 +39,10 @@ body {
 }   
 
 .verbs-grid input {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 2px;
+    margin-right: 2px;
     background-color: rgb(248, 248, 248);
     border-radius: 7px;
 }
@@ -51,11 +55,11 @@ body {
 
     .verbs-grid .row input, .verbs-grid .header input {
         height: 15px;
-        font-size: 13px;
+        font-size: 11px;
     }
 
     .verbs-grid .header, .verbs-grid .row {
-        gap: 1px;
+        gap: 0px;
         height: 26px;
     }
 
@@ -152,8 +156,9 @@ button:disabled {
 }
 
 .session_div, .lesson_div {
-    padding: 10px;
-    margin: 10px;
+    padding: 8px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -376,6 +381,107 @@ li {
 #see_account_small, #close_account_small, #import_3_button, #close_import {
     display: none;
 }
+
+
+.delete_lesson:hover {
+    top: -3px;
+    transform: none;
+}
+
+.delete_lesson {
+    transition: none;
+}
+
+.delete_col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: none;
+}
+
+.delete_col:hover {
+    transform: none;
+    margin-top: 0px;
+}
+
+.delete_row {
+    transition: none;
+}
+
+.delete_row:hover {
+    transform: none;
+}
+
+.delete_def {
+    transition: none;
+}
+
+.delete_def:hover {
+    transform: none;
+}
+
+.delete_session {
+    transition: none;
+}
+
+.delete_session:hover {
+    top: -3px;
+}
+
+.file_big_image {
+    width: 20px;
+    height: 20px;
+    background-image: url("poubelle.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.file_small_image {
+    width: 16px;
+    height: 16px;
+    background-image: url("poubelle.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.delete_col:hover div {
+    height: 25px;
+    width: 22px;
+    margin-right: 2px;
+    background-image: url("poubelle ouverte.png");
+}
+
+.delete_row:hover div {
+    height: 20px;
+    width: 18px;
+    margin-right: 5px;
+    background-image: url("poubelle ouverte.png");
+}
+
+.delete_def:hover div {
+    height: 20px;
+    width: 18px;
+    margin-top: -4px;
+    margin-left: -1px;
+    background-image: url("poubelle ouverte.png");
+}
+
+.delete_lesson:hover div {
+    height: 25px;
+    width: 22px;
+    margin-top: -1px;
+    background-image: url("poubelle ouverte.png");
+}
+
+.delete_session:hover div {
+    height: 24px;
+    width: 21px;
+    background-image: url("poubelle ouverte.png");
+}
+
+
 
 @media screen and (width <= 750px) {
     li {

@@ -498,8 +498,7 @@ async function see_profile() {
         if (check_empty) {
             session_div.innerHTML += "<p>Ce pack est vide</p>";
             let delete_session = document.createElement("button");
-            delete_session.innerText = "X";
-            delete_session.style.color = "var(--text-color)";
+            delete_session.innerHTML = "<div class='file_big_image'></div>";;
             delete_session.className = "delete_session";
             session_div.appendChild(delete_session);
             delete_session.addEventListener("click", e => { e.stopPropagation(); delete_object("session", session_div); });
@@ -520,8 +519,7 @@ async function see_profile() {
             lesson_div.dataset.lesson = lesson.name;
 
             let delete_lesson = document.createElement("button");
-            delete_lesson.innerText = "X";
-            delete_lesson.style.color = "var(--text-color)";
+            delete_lesson.innerHTML = "<div class='file_big_image'></div>";
             delete_lesson.className = "delete_lesson";
             lesson_div.appendChild(delete_lesson);
 
@@ -555,8 +553,7 @@ async function see_profile() {
                     new_li.dataset.kind = item.kind;
 
                     let delete_def = document.createElement("button");
-                    delete_def.innerText = "X";
-                    delete_def.style.color = "var(--text-color)";
+                    delete_def.innerHTML = "<div class='file_small_image'></div>";
                     delete_def.className = "delete_def";
                     delete_def.addEventListener("click", () => delete_object("def", new_li));
                     new_li.appendChild(delete_def);
@@ -622,8 +619,8 @@ async function see_profile() {
                             });
                         });
                         let delete_row_button = document.createElement("button");
-                        delete_row_button.innerText = "x"
-                        delete_row_button.style.color = "var(--text-color)";
+                        delete_row_button.className = "delete_row";
+                        delete_row_button.innerHTML = "<div class='file_small_image'></div>";
                         row_div.appendChild(delete_row_button);
                         delete_row_button.addEventListener("click", () => {
                             changeVerbs("delete_row", [session.name, lesson.name], rowIndex, null, null);
@@ -638,12 +635,16 @@ async function see_profile() {
                 verbs.columns.forEach((e, colIndex) => {
                     let button = document.createElement("button");
                     row_div.appendChild(button);
-                    button.innerText = "x";
-                    button.style.color = "var(--text-color)";
+                    button.className = "delete_col";
+                    button.innerHTML = "<div class='file_big_image'></div>";
                     button.addEventListener("click", () => {
                         changeVerbs("delete_col", [session.name, lesson.name], null, colIndex, null);
                     });
                 });
+                let nothing_div = document.createElement("div");
+                nothing_div.style.width = "35px";
+                row_div.appendChild(nothing_div);
+
                 row_div.style.gridTemplateColumns = `repeat(${verbs.columns.length}, minmax(65px, 1fr)) 0.15fr`;
             }
 
@@ -651,8 +652,7 @@ async function see_profile() {
         }
 
         let delete_session = document.createElement("button");
-        delete_session.innerText = "X";
-        delete_session.style.color = "var(--text-color)";
+        delete_session.innerHTML = "<div class='file_big_image'></div>";
         delete_session.className = "delete_session";
         session_div.appendChild(delete_session);
         delete_session.addEventListener("click", e => { e.stopPropagation(); delete_object("session", session_div); });
@@ -685,6 +685,9 @@ async function see_profile() {
             session_div.querySelector("h3").appendChild(unsee);
         }
     }
+
+    check_add();
+    check_import();
 }
 
 async function changeVerbs(action, way, rowIndex = null, colIndex = null, value = null) {
@@ -741,23 +744,21 @@ function check_import() {
     const button = getID("import_data_button");
     const message = getID("import_data_p");
 
-    if (import_data_input.value === "") {
+    if (!whole_data || whole_data.length === 0) {
+        message.style.display = "block";
+        message.innerText = "Il n'y a pas de pack à importer";
+        import_data_input.style.display = "none";
         button.disabled = true;
         return;
     }
 
-    if (!whole_data || whole_data.length === 0) {
-        message.style.display = "block";
-        message.innerText = "Il n'y a pas de session à importer";
-        button.disabled = true;
-        return;
-    }
+    import_data_input.style.display = "block";
 
     const session = whole_data.find(s => s.name === import_data_input.value);
 
     if (!session) {
         message.style.display = "block";
-        message.innerText = "Il n'y a aucune session de ce nom";
+        message.innerText = "Il n'y a aucun pack de ce nom";
         button.disabled = true;
         return;
     }
@@ -781,7 +782,7 @@ function check_import() {
 
     if (empty) {
         message.style.display = "block";
-        message.innerHTML = "Cette session est vide";
+        message.innerHTML = "Ce pack est vide";
         button.disabled = true;
         return;
     }
@@ -790,6 +791,8 @@ function check_import() {
     message.style.display = "none";
     button.disabled = false;
 }
+
+check_import();
 
 
 getID("import_data_button").addEventListener("click", import_data);
@@ -872,7 +875,9 @@ async function delete_object(type, element) {
         getID("import_data_p").innerHTML = "";
         getID("add_data_p").innerHTML = "";
         getID("add_data_button").disabled = true;
-        getID("import_data_button").disabled = true; 
+        getID("import_data_button").disabled = true;
+        check_add();
+        check_import(); 
     }
 }
 
@@ -881,18 +886,17 @@ const name_input = getID("add_data_input");
 name_input.addEventListener("input", check_add);
 
 function check_add() {
+
     const button = getID("add_data_button");
     const message = getID("add_data_p");
 
-    if (name_input.value === "") {
-        button.disabled = true;
-        return;
-    }
+    name_input.style.display = "block";
 
     if (!whole_data || whole_data.length === 0) {
         message.style.display = "block";
-        message.innerText = "Il n'y a pas de session à importer";
+        message.innerText = "Il n'y a pas de pack de leçons";
         button.disabled = true;
+        name_input.style.display = "none";
         return;
     }
 
@@ -900,7 +904,7 @@ function check_add() {
 
     if (!session) {
         message.style.display = "block";
-        message.innerText = "Il n'y a aucune session de ce nom";
+        message.innerText = "Il n'y a aucun pack de ce nom";
         button.disabled = true;
         return;
     }
@@ -909,6 +913,8 @@ function check_add() {
     message.style.display = "none";
     button.disabled = false;
 }
+
+check_add();
 
 
 getID("add_data_button").addEventListener("click", exporting_data);
@@ -984,7 +990,7 @@ async function exporting_data() {
         name_input.value = "";
         check_add();
         getID("add_data_p").style.display = "block";
-        getID("add_data_p").innerHTML = "Leçons ajoutées";
+        getID("add_data_p").innerHTML = "Leçon(s) ajoutée(s)";
         see_profile();
         check_import();
     }
@@ -1023,7 +1029,7 @@ function check_create() {
     if (whole_data.length >= 35) {
         button.disabled = true;
         message.style.dispay = "block";
-        message.innerHTML = "Il y a déjà trop de sessions";
+        message.innerHTML = "Il y a déjà trop de packs de leçons";
         return;
     }
 
@@ -1036,7 +1042,7 @@ function check_create() {
     if (test) {
         button.disabled = true;
         message.style.display = "block";
-        message.innerHTML = "Il y a déjà une session du même nom";
+        message.innerHTML = "Il y a déjà un pack du même nom";
         return;
     }
 
@@ -1063,7 +1069,7 @@ async function create_session() {
         getID("create_session_input").value = "";
         check_create();
         getID("create_session_p").style.display = "block";
-        getID("create_session_p").innerHTML = "Session ajoutée";
+        getID("create_session_p").innerHTML = "Pack ajouté";
         see_profile();
     }
 }
@@ -1153,4 +1159,3 @@ function import_div() {
         document.getElementById("parameter_cover").style.display = "none";
     }
 }
-

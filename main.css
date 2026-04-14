@@ -54,6 +54,10 @@ body {
 .verbs-grid input {
     background-color: rgb(248, 248, 248);
     border-radius: 7px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 .verbs-grid br {
@@ -166,7 +170,6 @@ body {
 .delete_def {
     align-self: flex-start;
     margin-top: -3px;
-    color: var(--text-color);
 }
 
 .delete_button {
@@ -184,13 +187,72 @@ body {
     transform: none;
 }
 
-.delete_button div {
+.delete_col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: none;
+}
+
+.delete_col:hover {
+    transform: none;
+    margin-top: 0px;
+}
+
+.delete_row {
+    transition: none;
+}
+
+.delete_row:hover {
+    transform: none;
+}
+
+.delete_def {
+    transition: none;
+}
+
+.delete_def:hover {
+    transform: none;
+}
+
+.file_big_image {
     width: 20px;
     height: 20px;
     background-image: url("poubelle.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.file_small_image {
+    width: 16px;
+    height: 16px;
+    background-image: url("poubelle.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.delete_col:hover div {
+    height: 25px;
+    width: 22px;
+    margin-right: 2px;
+    background-image: url("poubelle ouverte.png");
+}
+
+.delete_row:hover div {
+    height: 20px;
+    width: 18px;
+    margin-right: 5px;
+    background-image: url("poubelle ouverte.png");
+}
+
+.delete_def:hover div {
+    height: 20px;
+    width: 18px;
+    margin-top: -3px;
+    margin-left: -2px;
+    background-image: url("poubelle ouverte.png");
 }
 
 .delete_button:hover div {
@@ -515,11 +577,11 @@ body {
 @media screen and (max-width: 500px) {
     .verbs-grid .row input, #ask_div .ask_verbs_input, #ask_div .header_fixed, .verbs-grid .header input {
         height: 15px;
-        font-size: 15px;
+        font-size: 11px;
     }
 
     .verbs-grid .header, .verbs-grid .row {
-        gap: 1px;
+        gap: 0px;
         height: 26px;
     }
 
