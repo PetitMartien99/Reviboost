@@ -26,7 +26,7 @@ asking.value = "";
 const msg = document.getElementById("msg");
 const writer = document.getElementById("writer");
 const pack_type = document.getElementById("pack_type");
-const selects_lessons = [pack_title_add, pack_title_ask];
+const selects_lessons = pack_title_add;
 let asked = [];
 let questions_type_select = document.getElementById("questions_type_select");
 let questions_type;
@@ -112,7 +112,7 @@ function toggle_add_def(what) {
     }
 }
 
-function toggle_ask_def(what) {
+function toggle_ask_def() {
 
     let hasLessons = false;
     for (let i = 0; i < localStorage.length; i++) {
@@ -139,9 +139,60 @@ function toggle_ask_def(what) {
     document.getElementById("ask_button").style.display = "block";
     pack_title_ask.style.display = "block";
 
-    if (what === "normal") {
 
-        if (JSON.parse(localStorage.getItem(pack_title_ask.value)).length === 0) {
+    let get_stuff = get_pack_value();
+
+    if (get_stuff.valid === false) {
+        if (get_stuff.lessons.length === 0) {
+            document.getElementById("questions_type_select").style.display = "none";
+            document.getElementById("ask_length_input").style.display = "none";
+            document.getElementById("ask_length").style.display = "none";
+            document.getElementById("ask_button").style.display = "none";
+            document.getElementById("length_p").style.display = "flex"
+            document.getElementById("length_p").innerText = "Aucune leçon sélectionnée";
+            return;
+        } else {
+            document.getElementById("questions_type_select").style.display = "none";
+            document.getElementById("ask_length_input").style.display = "none";
+            document.getElementById("ask_length").style.display = "none";
+            document.getElementById("ask_button").style.display = "none";
+            document.getElementById("length_p").style.display = "flex"
+            document.getElementById("length_p").innerText = "Il y a différents types de leçons";
+            return;
+        }
+    }
+
+    if (get_stuff.kind === "verb") {
+        let first_cols = JSON.parse(localStorage.getItem("?verbs" + get_stuff.lessons[0])).columns;
+
+        for (let i = 0; i < get_stuff.lessons.length; i++) {
+            let e = get_stuff.lessons[i];
+        
+            let cols = JSON.parse(localStorage.getItem("?verbs" + e)).columns;
+        
+            if (JSON.stringify(cols) !== JSON.stringify(first_cols)) {
+                document.getElementById("questions_type_select").style.display = "none";
+                document.getElementById("ask_length_input").style.display = "none";
+                document.getElementById("ask_length").style.display = "none";
+                document.getElementById("ask_button").style.display = "none";
+                document.getElementById("length_p").style.display = "flex";
+                document.getElementById("length_p").innerHTML = "Les colonnes ne <br>correspondent pas";
+                return;
+            }
+        }
+    }
+
+
+    if (get_stuff.kind === "normal") {
+
+        let isEmpty = true;
+        get_stuff.lessons.forEach((e) => {
+            if (JSON.parse(localStorage.getItem(e)).length > 0) {
+                isEmpty = false;
+            }
+        });
+
+        if (isEmpty) {
             document.getElementById("questions_type_select").style.display = "none";
             document.getElementById("ask_length_input").style.display = "none";
             document.getElementById("ask_length").style.display = "none";
@@ -157,35 +208,56 @@ function toggle_ask_def(what) {
         document.getElementById("questions_type_select").innerHTML = '<option value="auto">Autovalidation</option><option value="qcm">Choix multiples</option><option value="write">Restitution écrite</option>';
         document.getElementById("questions_type_select").value = 'auto';
 
-        document.getElementById("ask_length_input").max = JSON.parse(localStorage.getItem(pack_title_ask.value)).length * 2;
-        document.getElementById("ask_length_input").value = JSON.parse(localStorage.getItem(pack_title_ask.value)).length;
+        let input_max = 0;
+        get_stuff.lessons.forEach((e) => {
+            input_max += JSON.parse(localStorage.getItem(e)).length;
+        });
 
-        if (JSON.parse(localStorage.getItem(pack_title_ask.value)).length === 0) {
+        document.getElementById("ask_length_input").max = input_max * 2;
+        document.getElementById("ask_length_input").value = input_max;
+
+        if (input_max === 0) {
             document.getElementById("ask_length").style.display = "none";
             document.getElementById("length_p").style.display = "none";
         } else {
             document.getElementById("ask_length").style.display = "flex";
             document.getElementById("length_p").style.display = "flex";
         }
-    } else if (what === "verb") {
 
-        if (JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)) === null) {
+    } else if (get_stuff.kind === "verb") {
+
+        let isEmpty = true;
+        get_stuff.lessons.forEach((e) => {
+            if (JSON.parse(localStorage.getItem("?verbs" + e)).verbs.length > 0) {
+                isEmpty = false;
+            }
+        });
+
+        if (isEmpty) {
             document.getElementById("questions_type_select").style.display = "none";
             document.getElementById("ask_length_input").style.display = "none";
             document.getElementById("ask_length").style.display = "none";
             document.getElementById("ask_button").style.display = "none";
             document.getElementById("length_p").style.display = "flex"
-            document.getElementById("length_p").innerText = "La leçon est vide";
+            document.getElementById("length_p").innerText = get_stuff.lessons.length === 1 ? "La leçon est vide" : "Les leçons sont vides";
             return;
         }
+
+        document.getElementById("length_p").innerText = "Nombre de questions :";
+        document.getElementById("ask_length_input").style.display = "inline";
 
         document.getElementById("questions_type_select").innerHTML = '<option value="random">Aléatoire</option><option value="choice">Déterminé</option>';
         document.getElementById("questions_type_select").value = 'random';
         
-        document.getElementById("ask_length_input").max = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length * 2;
-        document.getElementById("ask_length_input").value = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length;
+        let input_max = 0;
+        get_stuff.lessons.forEach((e) => {
+            input_max += JSON.parse(localStorage.getItem("?verbs" + e)).verbs.length;
+        });
+
+        document.getElementById("ask_length_input").max = input_max * 2;
+        document.getElementById("ask_length_input").value = input_max;
        
-        if (JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs.length === 0) {
+        if (input_max === 0) {
             document.getElementById("ask_length").style.display = "none";
             document.getElementById("length_p").style.display = "none";
         } else {
@@ -197,11 +269,6 @@ function toggle_ask_def(what) {
     document.getElementById("ask_length_p").innerText = document.getElementById("ask_length_input").value;
     toggle_verbs_select();
 }
-
-/*toggle_add_def();
-toggle_ask_def();
-*/
-
 
 updateTypeUI_add();
 def_type.addEventListener("input", updateTypeUI_add);
@@ -216,12 +283,7 @@ pack_title_add.addEventListener("change", () => {
 });
 
 pack_title_ask.addEventListener("change", () => {
-    console.log("ask_change");
-    if (localStorage.getItem(pack_title_ask.value) !== null) {
-        toggle_ask_def("normal");
-    } else if (localStorage.getItem("?verbs" + pack_title_ask.value) !== null) {
-        toggle_ask_def("verb");
-    }
+    toggle_ask_def()
 });
 
 document.getElementById("questions_type_select").addEventListener("change", () => {
@@ -254,6 +316,38 @@ ask_length_input.addEventListener("input", () => {
     }
     document.getElementById("ask_length_p").innerHTML = ask_length_input.value;
 });
+
+
+function get_pack_value() {
+    let selected = Array.from(
+        document.querySelectorAll('#menu input[type="checkbox"]:checked')
+    ).map(cb => cb.parentElement.textContent.trim());
+
+    if (selected.length === 0) {
+        return { valid: false, lessons: [] };
+    }
+
+    let firstIsVerb = localStorage.getItem("?verbs" + selected[0]) !== null;
+    let isOkay = true;
+
+    for (let i = 1; i < selected.length; i++) {
+        let isVerb = localStorage.getItem("?verbs" + selected[i]) !== null;
+
+        if (isVerb !== firstIsVerb) {
+            isOkay = false;
+            break;
+        }
+    }
+
+    let kind = firstIsVerb ? "verb" : "normal";
+
+    return {
+        valid: isOkay,
+        lessons: selected,
+        kind: kind
+    };
+}
+
 
 function get_euclide(number) {
     const quotient = Math.floor(number/60);
@@ -288,37 +382,49 @@ function actu_files() {
 
     document.getElementById("lessons").innerText = "Leçons ouvertes";
 
+    selects_lessons.innerHTML = "";
+    let old_checked_inputs = [];
+    pack_title_ask.querySelector("#menu").querySelectorAll("label").forEach((e) => {
+        if (e.querySelector("input").checked) {
+            old_checked_inputs.push(e);
+        }
+        pack_title_ask.querySelector("#menu").removeChild(e);
+    });
+
     if (!hasLessons) {
         contain_files.innerHTML = "<p>Il n'y a aucune leçon</p>"
+        toggle_add_def();
+        toggle_ask_def();
         return;
     }
 
 
     const fragment = document.createDocumentFragment();
 
-    selects_lessons.forEach((e) => {
-        e.innerHTML = "";
-    });
-
+    
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key.startsWith("color") || key.startsWith("text_color") || key.startsWith("sb-")) continue;
 
         let displayName = key.startsWith("?verbs") ? key.slice(6) : key;
 
-        
-        selects_lessons.forEach((e) => {
-            let option = document.createElement("option");
-            option.value = displayName;
-            option.innerText = displayName;
-            e.appendChild(option);
-        });
+        let option = document.createElement("option");
+        option.value = displayName;
+        option.innerText = displayName;
+        selects_lessons.appendChild(option);
+        if (selects_lessons.options.length > 0) {
+            selects_lessons.value = selects_lessons.options[0].value;
+        }
 
-        selects_lessons.forEach((e) => {
-            if (e.options.length > 0) {
-                e.value = e.options[0].value;
+        let label = document.createElement("label");
+        label.innerHTML = `<input type="checkbox" value="1">${displayName}`;
+        old_checked_inputs.forEach((e) => {
+            if (e.innerText === displayName) {
+                label.querySelector("input").checked = true;
             }
         });
+        pack_title_ask.querySelector("#menu").appendChild(label);
+        pack_title_ask.querySelector("#menu").appendChild(document.createElement("br"));
 
         let div = document.createElement("div");
         div.className = "file";
@@ -330,9 +436,18 @@ function actu_files() {
             let isVerb = key.startsWith("?verbs"); 
             let safeName = isVerb ? key.slice(6) : key; 
             pack_title_add.value = safeName; 
-            pack_title_ask.value = safeName; 
+            document.querySelectorAll("#menu label").forEach((e) => {
+                if (e.innerText.includes(safeName)) {
+                    if (e.querySelector("input").checked === true) {
+                        e.querySelector("input").checked = false;
+                    } else {
+                        e.querySelector("input").checked = true;
+                    }
+                    
+                }
+            });
             toggle_add_def(isVerb ? "verb" : "normal"); 
-            toggle_ask_def(isVerb ? "verb" : "normal"); 
+            toggle_ask_def(); 
         });
 
         let delete_button = document.createElement("button");
@@ -426,21 +541,23 @@ function actu_files() {
                 tab.appendChild(row_div);
             });
 
-            let addRowDiv = document.createElement("div");
-            addRowDiv.className = "row";
-            addRowDiv.style.gridTemplateColumns = `repeat(${verbsData.columns.length}, minmax(65px, 1fr)) 0.15fr`;
-            verbsData.columns.forEach((_, colIndex) => {
-                let button = document.createElement("button");
-                button.className = "delete_col";
-                button.innerHTML = "<div class='file_big_image'></div>";
-                button.addEventListener("click", () => changeVerbs("delete_col", key, null, colIndex));
-                addRowDiv.appendChild(button);
-            });
-            let nothing_div = document.createElement("div");
-            nothing_div.style.width = "35px";
-            addRowDiv.appendChild(nothing_div);
+            if (verbsData.columns.length > 1) {
+                let addRowDiv = document.createElement("div");
+                addRowDiv.className = "row";
+                addRowDiv.style.gridTemplateColumns = `repeat(${verbsData.columns.length}, minmax(65px, 1fr)) 0.15fr`;
+                verbsData.columns.forEach((_, colIndex) => {
+                    let button = document.createElement("button");
+                    button.className = "delete_col";
+                    button.innerHTML = "<div class='file_big_image'></div>";
+                    button.addEventListener("click", () => changeVerbs("delete_col", key, null, colIndex));
+                    addRowDiv.appendChild(button);
+                });
+                let nothing_div = document.createElement("div");
+                nothing_div.style.width = "35px";
+                addRowDiv.appendChild(nothing_div);
 
-            tab.appendChild(addRowDiv);
+                tab.appendChild(addRowDiv);
+            }
 
         }
 
@@ -487,18 +604,24 @@ function actu_files() {
 
     contain_files.appendChild(fragment);
 
-    if (localStorage.getItem(selects_lessons[1].value) !== null) {
+    if (localStorage.getItem(selects_lessons.value) !== null) {
         toggle_add_def("normal");
-        toggle_ask_def("normal");
-    } else if (localStorage.getItem("?verbs" + selects_lessons[1].value) !== null){
+    } else if (localStorage.getItem("?verbs" + selects_lessons.value) !== null){
         toggle_add_def("verb");
-        toggle_ask_def("verb");
     }
+
+    toggle_ask_def();
 
     updateTypeUI_add();
 }
 
 actu_files();
+
+
+toggle_add_def();
+toggle_ask_def();
+
+
 
 
 function changeVerbs(action, key, rowIndex = null, colIndex = null, value = null) {
@@ -673,84 +796,59 @@ function addPack() {
 
 
 let verbs;
+let all_columns;
 
 function start() {
-    if (!pack_title_ask.value) return;
 
-    let verbsKey = localStorage.getItem("?verbs" + pack_title_ask.value);
-    let packExists = localStorage.getItem(pack_title_ask.value);
+    const pack = get_pack_value();
 
-    if (!packExists && !verbsKey) {
-        giga_show("Cette leçon n'existe pas");
-        return;
-    }
-
-    verbs = !!verbsKey;
+    verbs = pack.kind === "verb";
 
     let ask_length_number = parseInt(document.getElementById("ask_length_input").value);
 
-    if (verbs) {
-        let allRows = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).verbs;
-        if (!allRows || allRows.length === 0) {
-            giga_show("Pas de verbes à réviser dans cette leçon !");
-            return; 
-        }
-    }
     about_ask = [];
+
+    let data = [];
+
     if (verbs) {
-        const data = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value));
-        data_source = data.verbs;
 
-        let base_length = data_source.length;
-        bonus_mode = ask_length_number > base_length;
-        remaining_bonus = ask_length_number - base_length;
+        all_columns = JSON.parse(localStorage.getItem("?verbs" + pack.lessons[0])).columns;
 
-        if (!bonus_mode) {
-            for (let i = 0; i < ask_length_number; i++) {
-                let new_item = data_source[getRandom(0, data_source.length)];
-                while (about_ask.includes(new_item)) {
-                    new_item = data_source[getRandom(0, data_source.length)];
-                }
-                about_ask.push(new_item);
+        pack.lessons.forEach((e) => {
+            data = data.concat(JSON.parse(localStorage.getItem("?verbs" + e)).verbs);
+        });
+
+    } else {
+
+        pack.lessons.forEach((e) => {
+            data = data.concat(JSON.parse(localStorage.getItem(e)));
+        });
+    }
+
+    data_source = data;
+
+    let base_length = data_source.length;
+    bonus_mode = ask_length_number > base_length;
+    remaining_bonus = ask_length_number - base_length;
+
+    if (!bonus_mode) {
+        for (let i = 0; i < ask_length_number; i++) {
+            let new_item = data_source[getRandom(0, data_source.length)];
+            while (about_ask.includes(new_item)) {
+                new_item = data_source[getRandom(0, data_source.length)];
             }
-        } else {
-            about_ask = [...data_source];
-        }
-
-        if (document.getElementById("questions_type_select") !== null) {
-            data.columns.forEach((e, i) => {
-                if (e === document.getElementById("verbs_select").value) {
-                    verbs_column = i;
-                }
-            });
+            about_ask.push(new_item);
         }
     } else {
-        const data = JSON.parse(localStorage.getItem(pack_title_ask.value));
-        data_source = data;
-
-        about_ask = [];
-
-        let base_length = data_source.length;
-        bonus_mode = ask_length_number > base_length;
-        remaining_bonus = ask_length_number - base_length;
-
-
-        if (!bonus_mode) {
-            for (let i = 0; i < ask_length_number; i++) {
-                let new_item = data_source[getRandom(0, data_source.length)];
-                while (about_ask.includes(new_item)) {
-                    new_item = data_source[getRandom(0, data_source.length)];
-                }
-                about_ask.push(new_item);
-            }
-        } else {
-            about_ask = [...data_source];
-        }
+        about_ask = [...data_source];
     }
 
-    if (about_ask.length === 0) {
-        giga_show("Cette leçon est vide");
-        return;
+    if (verbs && document.getElementById("questions_type_select") !== null) {
+        all_columns.forEach((e, i) => {
+            if (e === document.getElementById("verbs_select").value) {
+                verbs_column = i;
+            }
+        });
     }
 
     questions_type = questions_type_select.value;
@@ -773,7 +871,7 @@ function start() {
     document.getElementById("quit_lesson").className = "shown";
     ultra_container.style.display = "none";
     body.style.overflow = "hidden";
-    console.log("here");
+
     askQuestion();
 }
 
@@ -821,13 +919,13 @@ function check_input(reveal, next, def) {
 
 function askQuestion() {
     if (about_ask.length === asked.length) {
-
+        console.log("1");
         if (bonus_mode && remaining_bonus > 0) {
-
+            console.log(remaining_bonus);
             let next_batch = [];
     
             if (wrong_questions.length > 0) {
-                next_batch = [...wrong_questions];
+                next_batch = wrong_questions.slice(0, remaining_bonus);
             } else {
                 for (let i = 0; i < remaining_bonus; i++) {
                     next_batch.push(data_source[getRandom(0, data_source.length)]);
@@ -914,7 +1012,6 @@ function askQuestion() {
         let show_div = document.createElement("div");
         show_div.innerHTML = "<p id='complete_verbs_grid'>Complète :</p> <br>";
         show_div.className = "verbs-grid";
-        let all_columns = JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).columns;
         let the_column;
 
         let header = document.createElement("div");
@@ -1274,6 +1371,7 @@ document.getElementById("help_cover").addEventListener("click", help);
 
 
 function help() {
+
     if (help_toggle === false) {
         help_div.style.display = "block";
         help_div.style.opacity = 1;

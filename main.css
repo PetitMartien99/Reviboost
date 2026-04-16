@@ -100,6 +100,10 @@ body {
     transform: scale(1.03);
 }
 
+#ask {
+    transform-origin: top;
+}
+
 .phover {
     background-color: transparent;
     border-radius: 8px;
@@ -544,6 +548,8 @@ body {
     bottom: 0; 
     right: 0; 
     display: none; 
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3px);
 } 
 
 #help_div h2 { 

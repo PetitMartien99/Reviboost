@@ -828,7 +828,7 @@ function import_data() {
     check_create();
     check_import();
     setTimeout(() => {
-        getID("import_data_p").innerHTML = "Session importée";
+        getID("import_data_p").innerHTML = "Pack importé";
         getID("import_data_p").style.display = "block";
         getID("import_data_button").disabled = true;
     }, 50);
@@ -1133,10 +1133,12 @@ function account_small() {
         toggle_account_small = false;
         document.getElementById("account_small").style.display = "flex";
         document.getElementById("parameter_cover").style.display = "block";
+        document.getElementById("parameter_cover").onclick = () => {account_small()};
     } else {
         toggle_account_small = true;
         document.getElementById("account_small").style.display = "none";
         document.getElementById("parameter_cover").style.display = "none";
+        document.getElementById("parameter_cover").onclick = () => {parameter()};
     }
 }
 
@@ -1153,9 +1155,11 @@ function import_div() {
         toggle_import_3 = false;
         document.getElementById("see_3_connected").style.display = "flex";
         document.getElementById("parameter_cover").style.display = "block";
+        document.getElementById("parameter_cover").onclick = () => {import_div()};
     } else {
         toggle_import_3 = true;
         document.getElementById("see_3_connected").style.display = "none";
         document.getElementById("parameter_cover").style.display = "none";
+        document.getElementById("parameter_cover").onclick = () => {parameter()};
     }
 }

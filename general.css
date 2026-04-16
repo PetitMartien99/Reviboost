@@ -35,6 +35,45 @@ body {
     text-align: center;
 }
 
+.flex {
+    display: flex;
+}
+
+/*----- Dropdown ------ */
+
+.hidden {
+    display: none;
+}
+
+.dropdown {
+    display: inline-block;
+    padding: 10px;
+    position: relative;
+}
+
+#menu {
+    position: absolute;
+    top: 45px;
+    flex-direction: column;
+    background-color: var(--background-color);
+    padding: 5px;
+    padding-top: 25px;
+    border-radius: 10px;
+    border: solid 1px var(--text-color);
+    z-index: 150;
+}
+
+#menu label {
+    display: flex;
+    width: max-content;
+}
+
+#menu button{
+    position: absolute;
+    top: -6px;
+    right: -5px;
+}
+
 
 button {
     border: none;
@@ -162,6 +201,8 @@ option {
     bottom: 0;
     right: 0;
     display: none;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3px);
 }
 
 #parameter_div h2 {

@@ -10,6 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body> 
+
         <div id="mobile_up"></div>
         <div id="mobile_down"></div>
         <div id="inline"><h1>Synapse</h1><h3 style="letter-spacing: 1px;">Version 3.12.5</h3></div>
@@ -54,15 +55,22 @@
 
                 <div id="ask">
                     <p class="title_bigger">Réviser</p>
-                    <select id="pack_title_ask"></select>
+                    <div id="pack_title_ask" class="dropdown">
+                        <button onclick="toggleDropdown()">Choisir la/les leçon(s)</button>
+                        <div id="menu" class="hidden">
+                            <button onclick = "toggleDropdown()">X</button>
+                            <label><input type="checkbox" value="1"> Option 1</label><br>
+                            <label><input type="checkbox" value="2"> Option 2</label><br>
+                            <label><input type="checkbox" value="3"> Option 3</label>
+                        </div>
+                    </div>
+            
                     <select id="questions_type_select">
                         <option value="auto">Autovalidation</option>
                         <option value="qcm">Choix multiples</option>
                         <option value="write">Restitution écrite</option>
                     </select>
-                    <select style="display: none" id="verbs_select">
-
-                    </select>
+                    <select style="display: none" id="verbs_select" ></select>
                     <p id="length_p">Nombre de questions :</p>
                     <div id="ask_length">
                         <input min="1" id="ask_length_input" type="range">

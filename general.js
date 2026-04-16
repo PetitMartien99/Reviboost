@@ -16,7 +16,7 @@ let parameter_toggle = false;
 let sonor_effects = false;
 
 
-document.getElementById("inline").querySelector("h3").innerText = "Version 3.18.15";
+document.getElementById("inline").querySelector("h3").innerText = "Version 3.19.5 BETA";
 
 if (localStorage.getItem("text_color") === null) {
     localStorage.setItem("text_color", "black");
@@ -79,9 +79,10 @@ function getPack(baseName) {
     return null;
 }
 
-document.getElementById("parameter_cover").addEventListener("click", parameter);
+document.getElementById("parameter_cover").onclick = () => {parameter()};
 
 function parameter() {
+    console.log("d");
     if (parameter_toggle === false) {
         parameter_div.style.display = "flex";
         parameter_div.style.opacity = 1;
@@ -139,4 +140,10 @@ function playSound(name) {
     if (!name) return;
     name.currentTime = 0;
     name.play();
+}
+
+
+function toggleDropdown() {
+    document.getElementById("menu").classList.toggle("hidden");
+    document.getElementById("menu").classList.toggle("flex");
 }

@@ -1,5 +1,3 @@
-- Changer l'ordre des leçons et sessions 
-- Mode d'interrogation : relier les réponses;
-- Se faire interroger sur plusieurs leçons en même temps
+- Voir les leçons sélectionées ?
 - Éditer les noms
 - Refactor account.js
