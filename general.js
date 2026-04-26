@@ -1,4 +1,4 @@
-console.log("Let\'s go!");
+console.log("Let\'s go! (general)");
  
 function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
@@ -16,7 +16,7 @@ let parameter_toggle = false;
 let sonor_effects = false;
 
 
-document.getElementById("inline").querySelector("h3").innerText = "Version 3.19.5 BETA";
+document.getElementById("inline").querySelector("h3").innerText = "Version 3.19.12 BETA";
 
 if (localStorage.getItem("text_color") === null) {
     localStorage.setItem("text_color", "black");

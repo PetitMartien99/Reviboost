@@ -1,4 +1,4 @@
-console.log("Here we go !");
+console.log("Here we go ! (account)");
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2?bundle";
 
@@ -15,12 +15,12 @@ let opened_sessions = new Set();
 let whole_data = null; 
 let toggle_account_small = true;
 let toggle_import_3 = true;
-const selects_sessions = [document.getElementById("add_data_input"), document.getElementById("import_data_input")]
+const selects_sessions = [getID("add_data_input"), getID("import_data_input")]
 
 
 getID("see_defs_3").addEventListener("click", see_3_unconnected);
 async function see_3_unconnected() {
-    let id = Number.parseInt(document.getElementById("import_stuff_select").value);
+    let id = Number.parseInt(getID("import_stuff_select").value);
 
     const { data, error } = await supabase
         .from('public_data')
@@ -196,7 +196,7 @@ async function see_3_unconnected() {
 
 getID("see_defs_3_connected").addEventListener("click", see_3_connected);
 async function see_3_connected() {
-    let id = Number.parseInt(document.getElementById("import_stuff_select_connected").value);
+    let id = Number.parseInt(getID("import_stuff_select_connected").value);
 
     const { data, error } = await supabase
         .from('public_data')
@@ -252,7 +252,7 @@ async function update() {
 
         see_profile();
     } else {
-        document.getElementById("parameter_cover").style.display = "none";
+        getID("parameter_cover").style.display = "none";
         document.querySelector("#connection").innerText = "not connected";
         getID("sign_div").style.display = "block";
         getID("account_div").style.display = "none";
@@ -304,13 +304,6 @@ function check_signin() {
         return;
     }
 
-    if (password_input.value.length < 7) {
-        signin_message.innerHTML = "Mot de passe trop court <br>(minimum 7 caractères)";
-        getID("signin_button").disabled = true;
-        signin_message.style.display = "block";
-        return;
-    }
-
     signin_message.innerHTML = "";
     signin_message.style.display = "none";
     getID("signin_button").disabled = false;
@@ -330,12 +323,15 @@ async function sign_in() {
     update();
 
     if (error) {
+        console.log("Error: " + error.code);
         if (error.code === "invalid_credentials") {
             signin_message.innerText = "Identifiants invalides";
+            signin_message.style.display = "block";
         }
     } else {
         mail_input.value = "";
         password_input.value = "";
+        signin_message.style.display = "none";
     }
 }
 
@@ -426,7 +422,7 @@ getID("delete_account").addEventListener("click", () => {
 })
 
 
-document.getElementById("signout").addEventListener("click", signOut);
+getID("signout").addEventListener("click", signOut);
 async function signOut() {
     const { error } = await supabase.auth.signOut();
     update();
@@ -811,10 +807,8 @@ function import_data() {
     for (let lesson of session.lessons) {
         if (!(lesson.name === "text_color")) {
             let secure_name = lesson.name;
-            console.log(lesson.verbs);
             if (lesson.verbs) {
                 secure_name = "?verbs" + lesson.name;
-                console.log("in");
             }
             if (typeof lesson.items !== "string") {
                 localStorage.setItem(secure_name, JSON.stringify(lesson.items));
@@ -1075,23 +1069,23 @@ async function create_session() {
 }
 
 
-document.getElementById("choosing_create").addEventListener("click", () => {
+getID("choosing_create").addEventListener("click", () => {
     choose_account("create");
 });
-document.getElementById("choosing_add").addEventListener("click", () => {
+getID("choosing_add").addEventListener("click", () => {
     choose_account("add");
 });
-document.getElementById("choosing_import").addEventListener("click", () => {
+getID("choosing_import").addEventListener("click", () => {
     choose_account("import");
 });
 
 function choose_account(element) {
-    let create_button = document.getElementById("choosing_create");
-    let add_button = document.getElementById("choosing_add");
-    let import_button = document.getElementById("choosing_import");
-    let create = document.getElementById("create_session_div");
-    let add = document.getElementById("add_data_div");
-    let import_div = document.getElementById("import_data_div");
+    let create_button = getID("choosing_create");
+    let add_button = getID("choosing_add");
+    let import_button = getID("choosing_import");
+    let create = getID("create_session_div");
+    let add = getID("add_data_div");
+    let import_div = getID("import_data_div");
 
     if (element === "create") {
         create_button.style.textDecoration = "underline";
@@ -1120,46 +1114,55 @@ function choose_account(element) {
 }
 
 
-document.getElementById("see_account_small").addEventListener("click", () => {
+getID("see_account_small").addEventListener("click", () => {
     account_small()
 });
 
-document.getElementById("close_account_small").addEventListener("click", () => {
+getID("close_account_small").addEventListener("click", () => {
     account_small()
 });
 
 function account_small() {
     if (toggle_account_small === true) {
         toggle_account_small = false;
-        document.getElementById("account_small").style.display = "flex";
-        document.getElementById("parameter_cover").style.display = "block";
-        document.getElementById("parameter_cover").onclick = () => {account_small()};
+        getID("account_small").style.opacity = 1;
+        getID("account_small").style.display = "flex";
+        getID("parameter_cover").style.display = "block";
+        getID("parameter_cover").onclick = () => {account_small()};
     } else {
         toggle_account_small = true;
-        document.getElementById("account_small").style.display = "none";
-        document.getElementById("parameter_cover").style.display = "none";
-        document.getElementById("parameter_cover").onclick = () => {parameter()};
+        getID("account_small").style.opacity = 0;
+        setTimeout(() => {
+            console.log("here");
+            getID("account_small").style.display = "none";
+        }, 300);
+        getID("parameter_cover").style.display = "none";
+        getID("parameter_cover").onclick = () => {parameter()};
     }
 }
 
-document.getElementById("import_3_button").addEventListener("click", () => {
+getID("import_3_button").addEventListener("click", () => {
     import_div()
 });
 
-document.getElementById("close_import").addEventListener("click", () => {
+getID("close_import").addEventListener("click", () => {
     import_div()
 });
 
 function import_div() {
     if (toggle_import_3 === true) {
         toggle_import_3 = false;
-        document.getElementById("see_3_connected").style.display = "flex";
-        document.getElementById("parameter_cover").style.display = "block";
-        document.getElementById("parameter_cover").onclick = () => {import_div()};
+        getID("see_3_connected").style.opacity = 1;
+        getID("see_3_connected").style.display = "flex";
+        getID("parameter_cover").style.display = "block";
+        getID("parameter_cover").onclick = () => {import_div()};
     } else {
         toggle_import_3 = true;
-        document.getElementById("see_3_connected").style.display = "none";
-        document.getElementById("parameter_cover").style.display = "none";
-        document.getElementById("parameter_cover").onclick = () => {parameter()};
+        getID("see_3_connected").style.opacity = 0;
+        setTimeout(() => {
+            getID("see_3_connected").style.display = "none";
+        }, 300);
+        getID("parameter_cover").style.display = "none";
+        getID("parameter_cover").onclick = () => {parameter()};
     }
 }

@@ -507,6 +507,7 @@ body {
     z-index: 501; 
     width: 80%; 
     height: 600px; 
+    box-shadow: black 5px 5px 20px;
 } 
 
 #close_help { 

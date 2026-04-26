@@ -1,3 +1,4 @@
+console.log("Yaahhhaaaa! (main)")
 
 function clear_local() {
     localStorage.clear();
