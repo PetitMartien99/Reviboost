@@ -23,6 +23,9 @@ const params = new URLSearchParams(window.location.search);
 if (params.has("vaA3")) {
     redirect(2);
 }
+if (params.has("vaA4")) {
+    redirect(4);
+}
 if (params.has("vaA5")) {
     redirect(3);
 }
