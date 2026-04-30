@@ -21,19 +21,52 @@ const selects_sessions = [getID("add_data_input"), getID("import_data_input")]
 const params = new URLSearchParams(window.location.search);
 
 if (params.has("vaA3")) {
-    see_3_unconnected("2");
-    document.location.href = "https://petitmartien99.github.io/Synapse/index.html"
+    redirect(2);
 }
 if (params.has("vaA5")) {
-    see_3_unconnected("3");
-    document.location.href = "https://petitmartien99.github.io/Synapse/index.html"
+    redirect(3);
+}
+
+async function redirect(id) {
+    const { data, error } = await supabase
+        .from('public_data')
+        .select('json_data') 
+        .eq('id', id);
+
+    const new_data = data[0].json_data; 
+
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith("sb-") || key.startsWith("color") || key.startsWith("text_color")) continue;
+        localStorage.removeItem(key);
+        i--;
+    }
+
+    const session = new_data[0];
+
+    for (let lesson of session.lessons) {
+        if (!(lesson.name === "text_color")) {
+            let secure_name = lesson.name;
+            if (lesson.verbs) {
+                secure_name = "?verbs" + lesson.name;
+            }
+            if (lesson.isClass) {
+                secure_name = "?class" + lesson.name;
+            }
+            if (typeof lesson.items !== "string") {
+                localStorage.setItem(secure_name, JSON.stringify(lesson.items));
+            } else {
+                localStorage.setItem(secure_name, lesson.items);
+            }
+        }   
+    }
+    document.location.href = "https://petitmartien99.github.io/Synapse/index.html";
 }
 
 
-getID("see_defs_3").addEventListener("click", see_3_unconnected);
-async function see_3_unconnected(hasID = null) {
-
-    let id = hasID !== null ? hasID : Number.parseInt(getID("import_stuff_select").value);
+getID("see_defs_3").addEventListener("click", () => {see_3_unconnected()});
+async function see_3_unconnected() {
+    let id = Number.parseInt(getID("import_stuff_select").value);
 
     const { data, error } = await supabase
         .from('public_data')
@@ -42,9 +75,8 @@ async function see_3_unconnected(hasID = null) {
 
     const new_data = data[0].json_data; 
 
-    let we_are_verbs = hasID !== null ? true : false;
+    let we_are_verbs = false;
 
-    if (hasID !== null) {
         let data_div = document.createElement("div");
         data_div.className = "see_data_div_3";
         getID("see_3").appendChild(data_div);
@@ -177,7 +209,7 @@ async function see_3_unconnected(hasID = null) {
                 session_div.querySelector("h3").appendChild(unsee);
             }
         }
-    }
+    
 
     if (we_are_verbs) {
         for (let i = 0; i < localStorage.length; i++) {
@@ -194,6 +226,9 @@ async function see_3_unconnected(hasID = null) {
                 let secure_name = lesson.name;
                 if (lesson.verbs) {
                     secure_name = "?verbs" + lesson.name;
+                }
+                if (lesson.isClass) {
+                    secure_name = "?class" + lesson.name;
                 }
                 if (typeof lesson.items !== "string") {
                     localStorage.setItem(secure_name, JSON.stringify(lesson.items));

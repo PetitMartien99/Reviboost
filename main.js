@@ -949,7 +949,6 @@ function check_input(reveal, next, def) {
 
 function askQuestion() {
     if (about_ask.length === asked.length) {
-        console.log("1");
         if (bonus_mode && remaining_bonus > 0) {
             console.log(remaining_bonus);
             let next_batch = [];
