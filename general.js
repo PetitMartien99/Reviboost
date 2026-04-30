@@ -15,8 +15,7 @@ giga_msg.style.display = "none";
 let parameter_toggle = false;
 let sonor_effects = false;
 
-
-document.getElementById("inline").querySelector("h3").innerText = "Version 3.19.12 BETA";
+document.getElementById("inline").querySelector("h3").innerText = "v3.3.19.21 BÊTA";
 
 if (localStorage.getItem("text_color") === null) {
     localStorage.setItem("text_color", "black");
@@ -82,7 +81,6 @@ function getPack(baseName) {
 document.getElementById("parameter_cover").onclick = () => {parameter()};
 
 function parameter() {
-    console.log("d");
     if (parameter_toggle === false) {
         parameter_div.style.display = "flex";
         parameter_div.style.opacity = 1;

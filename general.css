@@ -292,3 +292,8 @@ option {
 #inline:hover {
     transform: scale(1.03);
 }
+
+
+#editor {
+    min-height: 200px;
+}

@@ -1,1 +1,8 @@
 - Éditer les noms
+
+COURS : 
+    - Le remplir avec du trumbowyg
+    - Faire garder la valeur dans le localStorage
+    - Rajouter un bouton pour toggle la toolbox
+    - responsive...
+    - Ajouter l'aide

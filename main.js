@@ -140,7 +140,6 @@ function toggle_ask_def() {
     document.getElementById("ask_button").style.display = "block";
     pack_title_ask.style.display = "block";
 
-
     let get_stuff = get_pack_value();
 
     if (get_stuff.valid === false) {
@@ -275,7 +274,6 @@ updateTypeUI_add();
 def_type.addEventListener("input", updateTypeUI_add);
 
 pack_title_add.addEventListener("change", () => {
-    console.log("add_change");
     if (localStorage.getItem(pack_title_add.value) !== null) {
         toggle_add_def("normal");
     } else if (localStorage.getItem("?verbs" + pack_title_add.value) !== null) {
@@ -296,10 +294,10 @@ function toggle_verbs_select() {
     if (document.getElementById("questions_type_select").value === "choice") {
         select.style.display = "block";
         select.innerHTML = "";
-        for (let i = 0; i < JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).columns.length; i++) {
+        for (let i = 0; i < JSON.parse(localStorage.getItem("?verbs" + get_pack_value().lessons[0])).columns.length; i++) {
             let option = document.createElement("option");
-            option.value =  JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).columns[i];
-            option.innerText =  JSON.parse(localStorage.getItem("?verbs" + pack_title_ask.value)).columns[i];
+            option.value =  JSON.parse(localStorage.getItem("?verbs" + get_pack_value().lessons[0])).columns[i];
+            option.innerText =  JSON.parse(localStorage.getItem("?verbs" + get_pack_value().lessons[0])).columns[i];
             select.appendChild(option);
         }
         
@@ -405,14 +403,16 @@ function actu_files() {
     
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key.startsWith("color") || key.startsWith("text_color") || key.startsWith("sb-")) continue;
-
-        let displayName = key.startsWith("?verbs") ? key.slice(6) : key;
+        if (key.startsWith("color") || key.startsWith("text_color") || key.startsWith("sb-") || key.startsWith("tinymce-custom-colors-forecolor") || key.startsWith("tinymce-custom-colors-hilitecolor")) continue;
+        let displayName = key.startsWith("?verbs") || key.startsWith("?class")? key.slice(6) : key;
 
         let option = document.createElement("option");
         option.value = displayName;
         option.innerText = displayName;
-        selects_lessons.appendChild(option);
+        if (!key.startsWith("?class")) {
+            selects_lessons.appendChild(option);
+        }
+            
         if (selects_lessons.options.length > 0) {
             selects_lessons.value = selects_lessons.options[0].value;
         }
@@ -424,8 +424,10 @@ function actu_files() {
                 label.querySelector("input").checked = true;
             }
         });
-        pack_title_ask.querySelector("#menu").appendChild(label);
-        pack_title_ask.querySelector("#menu").appendChild(document.createElement("br"));
+        if (!(key.startsWith("?class"))) {
+            pack_title_ask.querySelector("#menu").appendChild(label);
+            pack_title_ask.querySelector("#menu").appendChild(document.createElement("br"));
+        }
 
         let div = document.createElement("div");
         div.className = "file";
@@ -433,24 +435,26 @@ function actu_files() {
         div.innerHTML = `<span>${displayName}</span>`;
         fragment.appendChild(div); 
         
-        div.addEventListener("click", () => { 
-            let isVerb = key.startsWith("?verbs"); 
-            let safeName = isVerb ? key.slice(6) : key; 
-            pack_title_add.value = safeName; 
-            document.querySelectorAll("#menu label").forEach((e) => {
-                if (e.innerText.includes(safeName)) {
-                    if (e.querySelector("input").checked === true) {
-                        e.querySelector("input").checked = false;
-                    } else {
-                        e.querySelector("input").checked = true;
+        if (!(key.startsWith("?class"))) {
+            div.addEventListener("click", () => { 
+                let isVerb = key.startsWith("?verbs"); 
+                let safeName = isVerb ? key.slice(6) : key; 
+                pack_title_add.value = safeName; 
+                document.querySelectorAll("#menu label").forEach((e) => {
+                    if (e.innerText.includes(safeName)) {
+                        if (e.querySelector("input").checked === true) {
+                            e.querySelector("input").checked = false;
+                        } else {
+                            e.querySelector("input").checked = true;
+                        }
+                        
                     }
-                    
-                }
+                });
+                toggle_add_def(isVerb ? "verb" : "normal"); 
+                toggle_ask_def(); 
             });
-            toggle_add_def(isVerb ? "verb" : "normal"); 
-            toggle_ask_def(); 
-        });
-
+        }
+        
         let delete_button = document.createElement("button");
         delete_button.className = "delete_button";
         delete_button.innerHTML = "<div class='file_big_image'></div>";
@@ -461,7 +465,7 @@ function actu_files() {
         };
         div.appendChild(delete_button);
 
-        if (!key.startsWith("?verbs")) {
+        if (!key.startsWith("?verbs") && !key.startsWith("?class")) {
 
             const packItems = JSON.parse(localStorage.getItem(key));
             if (packItems.length === 0) {
@@ -488,7 +492,7 @@ function actu_files() {
                 div.appendChild(ul);
             }
 
-        } else {
+        } else if (key.startsWith("?verbs")) {
 
             let verbsData = JSON.parse(localStorage.getItem(key));
             let tab = document.createElement("div");
@@ -560,11 +564,26 @@ function actu_files() {
                 tab.appendChild(addRowDiv);
             }
 
+        } else if (key.startsWith("?class")) {
+            const packItems = JSON.parse(localStorage.getItem("?class" + key));
+            let editor = document.createElement("div");
+            editor.className = "editor";
+            editor.style.display = "flex";
+            div.appendChild(editor);
+            $(editor).trumbowyg({
+                btns: [
+                  ['formatting'],
+                  ['bold', 'italic', 'underline'],
+                  ['foreColor', 'backColor'],
+                  ['unorderedList', 'orderedList'],
+                  ['removeformat']
+                ]
+              });
         }
 
             let test = true;
-            if (!(key.startsWith("?verbs"))) {
-                if (JSON.parse(localStorage.getItem(key)).length === 0) {
+            if (!key.startsWith("?verbs")) {
+                if (JSON.parse(localStorage.getItem(key)).length === 0 && !key.startsWith("?class")) {
                     test = false;
                 }
             }
@@ -574,7 +593,15 @@ function actu_files() {
                 unsee.style.color = "var(--text-color)";
                 unsee.className = "unsee";
 
-                let contentToHide = key.startsWith("?verbs") ? div.querySelector(".verbs-grid") : div.querySelectorAll("li");
+                let contentToHide;
+
+                if (key.startsWith("?verbs")) {
+                    contentToHide = div.querySelector(".verbs-grid");
+                } else if (key.startsWith("?class")) {
+                    contentToHide = div.querySelector("div");
+                } else {
+                    contentToHide = div.querySelectorAll("li");
+                }
 
                 div.querySelector("span").addEventListener("click", () => {
                     if (contentToHide instanceof NodeList) {
@@ -735,6 +762,8 @@ function createPack() {
             columns: ["Infinitif", "Présent", "Prétérit", "Participe passé", "Traduction"],
             verbs: []
         }));
+    } else if (type === "class") {
+        localStorage.setItem("?class" + packName, "[]");
     }
 
     

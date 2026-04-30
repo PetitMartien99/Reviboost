@@ -18,152 +18,164 @@ let toggle_import_3 = true;
 const selects_sessions = [getID("add_data_input"), getID("import_data_input")]
 
 
+const params = new URLSearchParams(window.location.search);
+
+if (params.has("vaA3")) {
+    see_3_unconnected("2");
+    document.location.href = "https://petitmartien99.github.io/Synapse/index.html"
+}
+if (params.has("vaA5")) {
+    see_3_unconnected("3");
+    document.location.href = "https://petitmartien99.github.io/Synapse/index.html"
+}
+
+
 getID("see_defs_3").addEventListener("click", see_3_unconnected);
-async function see_3_unconnected() {
-    let id = Number.parseInt(getID("import_stuff_select").value);
+async function see_3_unconnected(hasID = null) {
+
+    let id = hasID !== null ? hasID : Number.parseInt(getID("import_stuff_select").value);
 
     const { data, error } = await supabase
         .from('public_data')
         .select('json_data') 
         .eq('id', id);
 
-   if (error) console.log(error);
-
-
     const new_data = data[0].json_data; 
 
-    let we_are_verbs = false;
+    let we_are_verbs = hasID !== null ? true : false;
 
-    let data_div = document.createElement("div");
-    data_div.className = "see_data_div_3";
-    getID("see_3").appendChild(data_div);
+    if (hasID !== null) {
+        let data_div = document.createElement("div");
+        data_div.className = "see_data_div_3";
+        getID("see_3").appendChild(data_div);
 
-    for (let i = 0; i < new_data.length; i++) {
-        const session = new_data[i];
-        let session_div = document.createElement("div");
-        session_div.className = "session_div";
-        session_div.style.border = "solid 2px var(--text-color)";
-        session_div.innerHTML = "<h3>" + session.name + "</h3>";
-        data_div.appendChild(session_div);
+        for (let i = 0; i < new_data.length; i++) {
+            const session = new_data[i];
+            let session_div = document.createElement("div");
+            session_div.className = "session_div";
+            session_div.style.border = "solid 2px var(--text-color)";
+            session_div.innerHTML = "<h3>" + session.name + "</h3>";
+            data_div.appendChild(session_div);
 
-        for (let j = 0; j < session.lessons.length; j++) {
-            const lesson = session.lessons[j];
-            if (lesson.name === "text_color") {
-                continue;
-            }
-            let lesson_div = document.createElement("div");
-            lesson_div.className = "lesson_div";
-            lesson_div.style.border = "solid 1px var(--text-color)";
-            lesson_div.innerHTML = "<h4>" + lesson.name + "</h4>";
-            session_div.appendChild(lesson_div);
-
-            let ul = document.createElement("ul");
-            lesson_div.appendChild(ul);
-
-            if (!lesson.items || !lesson.items.length) {
-                if (!lesson.verbs) {
-                    let p = document.createElement("p");
-                    p.innerText = "La leçon est vide";
-                    lesson_div.appendChild(p);
+            for (let j = 0; j < session.lessons.length; j++) {
+                const lesson = session.lessons[j];
+                if (lesson.name === "text_color") {
                     continue;
                 }
-            }
+                let lesson_div = document.createElement("div");
+                lesson_div.className = "lesson_div";
+                lesson_div.style.border = "solid 1px var(--text-color)";
+                lesson_div.innerHTML = "<h4>" + lesson.name + "</h4>";
+                session_div.appendChild(lesson_div);
 
-            let items = lesson.items;
-        
-            if (!lesson.verbs) {
-                for (let k = 0; k < items.length; k++) {
-                    const item = items[k];
-                    let new_li = document.createElement("li");
-                    if (item.kind === "egal") new_li.innerHTML = item.title + " = " + item.def;
-                    else {
-                        new_li.innerHTML = "<div class='titles'>" + item.title + " :</div> " + item.def;
+                let ul = document.createElement("ul");
+                lesson_div.appendChild(ul);
+
+                if (!lesson.items || !lesson.items.length) {
+                    if (!lesson.verbs) {
+                        let p = document.createElement("p");
+                        p.innerText = "La leçon est vide";
+                        lesson_div.appendChild(p);
+                        continue;
                     }
-
-
-                    ul.appendChild(new_li);
                 }
-            } else {
 
-                we_are_verbs = true;
-
-                let tab = document.createElement("div");
-                tab.className = "verbs-grid";
-                let verbs = lesson.items;
-                lesson_div.appendChild(tab);
-                let header_div = document.createElement("div");
-                header_div.className = "header";
-                header_div.style.gridTemplateColumns = `repeat(${verbs.columns.length}, minmax(65px, 1fr)) 0.15fr`;
-                tab.appendChild(header_div);
-                verbs.columns.forEach((e, colIndex) => {
-                    let input = document.createElement("input");
-                    header_div.appendChild(input);
-                    input.value = e;
-                });
-
-                if (verbs.verbs.length !== 0) {
-                    verbs.verbs.forEach((e, rowIndex) => {
-                        let row_div = document.createElement("div");
-                        row_div.className = "row";
-                        tab.appendChild(row_div);
-                        e.forEach((v) => {
-                            let input = document.createElement("input");
-                            row_div.appendChild(input);
-                            input.value = v;
-                        });
-    
-                        row_div.style.gridTemplateColumns = `repeat(${e.length}, minmax(65px, 1fr)) 0.15fr`;
-                    });
-                }            
-            } 
+                let items = lesson.items;
             
-            if (!we_are_verbs) {
-                let delete_session = document.createElement("button");
+                if (!lesson.verbs) {
+                    for (let k = 0; k < items.length; k++) {
+                        const item = items[k];
+                        let new_li = document.createElement("li");
+                        if (item.kind === "egal") new_li.innerHTML = item.title + " = " + item.def;
+                        else {
+                            new_li.innerHTML = "<div class='titles'>" + item.title + " :</div> " + item.def;
+                        }
+
+
+                        ul.appendChild(new_li);
+                    }
+                } else {
+
+                    we_are_verbs = true;
+
+                    let tab = document.createElement("div");
+                    tab.className = "verbs-grid";
+                    let verbs = lesson.items;
+                    lesson_div.appendChild(tab);
+                    let header_div = document.createElement("div");
+                    header_div.className = "header";
+                    header_div.style.gridTemplateColumns = `repeat(${verbs.columns.length}, minmax(65px, 1fr)) 0.15fr`;
+                    tab.appendChild(header_div);
+                    verbs.columns.forEach((e, colIndex) => {
+                        let input = document.createElement("input");
+                        header_div.appendChild(input);
+                        input.value = e;
+                    });
+
+                    if (verbs.verbs.length !== 0) {
+                        verbs.verbs.forEach((e, rowIndex) => {
+                            let row_div = document.createElement("div");
+                            row_div.className = "row";
+                            tab.appendChild(row_div);
+                            e.forEach((v) => {
+                                let input = document.createElement("input");
+                                row_div.appendChild(input);
+                                input.value = v;
+                            });
+        
+                            row_div.style.gridTemplateColumns = `repeat(${e.length}, minmax(65px, 1fr)) 0.15fr`;
+                        });
+                    }            
+                } 
+                
+                if (!we_are_verbs) {
+                    let delete_session = document.createElement("button");
+                    delete_session.innerText = "X";
+                    delete_session.style.color = "var(--text-color)";
+                    delete_session.className = "delete_session";
+                    session_div.appendChild(delete_session); 
+                    delete_session.addEventListener("click", e => { e.stopPropagation(); data_div.removeChild(session_div); });
+                }
+
+            }
+            
+            if (we_are_verbs) {
+            let delete_session = document.createElement("button");
                 delete_session.innerText = "X";
                 delete_session.style.color = "var(--text-color)";
                 delete_session.className = "delete_session";
                 session_div.appendChild(delete_session); 
-                delete_session.addEventListener("click", e => { e.stopPropagation(); data_div.removeChild(session_div); });
+                delete_session.addEventListener("click", e => { e.stopPropagation(); getID("see_3").removeChild(data_div); });   
             }
 
-        }
-        
-        if (we_are_verbs) {
-           let delete_session = document.createElement("button");
-            delete_session.innerText = "X";
-            delete_session.style.color = "var(--text-color)";
-            delete_session.className = "delete_session";
-            session_div.appendChild(delete_session); 
-            delete_session.addEventListener("click", e => { e.stopPropagation(); getID("see_3").removeChild(data_div); });   
-        }
 
-
-        if (session.lessons.length >= 1) {
-            let unsee = document.createElement("button");
-            unsee.innerText = ">";
-            unsee.style.color = "var(--text-color)";
-            unsee.className = "unsee";
-            let to_hide = session_div.querySelectorAll(".lesson_div");
-            session_div.querySelector("h3").addEventListener("click", () => {
-                const name = session.name;
-                if (to_hide[0].style.display === "none") {
+            if (session.lessons.length >= 1) {
+                let unsee = document.createElement("button");
+                unsee.innerText = ">";
+                unsee.style.color = "var(--text-color)";
+                unsee.className = "unsee";
+                let to_hide = session_div.querySelectorAll(".lesson_div");
+                session_div.querySelector("h3").addEventListener("click", () => {
+                    const name = session.name;
+                    if (to_hide[0].style.display === "none") {
+                        to_hide.forEach(e => e.style.display = "block");
+                        unsee.innerText = "v";
+                        opened_sessions.add(name);
+                    } else {
+                        to_hide.forEach(e => e.style.display = "none");
+                        unsee.innerText = ">";
+                        opened_sessions.delete(name);
+                    }
+                });
+                if (opened_sessions.has(session.name)) {
                     to_hide.forEach(e => e.style.display = "block");
                     unsee.innerText = "v";
-                    opened_sessions.add(name);
                 } else {
                     to_hide.forEach(e => e.style.display = "none");
                     unsee.innerText = ">";
-                    opened_sessions.delete(name);
                 }
-            });
-            if (opened_sessions.has(session.name)) {
-                to_hide.forEach(e => e.style.display = "block");
-                unsee.innerText = "v";
-            } else {
-                to_hide.forEach(e => e.style.display = "none");
-                unsee.innerText = ">";
+                session_div.querySelector("h3").appendChild(unsee);
             }
-            session_div.querySelector("h3").appendChild(unsee);
         }
     }
 
@@ -224,6 +236,7 @@ async function see_3_connected() {
     .update({ json_data: whole_data })
     .eq('uid', user_let.id);
     see_profile();
+    import_div();
 }
 
 
@@ -458,7 +471,7 @@ async function see_profile() {
     }
 
     selects_sessions.forEach((e) => {
-        e.value = "";
+        e.innerHTML = "";
     });
 
     for (let i = 0; i < whole_data.length; i++) {
@@ -810,6 +823,9 @@ function import_data() {
             if (lesson.verbs) {
                 secure_name = "?verbs" + lesson.name;
             }
+            if (lesson.isClass) {
+                secure_name = "?class" + lesson.name;
+            }
             if (typeof lesson.items !== "string") {
                 localStorage.setItem(secure_name, JSON.stringify(lesson.items));
             } else {
@@ -932,7 +948,7 @@ async function exporting_data() {
     let newStuff = [];
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key.startsWith("sb-") || key === "color" || key.startsWith("text_color")) continue;
+        if (key.startsWith("sb-") || key === "color" || key.startsWith("text_color") || key.startsWith("tinymce-custom-colors-hilitecolor") || key.startsWith("tinymce-custom-colors-forecolor")) continue;
     
         let items = localStorage.getItem(key);
         try {
@@ -944,6 +960,12 @@ async function exporting_data() {
             newStuff.push({
                 name: key.substring(6, key.length),
                 verbs: true,
+                items: items
+            });
+        } else if (key.startsWith("?class")) {
+            newStuff.push({
+                name: key.substring(6, key.length),
+                isClass: true,
                 items: items
             });
         } else {
