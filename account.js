@@ -570,7 +570,7 @@ async function see_profile() {
             delete_lesson.className = "delete_lesson";
             lesson_div.appendChild(delete_lesson);
 
-            if (!(lesson.verbs === true)) {
+            if (!(lesson.verbs === true) && !(lesson.isClass === true)) {
                 let ul = document.createElement("ul");
                 lesson_div.appendChild(ul);
 
@@ -607,7 +607,7 @@ async function see_profile() {
 
                     ul.appendChild(new_li);
                 }
-            } else {
+            } else if (lesson.verbs === true) {
 
                 if (!lesson.items) {
                     let p = document.createElement("p");
@@ -693,6 +693,56 @@ async function see_profile() {
                 row_div.appendChild(nothing_div);
 
                 row_div.style.gridTemplateColumns = `repeat(${verbs.columns.length}, minmax(65px, 1fr)) 0.15fr`;
+            } else if (lesson.isClass === true) {
+                let editor = document.createElement("div");
+                editor.className = "editor";
+                
+                lesson_div.style.padding = "0px";
+                lesson_div.querySelector("h4").style.marginLeft = "10px";
+                lesson_div.querySelector("h4").style.marginTop = "10px";
+                lesson_div.querySelector("h4").style.fontSize = "20px";
+                
+                lesson_div.appendChild(editor);
+                
+                if ($(editor).data('trumbowyg')) {
+                    $(editor).trumbowyg('destroy');
+                }
+
+                $.trumbowyg.langs.fr.backColor = "Surlignage";
+                $.trumbowyg.langs.fr.removeformat = "Enlever couleurs";
+                
+                $(editor).trumbowyg({
+                    lang: 'fr',
+                    semantic: false,
+                    disabled: true,
+                    btns: [
+                        ['h1', 'h2'],
+                        ['bold', 'italic', 'underline'],
+                        ['foreColor', 'backColor'],
+                        ['removeformat']
+                    ]
+                }).on('tbwinit', function () {
+                    $(editor).trumbowyg('html', lesson.items);
+                });
+                
+                $(editor).on('keydown', function (e) {
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                
+                        document.execCommand('insertText', false, '        ');
+                    }
+                });
+
+                editor.dataset.twInit = "1";
+
+                let timeout;
+
+                editor.addEventListener("input", () => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                    localStorage.setItem(lesson.name, $(editor).trumbowyg('html'));
+                    }, 300);
+                });
             }
 
             delete_lesson.addEventListener("click", () => delete_object("lesson", lesson_div));

@@ -110,9 +110,10 @@ body {
     text-align: left;
     position: fixed;
     left: 5px;
-    bottom: 10px;
+    bottom: 0px;
     width: 350px;
     transition: opacity 0.3s;
+    border-radius: 0 10px 0 0;
 }
 
 
@@ -174,6 +175,14 @@ button:disabled {
 .session_div:hover, .lesson_div:hover {
     box-shadow: 0 8px 20px rgba(0,0,0,0.5);
     transform: translateY(-4px);
+}
+
+.lesson_div {
+    max-width: 98%;
+}
+
+.session_div {
+    max-width: 91%;
 }
 
 .titles {
@@ -262,7 +271,7 @@ button:disabled {
 #changing_div {
     display: flex;
     flex-direction: row;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
     height: 250px;
     margin-top: 100px;
@@ -271,6 +280,21 @@ button:disabled {
     left: 150px;
     right: 150px;
     z-index: 2;
+}
+
+@media screen and (width <= 900px) {
+    #changing_div {
+        left: 50px;
+        right: 50px
+    }
+}
+
+#changing_div h2, #changing_div p {
+    text-align: center;
+}
+
+#changing_div h2 {
+    text-decoration: underline;
 }
 
 #import_data_div, #add_data_div, #create_session_div {
@@ -288,9 +312,18 @@ button:disabled {
     transform: scale(1.03);
 }
 
+#add_data_div {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
 #danger_import, #danger_export {
     max-width: 300px;
 }
+#danger_import {
+    padding-left: 10px;
+}
+
 
 #choosing_stuff {
     display: none;
@@ -339,6 +372,10 @@ button:disabled {
 
     #see_data_div_id h2 {
         top: 370px;
+    }
+
+    .beetween {
+        display: none;
     }
 }
 
@@ -576,7 +613,7 @@ li {
     
     #see_3_connected p {
         width: 300px;
-    }
+    } 
 }
 
 @media screen and (width <= 450px) {
@@ -598,4 +635,42 @@ li:hover {
 
 #delete_account {
     width: 240px;
+}
+
+
+
+.trumbowyg-button-pane {
+    display: none;
+}
+
+.trumbowyg-box {
+    border-radius: 0 0 10px 10px;
+}
+
+
+/*!FIXED*/
+
+@media screen and (width <= 900px) {
+    #changing_div, #see_data_div_id {
+        position: relative;
+    }
+
+    #see_data_div_id, #see_data_container {
+        margin-top: 0;
+    }
+
+    #ultra_container {
+        display: none;
+    }
+    
+    #changing_div {
+        height: fit-content;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+    
+    #see_data_div_id h2 {
+        position: relative;
+        top: 0px;
+    }
 }

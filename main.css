@@ -91,6 +91,10 @@ body {
     justify-content: center;
 }
 
+#add_switch p {
+    text-align: center;
+}
+
 #create, #add, #ask {
     width: 300px;
     transition: transform 0.5s ease-in-out;
@@ -120,12 +124,17 @@ body {
     width: 28px;
 }
 
+#no_hover_button:hover {
+    transform: scale(1.1) !important;
+    box-shadow: none !important;
+}
+
 /* ===== Fichiers ===== */
 .file {
     border: solid 2px var(--text-color);
-    padding: 10px;
     border-radius: 12px;
     width: fit-content;
+    max-width: 92%;
     margin: 5px;
     position: relative;
     transition: border 0.5s, transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
@@ -152,7 +161,7 @@ body {
 
 .file ul {
     list-style-type: none; 
-    padding-left: 30px;
+    padding-left: 5px;
     margin: 0;
 }
 
@@ -270,6 +279,7 @@ body {
 
 #length_p {
     margin-bottom: -10px;
+    text-align: center;
 }
 
 /* ===== Titres ===== */
@@ -283,6 +293,7 @@ body {
 .title_bigger {
     font-size: 23px;
     font-weight: bold;
+    text-decoration: underline;
 }
 
 /* ===== Results ===== */
@@ -333,7 +344,7 @@ body {
     margin-top: 0px;
     background-color: transparent;
     position: fixed;
-    top: 50px;
+    top: 10px;
     left: 50%;
     transform: translate(-50%, 0);
     z-index: 91;
@@ -342,10 +353,11 @@ body {
 #lessons {
     z-index: 90;
     position: fixed;
-    top: 425px;
+    top: 385px;
     left: 50%;
     transform: translate(-50%, 0);
     background-color: transparent;
+    text-decoration: underline;
 }
 
 #ultra_container {
@@ -354,7 +366,7 @@ body {
     left: 0;
     right: 0;
     top: 0;
-    height: 475px;
+    height: 435px;
     z-index: 60;
     display: block;
 }
@@ -364,7 +376,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 480px;
+    margin-top: 440px;
 }
 
 /* ===== Mobile Up / Down ===== */
@@ -387,12 +399,6 @@ body {
     height: 55px;
     left: 0;
     right: 0;
-}
-
-.beetween { 
-    width: 2px; height: 150px; 
-    background-color: var(--text-color); 
-    transition: background-color 0.5s; 
 }
 
 /* ===== Ask div overlay ===== */
@@ -602,7 +608,7 @@ body {
 @media screen and (max-width: 750px) {
     .file li {
         font-size: 18px;
-        flex-direction: column;
+        flex-direction: row;
     }
 
     .delete_def {
@@ -649,6 +655,7 @@ body {
         position: relative;
         top: 0;
         margin-top: 25px;
+        text-align: center;
     }
 
     #ultra_container, #container {
@@ -662,10 +669,6 @@ body {
         margin-top: 10px;
     }
 
-    #mobile_up {
-        z-index: 70;
-    }
-
     #help {
         font-size: 27px; 
         margin: 5px;
@@ -673,7 +676,7 @@ body {
 
     #help_div {
         width: 80%;
-        height: 600px;
+        height: 99%;
         font-size: 15px;
     }
 
@@ -687,7 +690,7 @@ body {
     }
 
     #choosing_help button {
-        font-size: 18px;
+        font-size: 15px;
     }
 
     #choosing_stuff {
@@ -710,6 +713,22 @@ body {
     }
 }
 
+@media screen and (max-width: 1120px) {
+    #mobile_up {
+        z-index: 70;
+    }
+
+    #ultra_container {
+        height: 445px;
+    }
+    #container {
+        top: 35px;
+    }
+    #lessons {
+        top: 395px;
+    }
+}
+
 
 /* Petit écran ≤ 450px */
 @media screen and (max-width: 450px) {
@@ -719,8 +738,8 @@ body {
     }
 
     #help_div {
-        font-size: 14px;
-        height: 90%;
+        font-size: 13.5px;
+        height: 93%;
     }
 
     #ask_div p {
@@ -749,6 +768,10 @@ body {
 
     #quit_lesson img {
         width: 40px;
+    }
+
+    #lessons {
+        top: 20px;
     }
 }
 

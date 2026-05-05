@@ -1,64 +1,61 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Test Trumbowyg</title>
+  <meta charset="UTF-8" />
+  <title>Mind Elixir Demo</title>
 
-  <!-- jQuery (obligatoire pour Trumbowyg) -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <!-- Trumbowyg -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2.28.0/dist/ui/trumbowyg.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.28.0/dist/trumbowyg.min.js"></script>
-
-  <!-- Plugins couleurs -->
-  <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.28.0/dist/plugins/colors/trumbowyg.colors.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2.28.0/dist/plugins/colors/ui/trumbowyg.colors.min.css">
+  <!-- CSS Mind Elixir -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mind-elixir/dist/style.css">
 
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    #editor {
-      min-height: 200px;
+    #map {
+      height: 500px;
+      width: 500px;
     }
 
     button {
+      padding: 8px 12px;
       cursor: pointer;
     }
-
   </style>
 </head>
+
 <body>
 
-  <h2>Éditeur Trumbowyg</h2>
+  <div id="toolbar">
+    <button id="exportBtn">Log JSON</button>
+  </div>
 
-  <!-- Zone éditable -->
-  <div id="editor"></div>
+  <div id="map"></div>
 
-  <button id="logBtn">Afficher contenu</button>
-
-  <script>
-    // Init éditeur
-    $('#editor').trumbowyg({
-      btns: [
-        ['formatting'],
-        ['bold', 'italic', 'underline'],
-        ['foreColor', 'backColor'],
-        ['unorderedList', 'orderedList'],
-        ['removeformat']
-      ]
-    });
-
-    // Log contenu
-    document.getElementById('logBtn').addEventListener('click', () => {
-      const html = $('#editor').trumbowyg('html');
-      $('#editor').trumbowyg('html', "stuff");
-      $('#editor').trumbowyg('html', html);
-      console.log("HTML :", html);
-    });
+  <script type="module">
+    import MindElixir from 'mind-elixir';
+  
+    
+    let mind = new MindElixir({
+    el: '#map',
+    direction: MindElixir.LEFT,
+    // or set as data that is return from `.getAllData()`
+    // data: {...},
+    draggable: true, // default true
+    contextMenu: true, // default true
+    toolBar: true, // default true
+    nodeMenu: true, // default true
+    keypress: true, // default true
+  })
+  mind.init(MindElixir.new('new topic'))
+  
+    document.getElementById('exportBtn').onclick = () => {
+      console.log(JSON.stringify(mind.getData(), null, 2));
+    };
   </script>
 
 </body>

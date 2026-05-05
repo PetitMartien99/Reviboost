@@ -2,9 +2,6 @@
 <html> 
     <head>
         <title>Synapse</title>
-        <link rel="icon" href="Icon.png">
-        <link rel="stylesheet" href="main.css">
-        <link rel="stylesheet" href="general.css">
 
         <!-- jQuery (obligatoire pour Trumbowyg) -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -12,10 +9,18 @@
         <!-- Trumbowyg -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2.28.0/dist/ui/trumbowyg.min.css">
         <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.28.0/dist/trumbowyg.min.js"></script>
+        
+        <!--Plugin français-->
+        <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.28.0/dist/langs/fr.min.js"></script>
 
         <!-- Plugins couleurs -->
         <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.28.0/dist/plugins/colors/trumbowyg.colors.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2.28.0/dist/plugins/colors/ui/trumbowyg.colors.min.css">
+
+        <link rel="icon" href="Icon.png">
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="general.css">
+
 
         <meta name="robots" content="noindex,nofollow">
         <meta charset="UTF-8" />
@@ -41,7 +46,7 @@
                     <input id="pack_title" type="text" placeholder="Nom de la leçon">
                     <select id="lesson_select">
                         <option value="normal">Defs, dates et égalités</option>
-                        <!-- <option value="class">Cours</option> -->
+                        <option value="class">Cours</option>
                         <option value="verbs">Verbes irréguliers</option>
                     </select>
                     <button onclick="createPack()">Créer la leçon</button>
@@ -54,7 +59,7 @@
                     <select id="pack_title_add"></select>
                     <div id="add_switch">
                         <input id="def_title" type="text" placeholder="Nom de la définition">
-                        <textarea id="def" cols="20" rows="5" placeholder="Définition"></textarea>
+                        <textarea id="def" cols="20" rows="4" placeholder="Définition"></textarea>
                         <select id="def_type">
                             <option value="defs">Définition</option>
                             <option value="dates">Date</option>
@@ -71,7 +76,7 @@
                     <div id="pack_title_ask" class="dropdown">
                         <button onclick="toggleDropdown()">Choisir la/les leçon(s)</button>
                         <div id="menu" class="hidden">
-                            <button onclick = "toggleDropdown()">X</button>
+                            <button id="no_hover_button" style="border: none;" onclick="toggleDropdown()">X</button>
                             <label><input type="checkbox" value="1"> Option 1</label><br>
                             <label><input type="checkbox" value="2"> Option 2</label><br>
                             <label><input type="checkbox" value="3"> Option 3</label>
@@ -122,7 +127,7 @@
             <p>Synapse est un projet que j'ai commencé un dimanche après-midi quand je m'ennuyais. Près de 200 heures de codage plus tard, c'est le site que vous consultez.
                 <br>Je travaille encore dessus dès que j'ai le temps; de nouvelles fonctionalités arrivent régulièrement. 
                 <br>Et, petit rappel : ce site reste un petit (enfin plus si petit...) projet extrascolaire, pas une entreprise professionnelle. Les bugs arrivent, tout n'est pas parfait, mais je fais ce que je peux. 
-                <br>Merci à vous d'utiliser mon site : c'était un rêve d'enfant !
+                <br>Merci beaucoup d'utiliser mon site : c'était un rêve d'enfant !
                 <br><br>Alban (le 3ème)
             </p>
         </div>
@@ -136,6 +141,7 @@
                     <li>Tu stockes tes packs de leçons dans ton Compte.</li>
                     <li>Tu récupères tes packs de leçons archivés quand tu changes de matière.</li>
                 </ol> 
+                <p style="font-size: 16px;">Le site fonctionne mieux avec Firefox sur écran large</p>
             
             <div id="choosing_help">
                 <button onclick="choose_help('1')" id="choosing_help1">Page Accueil</button>
@@ -147,7 +153,7 @@
                     <ul>
                         <li><b>Les "leçons ouvertes"</b> : les leçons actuellement ouvertes dans l'accueil (elles restent même si tu quittes la page).</li>
                 
-                        <li><b>Créer une leçon</b> : choisis un titre et un type de leçon (définitions, dates et égalités ou verbes irréguliers).</li>
+                        <li><b>Créer une leçon</b> : choisis un titre et un type de leçon (définitions dates et égalités, verbes irréguliers ou cours).</li>
                 
                         <li><b>Ajouter</b> :
                             <ul>
@@ -192,7 +198,6 @@
                     </ul>
                 </div> 
             </p>
-            <p>Le site fonctionne mieux avec Firefox</p>
         </div>
 
         <div id="help_cover"></div>

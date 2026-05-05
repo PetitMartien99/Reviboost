@@ -81,16 +81,23 @@ function toggle_add_def(what) {
     pack_title_add.style.display = "block";
 
     let hasLessons = false;
+    let hasClass = false;
+
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (!key.startsWith("color") && !key.startsWith("text_color") && !key.startsWith("sb-")) {
+
+        if (key.startsWith("?class")) {
+            hasClass = true;
+        }
+
+        if (!key.startsWith("color") && !key.startsWith("text_color") && !key.startsWith("sb-") && !key.startsWith("?class")) {
             hasLessons = true;
         }
     }
 
     if (!hasLessons) {
         pack_title_add.style.display = "none";
-        document.getElementById("add_switch").innerHTML = '<p>Aucune leçon présente</p>';
+        document.getElementById("add_switch").innerHTML = hasClass ? '<p>Pour ajouter des defs, créez une leçon de verbes ou de defs.</p>' : '<p>Aucune leçon présente</p>';
         document.getElementById("add_pack_button").innerText = "";
         return;
     }
@@ -116,9 +123,14 @@ function toggle_add_def(what) {
 function toggle_ask_def() {
 
     let hasLessons = false;
+    let hasClass = false;
+
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (!key.startsWith("color") && !key.startsWith("text_color") && !key.startsWith("sb-")) {
+        if (key.startsWith("?class")) {
+            hasClass = true;
+        }
+        if (!key.startsWith("color") && !key.startsWith("text_color") && !key.startsWith("sb-") && !key.startsWith("?class")) {
             hasLessons = true;
         }
     }
@@ -130,11 +142,10 @@ function toggle_ask_def() {
         document.getElementById("ask_length_input").style.display = "none";
         document.getElementById("ask_length").style.display = "none";
         document.getElementById("ask_button").style.display = "none";
-        document.getElementById("length_p").style.display = "flex"
-        document.getElementById("length_p").innerText = "Aucune leçon présente";
+        document.getElementById("length_p").style.display = "block";
+        document.getElementById("length_p").innerText = hasClass ? "Pour réviser, créez une leçon de verbes ou de defs." : "Aucune leçon présente";
         return;
     }
-
 
     document.getElementById("questions_type_select").style.display = "inline";
     document.getElementById("ask_button").style.display = "block";
@@ -148,7 +159,7 @@ function toggle_ask_def() {
             document.getElementById("ask_length_input").style.display = "none";
             document.getElementById("ask_length").style.display = "none";
             document.getElementById("ask_button").style.display = "none";
-            document.getElementById("length_p").style.display = "flex"
+            document.getElementById("length_p").style.display = "block"
             document.getElementById("length_p").innerText = "Aucune leçon sélectionnée";
             return;
         } else {
@@ -156,7 +167,7 @@ function toggle_ask_def() {
             document.getElementById("ask_length_input").style.display = "none";
             document.getElementById("ask_length").style.display = "none";
             document.getElementById("ask_button").style.display = "none";
-            document.getElementById("length_p").style.display = "flex"
+            document.getElementById("length_p").style.display = "block"
             document.getElementById("length_p").innerText = "Il y a différents types de leçons";
             return;
         }
@@ -175,7 +186,7 @@ function toggle_ask_def() {
                 document.getElementById("ask_length_input").style.display = "none";
                 document.getElementById("ask_length").style.display = "none";
                 document.getElementById("ask_button").style.display = "none";
-                document.getElementById("length_p").style.display = "flex";
+                document.getElementById("length_p").style.display = "block";
                 document.getElementById("length_p").innerHTML = "Les colonnes ne <br>correspondent pas";
                 return;
             }
@@ -197,7 +208,7 @@ function toggle_ask_def() {
             document.getElementById("ask_length_input").style.display = "none";
             document.getElementById("ask_length").style.display = "none";
             document.getElementById("ask_button").style.display = "none";
-            document.getElementById("length_p").style.display = "flex"
+            document.getElementById("length_p").style.display = "block"
             document.getElementById("length_p").innerText = "La leçon est vide";
             return;
         }
@@ -221,7 +232,7 @@ function toggle_ask_def() {
             document.getElementById("length_p").style.display = "none";
         } else {
             document.getElementById("ask_length").style.display = "flex";
-            document.getElementById("length_p").style.display = "flex";
+            document.getElementById("length_p").style.display = "block";
         }
 
     } else if (get_stuff.kind === "verb") {
@@ -238,7 +249,7 @@ function toggle_ask_def() {
             document.getElementById("ask_length_input").style.display = "none";
             document.getElementById("ask_length").style.display = "none";
             document.getElementById("ask_button").style.display = "none";
-            document.getElementById("length_p").style.display = "flex"
+            document.getElementById("length_p").style.display = "block"
             document.getElementById("length_p").innerText = get_stuff.lessons.length === 1 ? "La leçon est vide" : "Les leçons sont vides";
             return;
         }
@@ -262,7 +273,7 @@ function toggle_ask_def() {
             document.getElementById("length_p").style.display = "none";
         } else {
             document.getElementById("ask_length").style.display = "flex";
-            document.getElementById("length_p").style.display = "flex";
+            document.getElementById("length_p").style.display = "block";
         }
     }
 
@@ -433,6 +444,7 @@ function actu_files() {
         div.className = "file";
         div.style.border = `solid 2px var(--text-color)`;
         div.innerHTML = `<span>${displayName}</span>`;
+        div.style.padding = "10px";
         fragment.appendChild(div); 
         
         if (!(key.startsWith("?class"))) {
@@ -565,28 +577,65 @@ function actu_files() {
             }
 
         } else if (key.startsWith("?class")) {
-            const packItems = JSON.parse(localStorage.getItem("?class" + key));
+            const packItems = localStorage.getItem(key);
+
             let editor = document.createElement("div");
             editor.className = "editor";
-            editor.style.display = "flex";
+            
+            div.style.padding = "0px";
+            div.querySelector("span").style.marginLeft = "10px";
+            div.querySelector("span").style.marginTop = "10px";
+            
             div.appendChild(editor);
+            
+            if ($(editor).data('trumbowyg')) {
+                $(editor).trumbowyg('destroy');
+            }
+            
+            $.trumbowyg.langs.fr.backColor = "Surlignage";
+            $.trumbowyg.langs.fr.removeformat = "Enlever couleurs";
+
             $(editor).trumbowyg({
+                lang: 'fr',
+                semantic: false,
                 btns: [
-                  ['formatting'],
-                  ['bold', 'italic', 'underline'],
-                  ['foreColor', 'backColor'],
-                  ['unorderedList', 'orderedList'],
-                  ['removeformat']
+                    ['h1', 'h2'],
+                    ['bold', 'italic', 'underline'],
+                    ['foreColor', 'backColor'],
+                    ['removeformat']
                 ]
-              });
+            }).on('tbwinit', function () {
+                $(editor).trumbowyg('html', packItems);
+            });
+            
+            $(editor).on('keydown', function (e) {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+            
+                    document.execCommand('insertText', false, '        ');
+                }
+            });
+
+            editor.dataset.twInit = "1";
+
+            let timeout;
+
+            editor.addEventListener("input", () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                  localStorage.setItem(key, $(editor).trumbowyg('html'));
+                }, 300);
+            });
+
         }
 
             let test = true;
-            if (!key.startsWith("?verbs")) {
+            if (!key.startsWith("?verbs") && !key.startsWith("?class")) {
                 if (JSON.parse(localStorage.getItem(key)).length === 0 && !key.startsWith("?class")) {
                     test = false;
                 }
             }
+
             if (test) {
                 let unsee = document.createElement("button");
                 unsee.innerText = ">";
@@ -598,7 +647,7 @@ function actu_files() {
                 if (key.startsWith("?verbs")) {
                     contentToHide = div.querySelector(".verbs-grid");
                 } else if (key.startsWith("?class")) {
-                    contentToHide = div.querySelector("div");
+                    contentToHide = div.querySelectorAll("div")[1];
                 } else {
                     contentToHide = div.querySelectorAll("li");
                 }
@@ -641,6 +690,10 @@ function actu_files() {
     toggle_ask_def();
 
     updateTypeUI_add();
+
+    if (document.querySelector('.trumbowyg-editor') !== null) {
+        document.querySelector('.trumbowyg-editor').style.userSelect = 'text';
+    }
 }
 
 actu_files();
@@ -763,7 +816,7 @@ function createPack() {
             verbs: []
         }));
     } else if (type === "class") {
-        localStorage.setItem("?class" + packName, "[]");
+        localStorage.setItem("?class" + packName, "");
     }
 
     

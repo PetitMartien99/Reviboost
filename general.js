@@ -15,7 +15,7 @@ giga_msg.style.display = "none";
 let parameter_toggle = false;
 let sonor_effects = false;
 
-document.getElementById("inline").querySelector("h3").innerText = "v3.3.19.23 BÊTA";
+document.getElementById("inline").querySelector("h3").innerText = "v3.4.2.23 BÊTA";
 
 if (localStorage.getItem("text_color") === null) {
     localStorage.setItem("text_color", "black");
