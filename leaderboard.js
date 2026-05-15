@@ -49,6 +49,11 @@ if (user) {
                             "description": "Participer au classement",
                             "emoji": "🗳️"
                         },
+                        "curieux": {
+                            "name": "Curieux",
+                            "description": "Ouvrir la page des succès",
+                            "emoji": "👀"
+                        },
                         "etincelle": {
                             "name": "Étincelle",
                             "description": "Démarrer une série",
