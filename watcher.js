@@ -222,6 +222,12 @@ function unlockAudio() {
     console.log("Audio unlocked");
 }
 
+
+let renderer = document.createElement("div");
+renderer.id = "renderer"
+document.querySelector("body").appendChild(renderer);
+
+
 const { data: { user } } = await supabase.auth.getUser()
 if (user) {
     user_let = user;
@@ -648,10 +654,6 @@ async function give_achievement(key, new_achievement) {
 
     render_achievement(new_achievement);
 }
-
-let renderer = document.createElement("div");
-renderer.id = "renderer"
-document.querySelector("body").appendChild(renderer);
 
 function render_achievement(achievement) {
     console.log("rendering");

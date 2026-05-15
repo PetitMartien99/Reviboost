@@ -3,6 +3,7 @@
 - Faire une version non-étendue de la série
 - Avoir sa ligne différente dans le leaderboard
 - Série d'achievements en rapport avec les langues
+- Série d'achievements sur rajouter des defs
 - Les effets sonores restent acitvés
 - Corriger le système de points
 
