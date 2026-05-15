@@ -159,6 +159,7 @@ p {
     border-radius: 20px;
     padding: 10px;
     z-index: 20000;
+    background-color: var(--background-color);
 }
 
 

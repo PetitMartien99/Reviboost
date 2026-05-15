@@ -237,6 +237,8 @@ if (user) {
         if (data[0].is_participating === true) {
             user_data = structuredClone(data[0]);
 
+            lessons_created_local = user_data.Informations.lessons_created;
+
             update_streak_state(data[0]);
 
             if (user_data.Informations.achievements >= 5) {
@@ -267,33 +269,44 @@ async function lesson_ending(data, details) {
     console.log("Informations AVANT :", structuredClone(new_one));
 
     new_one.points += details.points_number;
-    user_data.Informations.points += details.points;
+    user_data.Informations.points += details.points_number;
+
+    console.log(user_data)
 
     if (user_data.Informations.points >= 1000) {
+        console.log(1)
         if (!new_one.all_achievements["inarretable"]) {
             new_one.achievements += 1;
             new_one.all_achievements["inarretable"] = ACHIEVEMENTS.inarretable;
         }
         await give_achievement("innaretable", ACHIEVEMENTS.inarretable);
-    } else if (user_data.Informations.points >= 500) {
+    }
+    if (user_data.Informations.points >= 500) {
+        console.log(2)
         if (!new_one.all_achievements["en_route"]) {
             new_one.achievements += 1;
             new_one.all_achievements["en_route"] = ACHIEVEMENTS.en_route;
         }
         await give_achievement("en_route", ACHIEVEMENTS.en_route);
-    } else if (user_data.Informations.points >= 250) {
+    } 
+    if (user_data.Informations.points >= 250) {
+        console.log(3)
         if (!new_one.all_achievements["collectionneur_savoir"]) {
             new_one.achievements += 1;
             new_one.all_achievements["collectionneur_savoir"] = ACHIEVEMENTS.collectionneur_savoir;
         }
         await give_achievement("collectionneur_savoir", ACHIEVEMENTS.collectionneur_savoir);
-    } else if (user_data.Informations.points >= 100) {
+    } 
+    if (user_data.Informations.points >= 100) {
+        console.log(4)
         if (!new_one.all_achievements["bon_debut"]) {
             new_one.achievements += 1;
             new_one.all_achievements["bon_debut"] = ACHIEVEMENTS.bon_debut;
         }
         await give_achievement("bon_debut", ACHIEVEMENTS.bon_debut);
-    } else if (user_data.Informations.points >= 10) {
+    } 
+    if (user_data.Informations.points >= 10) {
+        console.log(5)
         if (!new_one.all_achievements["premiers_points"]) {
             new_one.achievements += 1;
             new_one.all_achievements["premiers_points"] = ACHIEVEMENTS.premiers_points;
@@ -685,11 +698,9 @@ function render_achievement(achievement) {
 
 if (window.location.pathname.endsWith("leaderboard.html")) {
     document.getElementById("achievements_button").addEventListener("click", () => {
-            give_achievement("curieux", ACHIEVEMENTS.curieux);
-    })
+        give_achievement("curieux", ACHIEVEMENTS.curieux);
+    });
 }
-
-lessons_created_local = user_data.Informations.lessons_created;
 
 document.addEventListener("lesson_create", async (event) => {
     let newObject = structuredClone(user_data);
