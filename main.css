@@ -302,7 +302,7 @@ body {
 #results { 
     display: flex; 
     margin-top: 20px; 
-    align-items: end; 
+    align-items: center; 
     justify-content: center; 
 } 
 
@@ -316,22 +316,27 @@ body {
     align-self: center;
 } 
 
-#precision { 
-    display: block; 
+#point { 
+    width: 65px; 
+    align-self: center;
+} 
+
+#speed, #precision, #points {
+    margin: 25px;
+    display: flex; 
     flex-direction: column;
     align-content: center;
     justify-content: center;
-} 
+    height: 100px;
+}
 
-#speed { 
-    margin-right: 40px; 
-    flex-direction: column;
-    align-content: center;
-    justify-content: center;
-} 
+#animate_time, #animate_precision, #animate_points { 
+    display: flex;
+    justify-content: center; 
+}
 
-#animate_time, #animate_precision { 
-    display: inline; 
+#animate_points {
+    transform: translate(0, 10px);
 }
 
 /* ===== Containers principaux ===== */
@@ -556,6 +561,12 @@ body {
 #choosing_help button { 
     font-size: 18px; 
 } 
+
+#choosing_help button img {
+    width: 22px;
+    margin-right: 5px;
+    transform: translate(0, 2px);
+}
 
 #help_1 { 
     display: block; 

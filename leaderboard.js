@@ -40,7 +40,7 @@ if (user) {
                 {
                     "streak": 1,
                     "last_action_date": null,
-                    "skips": 0,
+                    "skips": 1,
                     "last_skip_reward": null,
                     "achievements" : 3,
                     "all_achievements" : {
@@ -82,6 +82,14 @@ if (user) {
             /*INITIALIZE STREAK*/
             document.querySelector(".fill").innerText = data[0].Informations.streak;
             getID("freeze_p").innerHTML = "Gels : <strong>" + data[0].Informations.skips + "</strong>/20";
+            getID("streak_p").querySelector("img").src = getID("link_info").innerText === "on" ? "streak.png" : "streak_off.png";
+            getID("streak_button").querySelector("img").src = getID("link_info").innerText === "on" ? "streak.png" : "streak_off.png";
+            if (getID("link_info").innerText === "off") {
+                document.querySelector(".underline").style.background = "#9ba8af";
+                document.querySelector(".underline").style.animation = "none";
+                document.querySelector(".fill").style.animation = "none";
+                document.querySelector(".streak_p").style.animation = "none";
+            }
         } else {
             getID("connected_not_participating").style.display = "flex";
         }
@@ -204,6 +212,9 @@ function render_leaderboard() {
         username_div.innerHTML = e.username;
         username_div.style.display = "flex";
         username_div.style.alignItems = "center";
+        if (user_data.username === e.username) {
+            username_div.style.textDecoration = "underline";
+        }
 
         let type_div = document.createElement("div");
         type_div.innerHTML = e.Informations[getID("first_row").querySelector("select").value];

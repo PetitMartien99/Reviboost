@@ -1054,7 +1054,7 @@ function askQuestion() {
         if (sonor_effects === true) playSound(victory);
         document.getElementById("quit_lesson").className = "hide";
 
-        let points = Math.round((right_answers * Math.round(interrogation_time)) / 4);
+        let points = Math.round((right_answers * percent * asked.length) / 150);
         document.dispatchEvent(new CustomEvent("lesson_end", {
             detail: {
                 points_number: points,
@@ -1064,10 +1064,11 @@ function askQuestion() {
             }
         }));
 
-        let text = "Bravo, tu as fini de réviser la leçon !<br><div id='results'><div id='speed'><img id='chrono' src='Chronometer.png'><br><div id='animate_time'></div></div><div id='precision'><img id='cible' src='Cible.png'><br><div id='animate_precision'></div>%</div></div>";
+        let text = "Bravo, tu as fini de réviser la leçon !<br><div id='results'><div id='speed'><img id='chrono' src='Chronometer.png'><br><div id='animate_time'></div></div><div id='precision'><img id='cible' src='Cible.png'><br><div id='animate_precision'></div></div><div id='points'><img id='point' src='points.png'><br><div id='animate_points'></div></div></div>";
         show(text);
         animateNumber("time", document.getElementById("animate_time"), Math.round(interrogation_time));
         animateNumber("percent", document.getElementById("animate_precision"), percent);
+        animateNumber("points", document.getElementById("animate_points"), points);
 
         let count = 0;
         const interval = setInterval(() => {
@@ -1817,7 +1818,8 @@ function animateNumber(type, el, target, duration = 2000) {
         }
 
         if (type === "time") el.textContent = get_euclide(value);
-        if (type === "percent") el.textContent = value;
+        if (type === "percent") el.textContent = value + "%";
+        if (type === "points") el.textContent = value;
 
         if (value < target) requestAnimationFrame(frame);
     }

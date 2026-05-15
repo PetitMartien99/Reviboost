@@ -136,6 +136,16 @@ const ACHIEVEMENTS = {
         description: "Gagner 1000 points",
         emoji: "🚄"
     },
+    cresus: {
+        name: "Crésus",
+        description: "Gagner 5000 points",
+        emoji: "💰"
+    },
+    picsou: {
+        name: "Picsou",
+        description: "Gagner 20000 points",
+        emoji: "🦆"
+    },
     champion: {
         name: "Champion",
         description: "Atteindre le podium du classement",
@@ -279,8 +289,24 @@ async function lesson_ending(data, details) {
 
     console.log(user_data)
 
+    if (user_data.Informations.points >= 20000) {
+        console.log(10);
+        if (!new_one.all_achievements["picsou"]) {
+            new_one.achievements += 1;
+            new_one.all_achievements["picsou"] = ACHIEVEMENTS.picsou;
+        }
+        await give_achievement("picsou", ACHIEVEMENTS.picsou);
+    }
+    if (user_data.Informations.points >= 5000) {
+        console.log(0);
+        if (!new_one.all_achievements["cresus"]) {
+            new_one.achievements += 1;
+            new_one.all_achievements["cresus"] = ACHIEVEMENTS.cresus;
+        }
+        await give_achievement("cresus", ACHIEVEMENTS.cresus);
+    }
     if (user_data.Informations.points >= 1000) {
-        console.log(1)
+        console.log(1);
         if (!new_one.all_achievements["inarretable"]) {
             new_one.achievements += 1;
             new_one.all_achievements["inarretable"] = ACHIEVEMENTS.inarretable;
@@ -288,7 +314,7 @@ async function lesson_ending(data, details) {
         await give_achievement("innaretable", ACHIEVEMENTS.inarretable);
     }
     if (user_data.Informations.points >= 500) {
-        console.log(2)
+        console.log(2);
         if (!new_one.all_achievements["en_route"]) {
             new_one.achievements += 1;
             new_one.all_achievements["en_route"] = ACHIEVEMENTS.en_route;
@@ -296,7 +322,7 @@ async function lesson_ending(data, details) {
         await give_achievement("en_route", ACHIEVEMENTS.en_route);
     } 
     if (user_data.Informations.points >= 250) {
-        console.log(3)
+        console.log(3);
         if (!new_one.all_achievements["collectionneur_savoir"]) {
             new_one.achievements += 1;
             new_one.all_achievements["collectionneur_savoir"] = ACHIEVEMENTS.collectionneur_savoir;
@@ -304,7 +330,7 @@ async function lesson_ending(data, details) {
         await give_achievement("collectionneur_savoir", ACHIEVEMENTS.collectionneur_savoir);
     } 
     if (user_data.Informations.points >= 100) {
-        console.log(4)
+        console.log(4);
         if (!new_one.all_achievements["bon_debut"]) {
             new_one.achievements += 1;
             new_one.all_achievements["bon_debut"] = ACHIEVEMENTS.bon_debut;
@@ -312,7 +338,7 @@ async function lesson_ending(data, details) {
         await give_achievement("bon_debut", ACHIEVEMENTS.bon_debut);
     } 
     if (user_data.Informations.points >= 10) {
-        console.log(5)
+        console.log(5);
         if (!new_one.all_achievements["premiers_points"]) {
             new_one.achievements += 1;
             new_one.all_achievements["premiers_points"] = ACHIEVEMENTS.premiers_points;
@@ -598,7 +624,7 @@ function display_achievements(data) {
         return;
     }
     console.log(data);
-    document.getElementById("total_achievements_p").innerHTML = Object.keys(data).length === 1 ? "<strong>" + Object.keys(data).length + "</strong> débloqué sur 35" : "<strong>" + Object.keys(data).length + "</strong> débloqués sur 35";
+    document.getElementById("total_achievements_p").innerHTML = Object.keys(data).length === 1 ? "<strong>" + Object.keys(data).length + "</strong> débloqué sur 37" : "<strong>" + Object.keys(data).length + "</strong> débloqués sur 37";
 
     let total = document.getElementById("total_achievements_div");
     for (const key in ACHIEVEMENTS) {
@@ -822,10 +848,12 @@ async function update_streak_state(data) {
         if (diffDays === 0) {
 
             console.log("OK : streak toujours valide");
+            document.getElementById("link_info").innerText = "on";
 
         } else if (diffDays === 1) {
 
             console.log("OK : progression naturelle");
+            document.getElementById("link_info").innerText = "off";
 
         } else {
 
@@ -850,6 +878,8 @@ async function update_streak_state(data) {
             fixedDate.setDate(fixedDate.getDate() - 1);
 
             lastAction = fixedDate;
+
+            document.getElementById("link_info").innerText = "off";
         }
     }
 

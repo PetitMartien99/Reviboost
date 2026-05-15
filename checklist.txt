@@ -1,12 +1,4 @@
-- Mettre des icones de pages dans help
 - Leçons et packs horizontaux
-- Faire une version non-étendue de la série
-- Avoir sa ligne différente dans le leaderboard
 - Série d'achievements en rapport avec les langues
 - Série d'achievements sur rajouter des defs
-- Les effets sonores restent acitvés
-- Corriger le système de points
-
-
-Début de la mise à jour : 5500 lignes total.
-Fin de la mise à jour : 7400 lignes total.
+- Effets visuel niveau points gagnés à la fin de l'interrogation
