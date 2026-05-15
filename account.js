@@ -300,7 +300,7 @@ async function update() {
             if (errInsert) console.error("Erreur :", errInsert);
             else console.log("Ligne insérée :", inserted);
         }
-
+        
         see_profile();
     } else {
         getID("parameter_cover").style.display = "none";
@@ -383,6 +383,7 @@ async function sign_in() {
         mail_input.value = "";
         password_input.value = "";
         signin_message.style.display = "none";
+        
     }
 }
 

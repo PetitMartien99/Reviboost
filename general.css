@@ -53,11 +53,13 @@ body {
 /*----- Buttons styles ------ */
 
 #changing_div button,
-#see_3_connected button,
-#account_small button,
-#sign_in_div button,
-#sign_up_div button,
 #see_defs_3,
+#signout,
+#delete_account,
+#signin_div button,
+#signup_div button,
+#see_defs_3_connected,
+#connected_not_participating button,
 #container button {
     border: var(--text-color) solid 1px;
     border-radius: 7px;
@@ -65,11 +67,13 @@ body {
 }
 
 #changing_div button:hover,
-#see_3_connected button:hover,
-#account_small button:hover,
-#sign_in_div button:hover,
-#sign_up_div button:hover,
 #see_defs_3:hover,
+#signout:hover,
+#delete_account:hover,
+#signin_div button:hover,
+#signup_div button:hover,
+#see_defs_3_connected:hover,
+#connected_not_participating button:hover,
 #container button:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     transform: translateY(-3px);
@@ -187,7 +191,7 @@ option {
     position: fixed;
     bottom: 0;
     right: 0;
-    z-index: 114;
+    z-index: 111;
     font-size: 22px;
 }
 
@@ -217,6 +221,17 @@ option {
     box-shadow: black 5px 5px 20px;
 }
 
+#parameter_div p {
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    font-size: 20px;
+    margin-left: 10px;
+    margin-bottom: -5px;
+}
+
 @media screen and (width <= 450px) {
     #parameter img{
         width: 38px;      
@@ -230,6 +245,10 @@ option {
         left: 5px;
         right: 5px;
         transform: translate(0%, -50%);
+    }
+
+    #parameter_div p {
+        font-size: 19px;
     }
 }
 
@@ -253,17 +272,6 @@ option {
 
 #parameter_div h2:hover {
     transform: scale(1.05);
-}
-
-#parameter_div p {
-    width: fit-content;
-    height: fit-content;
-    display: flex;
-    align-items: center;
-    text-align: left;
-    font-size: 20px;
-    margin-left: 10px;
-    margin-bottom: -5px;
 }
 
 #parameter_div p:hover {
@@ -391,4 +399,76 @@ option {
 
 .trumbowyg-button-pane {
     z-index: 0;
+}
+
+/* ----- RENDERER ------ */
+#renderer {
+    position: fixed;
+    bottom: 2px;
+    left: 2px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.achievement {
+    display: grid;
+    grid-template-columns: 1fr 7fr;
+    border: solid 2px var(--text-color);
+    border-radius: 10px;
+    max-height: 100px;
+    padding: 10px;
+    gap: 10px;
+    transition: transform 0.3s ease-in, box-shadow 0.3s ease-in;
+}
+
+#renderer .achievement {
+    margin-top: 10px;
+    background-color: var(--background-color);
+    transition: transform 0.3s ease-in, box-shadow 0.3s ease-in, opacity ease-in 0.4s;
+}
+
+.achievement:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    transform: translateY(-3px);
+}
+
+.achievement_img {
+    border: solid var(--text-color) 1px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.title_and_description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title {
+    text-align: left;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 400px) {
+    .title {
+        font-size: 25px;
+    }
+    .description {
+        font-size: 20px;
+    }
+    .achievement_img {
+        width: 50px;
+        height: 50px;
+        font-size: 32px;
+    }
+    #total_achievements_div {
+        grid-template-columns: 1fr;
+    }
 }

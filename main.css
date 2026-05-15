@@ -81,6 +81,7 @@ body {
 
 #complete_verbs_grid {
     font-size: 34px;
+    text-align: center;
 }
 
 /* ===== Boutons et interactions ===== */
@@ -307,18 +308,26 @@ body {
 
 #chrono{ 
     width: 90px; 
+    align-self: center;
 } 
 
 #cible { 
     width: 90px; 
+    align-self: center;
 } 
 
 #precision { 
     display: block; 
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
 } 
 
 #speed { 
     margin-right: 40px; 
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
 } 
 
 #animate_time, #animate_precision { 
@@ -355,7 +364,7 @@ body {
     position: fixed;
     top: 385px;
     left: 50%;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 0%);
     background-color: transparent;
     text-decoration: underline;
 }
@@ -425,12 +434,12 @@ body {
     display: block;
 }
 
-/* ===== Account link ===== */
+/* ===== Links ===== */
 #account_link {
     position: fixed;
     bottom: 58px;
     right: 0;
-    z-index: 150;
+    z-index: 111;
     margin: 8px;
     text-decoration: none;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -449,12 +458,24 @@ body {
     text-decoration: underline;
 }
 
-.white_hover:hover {
-    color: #e2e2e2;
+#leader_link {
+    position: fixed;
+    bottom: -15px;
+    left: -12px;
+    width: 100px;
+    height: 100px;
+    background-color: var(--background-color);
+    border-radius: 0 10px 0 0;
 }
 
-.black_hover:hover {
-    color: #676767;
+#leader_link:hover img{
+    transform: scale(1.1);
+}
+
+#leader_link img {
+    transition: transform ease-in 0.5s;
+    width: 100px;
+    height: 100px;
 }
 
 /* ===== Overlays ===== */
@@ -617,6 +638,24 @@ body {
     }
 }
 
+
+@media screen and (max-width: 1120px) {
+    #mobile_up {
+        z-index: 70;
+    }
+
+    #ultra_container {
+        height: 445px;
+    }
+    #container {
+        top: 35px;
+    }
+    #lessons {
+        top: 395px;
+    }
+}
+
+
 /* Écran ≤ 900px */
 @media screen and (max-width: 900px) {
 
@@ -713,22 +752,6 @@ body {
     }
 }
 
-@media screen and (max-width: 1120px) {
-    #mobile_up {
-        z-index: 70;
-    }
-
-    #ultra_container {
-        height: 445px;
-    }
-    #container {
-        top: 35px;
-    }
-    #lessons {
-        top: 395px;
-    }
-}
-
 
 /* Petit écran ≤ 450px */
 @media screen and (max-width: 450px) {
@@ -773,6 +796,12 @@ body {
     #lessons {
         top: 20px;
     }
+
+    #leader_link, #leader_link img {
+        width: 70px;
+        height: 70px
+    }
+
 }
 
 

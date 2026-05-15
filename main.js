@@ -1,4 +1,4 @@
-console.log("Yaahhhaaaa! (main)")
+console.log("Yaahhhaaaa! (main)");
 
 function clear_local() {
     localStorage.clear();
@@ -35,6 +35,8 @@ let about_ask;
 let interrogation_time;
 let questions_number;
 let right_answers;
+let right_answers_in_row = 0;
+let wrong_answers_in_row = 0;
 let time_stat; 
 let verbs_column;
 let help_toggle = false;
@@ -79,6 +81,7 @@ function updateTypeUI_add() {
 function toggle_add_def(what) {
 
     pack_title_add.style.display = "block";
+    document.getElementById("add_pack_button").style.display = "block";
 
     let hasLessons = false;
     let hasClass = false;
@@ -99,6 +102,7 @@ function toggle_add_def(what) {
         pack_title_add.style.display = "none";
         document.getElementById("add_switch").innerHTML = hasClass ? '<p>Pour ajouter des defs, créez une leçon de verbes ou de defs.</p>' : '<p>Aucune leçon présente</p>';
         document.getElementById("add_pack_button").innerText = "";
+        document.getElementById("add_pack_button").style.display = "none";
         return;
     }
 
@@ -819,7 +823,10 @@ function createPack() {
         localStorage.setItem("?class" + packName, "");
     }
 
-    
+    document.dispatchEvent(new CustomEvent("lesson_create", {
+        detail: {}
+    }));
+
     pack_title.value = "";
     actu_files();
 }
@@ -950,6 +957,8 @@ function start() {
     interrogation_time = 0;
     time_stat = setInterval(() => { interrogation_time += 0.1; }, 100);
     right_answers = 0;
+    right_answers_in_row = 0;
+    wrong_answers_in_row = 0;
 
     document.getElementById("quit_lesson").className = "shown";
     ultra_container.style.display = "none";
@@ -988,6 +997,8 @@ function check_input(reveal, next, def) {
             asking.value = "";
             asking.className = "hide";
             right_answers += 1;
+            right_answers_in_row += 1;
+            wrong_answers_in_row = 0;
             if (sonor_effects) playSound(correct);
             playCheckAnimation();
             setTimeout(() => {
@@ -1001,6 +1012,18 @@ function check_input(reveal, next, def) {
 
 
 function askQuestion() {
+    if (right_answers_in_row === 10) {
+        document.dispatchEvent(new CustomEvent("10_right_in_row", {
+            detail: {}
+        }));
+    }
+
+    if (wrong_answers_in_row === 10) {
+        document.dispatchEvent(new CustomEvent("10_wrong_in_row", {
+            detail: {}
+        }));
+    }
+
     if (about_ask.length === asked.length) {
         if (bonus_mode && remaining_bonus > 0) {
             console.log(remaining_bonus);
@@ -1030,6 +1053,16 @@ function askQuestion() {
         let percent = Math.round((right_answers * 100) / questions_number);
         if (sonor_effects === true) playSound(victory);
         document.getElementById("quit_lesson").className = "hide";
+
+        let points = Math.round((right_answers * Math.round(interrogation_time)) / 4);
+        document.dispatchEvent(new CustomEvent("lesson_end", {
+            detail: {
+                points_number: points,
+                questions_length: asked.length,
+                time: Math.round(interrogation_time),
+                percentage: percent
+            }
+        }));
 
         let text = "Bravo, tu as fini de réviser la leçon !<br><div id='results'><div id='speed'><img id='chrono' src='Chronometer.png'><br><div id='animate_time'></div></div><div id='precision'><img id='cible' src='Cible.png'><br><div id='animate_precision'></div>%</div></div>";
         show(text);
@@ -1140,6 +1173,8 @@ function askQuestion() {
 
     if (questions_type === "qcm" || questions_type === "write") {
         reveal.onclick = () => {
+            right_answers_in_row = 0;
+            wrong_answers_in_row += 1;
             show("La réponse était : \"" + def + "\"");
             if (bonus_mode) {
                 wrong_questions.push(about_ask[question_id]);
@@ -1170,6 +1205,8 @@ function askQuestion() {
                     setTimeout(() => {
                         show("C'était la bonne réponse");
                         right_answers++;
+                        right_answers_in_row += 1;
+                        wrong_answers_in_row = 0;
                         next.className = "shown";
                         next.onclick = () => {
                             askQuestion();
@@ -1193,6 +1230,8 @@ function askQuestion() {
 
                     accept.onclick = () => {
                         right_answers++;
+                        right_answers_in_row += 1;
+                        wrong_answers_in_row = 0;
                         accept.remove();
                         refuse.remove();
                         if (sonor_effects) playSound(correct);
@@ -1207,6 +1246,8 @@ function askQuestion() {
                     refuse.onclick = () => {
                         accept.remove();
                         refuse.remove();
+                        right_answers_in_row = 0;
+                        wrong_answers_in_row += 1;
                         if (bonus_mode) {
                             wrong_questions.push(about_ask[question_id]);
                         }
@@ -1256,6 +1297,8 @@ function askQuestion() {
                     next.className = "shown";
                     show("C'était la bonne réponse");
                     right_answers++;
+                    right_answers_in_row += 1;
+                    wrong_answers_in_row = 0;
                     next.onclick = () => {
                         askQuestion();
                         next.remove();
@@ -1263,6 +1306,7 @@ function askQuestion() {
                     };
                 }, 1900);
             } else {
+                right_answers_in_row = 0;
                 ask_div.querySelector(".verbs-grid").removeChild(ask_div.querySelector(".verbs-grid").querySelector("#complete_verbs_grid"));
                 ask_div.querySelector(".verbs-grid").removeChild(ask_div.querySelector(".verbs-grid").querySelector("br"));
                 if (sonor_effects) playSound(fail);
@@ -1338,6 +1382,8 @@ function askQuestion() {
                     reveal.className = "hide";
                     show("");
                     right_answers++;
+                    right_answers_in_row += 1;
+                    wrong_answers_in_row = 0;
                     if (sonor_effects) playSound(correct);
                     playCheckAnimation();
                     setTimeout(() => {
@@ -1362,6 +1408,8 @@ function askQuestion() {
                     }
                     playCrossAnimation();
                     setTimeout(() => {
+                        right_answers_in_row = 0;
+                        wrong_answers_in_row += 1;
                         show("Dommage... La bonne réponse était \"" + def + "\"");
                         next.className = "shown";
                         next.onclick = () => {
@@ -1387,6 +1435,8 @@ function askQuestion() {
                     }
                     playCrossAnimation();
                     setTimeout(() => {
+                        right_answers_in_row = 0;
+                        wrong_answers_in_row += 1;
                         show("Dommage... La bonne réponse était \"" + def + "\"");
                         next.className = "shown";
                         next.onclick = () => {
@@ -1412,6 +1462,8 @@ function askQuestion() {
                     }
                     playCrossAnimation();
                     setTimeout(() => {
+                        right_answers_in_row = 0;
+                        wrong_answers_in_row += 1;
                         show("Dommage... La bonne réponse était \"" + def + "\"");
                         next.className = "shown";
                         next.onclick = () => {

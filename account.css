@@ -199,7 +199,7 @@ button:disabled {
     right: 8px;
     font-size: 25px;
     transition: color 0.5s, transform 0.5s ease-in;
-    z-index: 500;
+    z-index: 111;
 }
 
 #back_to_homepage:hover {
@@ -564,7 +564,7 @@ li {
         position: fixed;
         top: 0px;
         right: -4px;
-        z-index: 114;
+        z-index: 111;
     }
     
     #account_small, #see_3_connected {
@@ -587,7 +587,7 @@ li {
         position: fixed;
         top: 52px;
         right: -4px;
-        z-index: 114;
+        z-index: 111;
     }
     
     #see_account_small img, #import_3_button img {

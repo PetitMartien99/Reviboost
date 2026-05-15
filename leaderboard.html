@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Synapse</title>
+
+        <link rel="icon" href="Synapse logo.jpg">
+        <link rel="stylesheet" href="general.css">
+        <link rel="stylesheet" href="leaderboard.css">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Oi&display=swap" rel="stylesheet">
+        
+        <meta name="robots" content="noindex,nofollow">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+
+        <div id="inline" style="z-index: 111;"><h1>Synapse</h1><h3 style="letter-spacing: 1px;">Version 3.12.5</h3></div>
+
+
+        <div id="not_connected" style="display: none">
+            <h1>Pour participer au classement, créez un compte ou connectez-vous.</h1>
+        </div>
+
+        <div id="connected_not_participating" style="display: none">
+            <h2>Rejoins le classement</h2>
+            <p>Débloque l'accès aux séries, à l'XP, aux succès, et grimpe au sommet du classement !</p>
+            <input placeholder="Pseudo" id="username_input" type="text">
+            <p id="message_parti">Truc</p>
+            <button>Rejoindre</button>
+            <p style="margin-top: 50px"><u>Précision</u>: Ici, l'anticheat, c'est moi (le dev). Si j'en vois un qui fait des trucs louches, je lui met le bazar sur son compte et bien fait pour lui.</p>
+        </div>
+
+        <div id="connected_participating" style="display: none">
+            <h1>Classement</h1>
+            <div id="leaderboard">
+                <div id="first_row" class="row" style="border-radius: 8px 8px 0 0;">
+                    <div class="rank"><strong></strong></div>
+                    <div class="username"><strong>Pseudo</strong></div>
+                    <div class="type">
+                        <select>
+                            <option value="points">Points</option>
+                            <option value="streak">Série</option>
+                            <option value="achievements">Succès</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button id="streak_button"><img src="streak.png"></button>
+            <button id="achievements_button"><img src="achievements.png"></button>
+
+            <div style="position: fixed;" class="hidden" id="streak_div">
+                <button id="close_streak">X</button>
+                <h2>Série</h2>
+                <p id="streak_p" class="streak_p">
+                    <img src="streak.png">
+                    <h1 class="fill">0</h1>
+                    <div class="underline"></div>
+                </p>
+                <p id="freeze_p">Gels: 0/20</p>
+                <p id="freeze_p_explain">Tu gagnes un gel par semaine. Ils te permettent de garder ta série si tu manques quelques jours.</p>
+            </div>
+
+            <div style="position: fixed;" class="hidden" id="achievements_div">
+                <button id="close_achievements">X</button>
+                <h2>Succès</h2>
+                <p id="total_achievements_p">Total : 1 débloqué sur 35</p>
+                <div id="total_achievements_div">
+
+                </div>
+            </div>
+        </div>
+
+
+        <div id="parameter_div">
+            <button onclick="parameter()" id="close_parameter">X</button>
+            <h2>Paramètres</h2>
+            <p>Couleur: <input type="color" id="color"></p>
+            <button id="toggle_text" onclick="toggle_text_f()">Texte en blanc</button>
+            <div id="parameter_sound">
+                <input type="checkbox" id="toggle_sound" onclick="toggle_sound()">
+                <label id="for_toggle_sound" for="toggle_sound">Effets sonores</label>
+            </div>
+            <h2 id="credit_h2">À propos</h2>
+            <p>Synapse est un projet que j'ai commencé un dimanche après-midi quand je m'ennuyais. Près de 200 heures de codage plus tard, c'est le site que vous consultez.
+                <br>Je travaille encore dessus dès que j'ai le temps; de nouvelles fonctionalités arrivent régulièrement. 
+                <br>Et, petit rappel : ce site reste un petit (enfin plus si petit...) projet extrascolaire, pas une entreprise professionnelle. Les bugs arrivent, tout n'est pas parfait, mais je fais ce que je peux. 
+                <br>Merci beaucoup d'utiliser mon site : c'était un rêve d'enfant !
+                <br><br>Alban (le 3ème)
+            </p>
+        </div>
+        <div id="parameter_cover"></div>
+            
+        <button id="parameter" onclick="parameter()"><img src="parameter.png"></button>
+
+
+        <p id="giga_msg" style="display: none;"></p>
+
+        <a id="back_to_homepage" href="index.html"><img src="home.png"></a>
+
+        <script src="general.js"></script>
+        <script src="watcher.js" type="module"></script>
+        <script src="leaderboard.js" type="module"></script>
+    </body>
+</html>

@@ -1,1 +1,38 @@
-- Éditer les noms
+- Refaire le giga_msg
+- Mettre des icones de pages dans help
+- Compte : "Importer" vers l'accueil
+- Leçons et packs horizontaux
+- Tout remonter dans l'accueil
+- Faire une version non-étendue de la série
+- Avoir sa ligne différente dans le leaderboard
+- Série d'achievements en rapport avec les langues
+- Les effets sonores restent acitvés
+
+PLAN DE LA MAJ : STREAK, POINTS AND LEADERBOARD
+
+PAGE LEADERBOARD :   
+    -> Pas inscrit :
+        * Input "Pseudo"
+        * Bouton "Rejoindre le classement !"
+        * Sur clic : compte marqué comme inscrit
+        * Basculer en mode inscrit
+
+    -> Inscrit :
+        * Le classement apparait avec pour chaque personne :
+            - Pseudo
+            - Série
+            - Points
+            - Succès
+        * On peut classer selon la série, le nombre de points ou le nombre de succès
+        * Onglet succès :
+            - On voit tous les succès possibles avec une courte description
+            - Et ceux qu'on a décroché
+    
+
+GIGA CHECKLIST (RÉSUMÉ) :
+    - Lancer la BÊTA et aller hiberner pendant 8 mois minimum
+
+COMPTEUR DE TRUCS FAITS : 24/25
+
+
+Début de la mise à jour : 5500 lignes total.
