@@ -42,7 +42,7 @@ if (user) {
                     "last_action_date": null,
                     "skips": 0,
                     "last_skip_reward": null,
-                    "achievements" : 2,
+                    "achievements" : 3,
                     "all_achievements" : {
                         "candidat": {
                             "name": "Candidat",
