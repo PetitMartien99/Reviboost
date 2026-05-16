@@ -1,3 +1,1 @@
-- Leçons et packs horizontaux
-- Série d'achievements en rapport avec les langues
-- Série d'achievements sur rajouter des defs
+- Mettre un vrai truc de dernier achievement (en rajouter 1)

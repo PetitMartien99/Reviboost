@@ -62,6 +62,8 @@ if (user) {
                     },
                     "lessons_done" : 0,
                     "lessons_created" : 0,
+                    "lessons_added": 0,
+                    "langs_done": 0,
                     "points" : 0
                 }
             }]);

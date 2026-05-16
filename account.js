@@ -502,7 +502,7 @@ async function see_profile() {
 
     whole_data = data[0].json_data || []; 
     const see_div = getID("see_data_div_id");
-    see_div.innerHTML = "<h2>Packs de leçons</h2>";
+    // see_div.innerHTML = "<h2>Packs de leçons</h2>";
 
     if (!whole_data.length) {
         see_div.innerHTML += "<p>Il n'y a pas de packs de leçons dans le compte</p>";

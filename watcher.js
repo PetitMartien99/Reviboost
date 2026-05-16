@@ -36,10 +36,35 @@ const ACHIEVEMENTS = {
         description: "Créer 50 leçons",
         emoji: "🧑‍🏫"
     },
-    capes_reussi: {
-        name: "CAPES réussi",
-        description: "Créer 100 leçons",
-        emoji: "🎓"
+    premiere_def: {
+        name: "Première définition",
+        description: "Ajouter une définition",
+        emoji: "🪶"
+    },
+    prise_en_main: {
+        name: "Prise en main",
+        description: "Ajouter 10 fois",
+        emoji: "🧩"
+    },
+    collection_naissante: {
+        name: "Collection naissante",
+        description: "Ajouter 50 fois",
+        emoji: "📦"
+    },
+    bibliotheque_locale: {
+        name: "Bibliothèque locale",
+        description: "Ajouter 100 fois",
+        emoji: "📑"
+    },
+    archive_professionelle: {
+        name: "Archive professionelle",
+        description: "Ajouter 250 fois",
+        emoji: "🗄️"
+    },
+    maitre_des_defs: {
+        name: "Maître des définitions",
+        description: "Ajouter 500 fois",
+        emoji: "🧿"
     },
     debut_revision: {
         name: "Première révision",
@@ -61,6 +86,36 @@ const ACHIEVEMENTS = {
         description: "Terminer 100 leçons",
         emoji: "🧠"
     },
+    a1: {
+        name: "Niveau A1",
+        description: "Terminer une leçon de verbes",
+        emoji: "📕"
+    },
+    a2: {
+        name: "Niveau A2",
+        description: "Terminer 10 leçons de verbes",
+        emoji: "📗"
+    },
+    b1: {
+        name: "Niveau B1",
+        description: "Terminer 25 leçons de verbes",
+        emoji: "📘"
+    },
+    b2: {
+        name: "Niveau B2",
+        description: "Terminer 50 leçons de verbes",
+        emoji: "📙"
+    },
+    c1: {
+        name: "Niveau C1",
+        description: "Terminer 100 leçons de verbes",
+        emoji: "📄"
+    },
+    bilingue: {
+        name: "Bilingue",
+        description: "Terminer 250 leçons de verbes",
+        emoji: "🌍"
+    },
     etincelle: {
         name: "Étincelle",
         description: "Démarrer une série",
@@ -73,7 +128,7 @@ const ACHIEVEMENTS = {
     },
     feu_de_camp: {
         name: "Feu de camp",
-        description: "Atteindre 20 jours de série",
+        description: "Atteindre 25 jours de série",
         emoji: "🏕️"
     },
     incendie: {
@@ -83,6 +138,11 @@ const ACHIEVEMENTS = {
     },
     brasier: {
         name: "Brasier",
+        description: "Atteindre 75 jours de série",
+        emoji: "🎇"
+    },
+    soleil: {
+        name: "soleil",
         description: "Atteindre 100 jours de série",
         emoji: "☀️"
     },
@@ -143,7 +203,7 @@ const ACHIEVEMENTS = {
     },
     picsou: {
         name: "Picsou",
-        description: "Gagner 20000 points",
+        description: "Gagner 10000 points",
         emoji: "🦆"
     },
     champion: {
@@ -193,19 +253,22 @@ const ACHIEVEMENTS = {
     },
     completioniste: {
         name: "Complétioniste",
-        description: "Obtenir tous les succès",
+        description: "Obtenir tous(...?) les succès",
         emoji: "🏆"
+    },
+    the_end: {
+        name: "La Fin",
+        description: "Bien joué. C'était sympa, hein ?",
+        emoji: "🏁"
     }
 };
-
-
 
 let user_let;
 let user_data = null;
 let lessons_created_local = null;
 
 const notification = new Audio("notification.mp3");
-let sonor_effects = document.getElementById("toggle_sound").checked;
+let sonor_effects = document.getElementById("toggle_sound") ? document.getElementById("toggle_sound").checked : null;
 
 function playSound(name) {
     if (!name) return;
@@ -253,9 +316,11 @@ if (user) {
         if (data[0].is_participating === true) {
             user_data = structuredClone(data[0]);
 
-            lessons_created_local = user_data.Informations.lessons_created;
+            if (!window.location.pathname.endsWith("secret.html")) {
+                lessons_created_local = user_data.Informations.lessons_created;
 
-            update_streak_state(data[0]);
+                update_streak_state(data[0]);
+            }    
 
             if (user_data.Informations.achievements >= 5) {
                await give_achievement("amateur", ACHIEVEMENTS.amateur);
@@ -263,15 +328,18 @@ if (user) {
             if (user_data.Informations.achievements >= 10) {
                 await give_achievement("collectionneur", ACHIEVEMENTS.collectionneur);
             }
-            if (user_data.Informations.achievements === 35) {
+            if (user_data.Informations.achievements === 48) {
                 await give_achievement("completioniste", ACHIEVEMENTS.completioniste);
             }
 
-            display_achievements(user_data.Informations.all_achievements);
+            if (!window.location.pathname.endsWith("secret.html")) {
 
-            document.addEventListener("lesson_end", (event) => {
-                lesson_ending(data[0], event.detail);
-            });
+                display_achievements(user_data.Informations.all_achievements);
+
+                document.addEventListener("lesson_end", (event) => {
+                    lesson_ending(data[0], event.detail);
+                });
+            }
         } 
     }
 }
@@ -289,7 +357,7 @@ async function lesson_ending(data, details) {
 
     console.log(user_data)
 
-    if (user_data.Informations.points >= 20000) {
+    if (user_data.Informations.points >= 10000) {
         console.log(10);
         if (!new_one.all_achievements["picsou"]) {
             new_one.achievements += 1;
@@ -574,6 +642,12 @@ async function lesson_ending(data, details) {
     user_data.Informations.streak = streak;
 
     if (streak >= 100) {
+        if (!new_one.all_achievements["soleil"]) {
+            new_one.achievements += 1;
+            new_one.all_achievements["soleil"] = ACHIEVEMENTS.soleil;
+        }
+        await give_achievement("brasier", ACHIEVEMENTS.brasier);
+    } else if (streak >= 75) {
         if (!new_one.all_achievements["brasier"]) {
             new_one.achievements += 1;
             new_one.all_achievements["brasier"] = ACHIEVEMENTS.brasier;
@@ -585,7 +659,7 @@ async function lesson_ending(data, details) {
             new_one.all_achievements["incendie"] = ACHIEVEMENTS.incendie;
         }
         await give_achievement("incendie", ACHIEVEMENTS.incendie);
-    } else if (streak >= 20) {
+    } else if (streak >= 25) {
         if (!new_one.all_achievements["feu_de_camp"]) {
             new_one.achievements += 1;
             new_one.all_achievements["feu_de_camp"] = ACHIEVEMENTS.feu_de_camp;
@@ -624,7 +698,7 @@ function display_achievements(data) {
         return;
     }
     console.log(data);
-    document.getElementById("total_achievements_p").innerHTML = Object.keys(data).length === 1 ? "<strong>" + Object.keys(data).length + "</strong> débloqué sur 37" : "<strong>" + Object.keys(data).length + "</strong> débloqués sur 37";
+    document.getElementById("total_achievements_p").innerHTML = Object.keys(data).length === 1 ? "<strong>" + Object.keys(data).length + "</strong> débloqué sur 50" : "<strong>" + Object.keys(data).length + "</strong> débloqués sur 50";
 
     let total = document.getElementById("total_achievements_div");
     for (const key in ACHIEVEMENTS) {
@@ -758,6 +832,74 @@ document.addEventListener("lesson_create", async (event) => {
         give_achievement("bientot_professeur", ACHIEVEMENTS.bientot_professeur);
     } else if (lessons_created_local === 100) {
         give_achievement("capes_reussi", ACHIEVEMENTS.capes_reussi);
+    }
+});
+
+document.addEventListener("lesson_add", async (event) => {
+    console.log("hhehehehehjjed")
+
+    let newObject = structuredClone(user_data);
+    user_data.Informations.lessons_added += 1;
+    newObject.Informations.lessons_added += 1;
+    
+    const { error: err } = await supabase
+    .from("leaderboard_data")
+    .update({ Informations: newObject.Informations })
+    .eq('user_id', user_let.id);
+
+    if (err) console.log(err);
+
+    if (user_data.Informations.lessons_added >= 1) {
+        give_achievement("premiere_def", ACHIEVEMENTS.premiere_def);
+    }
+    if (user_data.Informations.lessons_added >= 10) {
+        give_achievement("prise_en_main", ACHIEVEMENTS.prise_en_main);
+    }
+    if (user_data.Informations.lessons_added >= 50) {
+        give_achievement("collection_naissante", ACHIEVEMENTS.collection_naissante);
+    } 
+    if (user_data.Informations.lessons_added >= 100) {
+        give_achievement("bibliotheque_locale", ACHIEVEMENTS.bibliotheque_locale);
+    }
+    if (user_data.Informations.lessons_added >= 250) {
+        give_achievement("archive_professionelle", ACHIEVEMENTS.archive_professionelle);
+    }
+    if (user_data.Informations.lessons_added >= 500) {
+        give_achievement("maitre_des_defs", ACHIEVEMENTS.maitre_des_defs);
+    }
+});
+
+document.addEventListener("lang_end", async (event) => {
+    console.log("hhehehehehjjeefeef454543LANGd")
+
+    let newObject = structuredClone(user_data);
+    user_data.Informations.langs_done += 1;
+    newObject.Informations.langs_done += 1;
+    
+    const { error: err } = await supabase
+    .from("leaderboard_data")
+    .update({ Informations: newObject.Informations })
+    .eq('user_id', user_let.id);
+
+    if (err) console.log(err);
+
+    if (user_data.Informations.langs_done >= 1) {
+        give_achievement("a1", ACHIEVEMENTS.a1);
+    }
+    if (user_data.Informations.langs_done >= 10) {
+        give_achievement("a2", ACHIEVEMENTS.a2);
+    }
+    if (user_data.Informations.langs_done >= 25) {
+        give_achievement("b1", ACHIEVEMENTS.b1);
+    } 
+    if (user_data.Informations.langs_done >= 50) {
+        give_achievement("b2", ACHIEVEMENTS.b2);
+    }
+    if (user_data.Informations.langs_done >= 100) {
+        give_achievement("c1", ACHIEVEMENTS.c1);
+    }
+    if (user_data.Informations.langs_done >= 250) {
+        give_achievement("bilingue", ACHIEVEMENTS.bilingue);
     }
 });
 
@@ -931,4 +1073,10 @@ async function update_streak_state(data) {
     if (error) console.error(error);
 
     console.log("===== END UPDATE =====");
+}
+
+
+
+if (window.location.pathname.endsWith("secret.html")) {
+    give_achievement("the_end", ACHIEVEMENTS.the_end);
 }

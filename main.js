@@ -202,7 +202,7 @@ function toggle_ask_def() {
 
         let isEmpty = true;
         get_stuff.lessons.forEach((e) => {
-            if (JSON.parse(localStorage.getItem(e)).length > 0) {
+            if (JSON.parse(localStorage.getItem(e)) && JSON.parse(localStorage.getItem(e)).length > 0) {
                 isEmpty = false;
             }
         });
@@ -873,6 +873,9 @@ function addPack() {
         def_title.value = "";
         def.value = "";
         actu_files();
+        document.dispatchEvent(new CustomEvent("lesson_add", {
+            detail: {}
+        }));
     } else {
 
         if (JSON.parse(localStorage.getItem(packKey)).verbs.length >= 150) {
@@ -881,7 +884,12 @@ function addPack() {
         }
 
         changeVerbs("add_row", packKey);
+        document.dispatchEvent(new CustomEvent("lesson_add", {
+            detail: {}
+        }));
     }
+
+
 }
 
 
@@ -1063,6 +1071,12 @@ function askQuestion() {
                 percentage: percent
             }
         }));
+
+        if (questions_type === "random" || questions_type === "choice") {
+            document.dispatchEvent(new CustomEvent("lang_end", {
+                detail: {}
+            }));
+        }
 
         let text = "Bravo, tu as fini de réviser la leçon !<br><div id='results'><div id='speed'><img id='chrono' src='Chronometer.png'><br><div id='animate_time'></div></div><div id='precision'><img id='cible' src='Cible.png'><br><div id='animate_precision'></div></div><div id='points'><img id='point' src='points.png'><br><div id='animate_points'></div></div></div>";
         show(text);
