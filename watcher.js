@@ -698,7 +698,7 @@ function display_achievements(data) {
         return;
     }
     console.log(data);
-    document.getElementById("total_achievements_p").innerHTML = Object.keys(data).length === 1 ? "<strong>" + Object.keys(data).length + "</strong> débloqué sur 50" : "<strong>" + Object.keys(data).length + "</strong> débloqués sur 50";
+    document.getElementById("total_achievements_p").innerHTML = Object.keys(data).length === 1 ? "<strong>" + Object.keys(data).length + "</strong> débloqué sur 49" : "<strong>" + Object.keys(data).length + "</strong> débloqués sur 49";
 
     let total = document.getElementById("total_achievements_div");
     for (const key in ACHIEVEMENTS) {
