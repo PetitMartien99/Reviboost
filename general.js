@@ -6,7 +6,6 @@ function getRandom(min, max) {
 
 const parameter_div = document.getElementById("parameter_div");
 const color = document.getElementById("color");
-let first = 1;
 const toggle_text = document.getElementById("toggle_text");
 let toggle_t = false;
 const giga_msg = document.getElementById("giga_msg");
@@ -15,16 +14,20 @@ giga_msg.style.display = "none";
 let parameter_toggle = false;
 let sonor_effects = false;
 
-document.getElementById("inline").querySelector("h3").innerText = "v4.0.1.5 B.";
+document.getElementById("inline").querySelector("h3").innerText = "v4.0.1.10 B.";
 
 if (localStorage.getItem("text_color") === null) {
     localStorage.setItem("text_color", "black");
 }
 
 document.querySelectorAll('input').forEach((e) => {e.value = "";});
+if (localStorage.getItem("color")) {
+    document.querySelector("#color").value = "#" + localStorage.getItem("color");
+}
+
 
 function actu_color() {
-    setTimeout(() => {
+
         if (localStorage.getItem("color") !== null) {
             let color_safe;
             
@@ -48,7 +51,6 @@ function actu_color() {
                 toggle_text.innerText = "Texte en blanc";
             }
         }
-    }, 30);
 }
 
 actu_color();
@@ -101,13 +103,9 @@ function parameter() {
 
 
 color.addEventListener("input", () => {
-    if (first === 0) {
-        document.querySelector("body").style.setProperty("--background-color", color.value);
-        let safe_color = color.value.replace("#", "");
-        localStorage.setItem("color", safe_color);
-    } else {
-        first = 0;
-    }
+    document.querySelector("body").style.setProperty("--background-color", color.value);
+    let safe_color = color.value.replace("#", "");
+    localStorage.setItem("color", safe_color);
 });
 
 

@@ -84,8 +84,15 @@ if (user) {
             /*INITIALIZE STREAK*/
             document.querySelector(".fill").innerText = data[0].Informations.streak;
             getID("freeze_p").innerHTML = "Gels : <strong>" + data[0].Informations.skips + "</strong>/20";
-            getID("streak_p").querySelector("img").src = getID("link_info").innerText === "on" ? "streak.png" : "streak_off.png";
-            getID("streak_button").querySelector("img").src = getID("link_info").innerText === "on" ? "streak.png" : "streak_off.png";
+            if (getID("link_info").innerText === "on") {
+                getID("streak_p").querySelector("img").src = "streak.png";
+                getID("streak_button").querySelector("img").src = "streak.png";
+            } else {
+                getID("streak_p").querySelector("img").src = "streak_off.png";
+                getID("streak_button").querySelector("img").src = "streak_off.png";
+            }
+            
+            console.log(getID("link_info").innerText === "on");
             if (getID("link_info").innerText === "off") {
                 document.querySelector(".underline").style.background = "#9ba8af";
                 document.querySelector(".underline").style.animation = "none";
@@ -216,6 +223,9 @@ function render_leaderboard() {
         username_div.style.alignItems = "center";
         if (user_data.username === e.username) {
             username_div.style.textDecoration = "underline";
+        }
+        if (e.username === "Alban") {
+            username_div.style.textShadow = "2px 2px 2px gold";
         }
 
         let type_div = document.createElement("div");
