@@ -195,48 +195,51 @@ function render_leaderboard() {
     })
 
     leaderboard.forEach(e => {
-        let row = document.createElement("div");
-        row.className = "row";
+        if (!e.is_participating === false) {
 
-        let rank_div = document.createElement("div");
-        rank_div.className = "rank_div";
-        if (e.rank < 4) {
-            rank_div.innerHTML = "<img src='Rank " + e.rank + ".png'>";
-            if (e.username === user_data.username) {
-                if (e.rank === 1) {
-                    document.dispatchEvent(new CustomEvent("1st_place", {
+            let row = document.createElement("div");
+            row.className = "row";
+
+            let rank_div = document.createElement("div");
+            rank_div.className = "rank_div";
+            if (e.rank < 4) {
+                rank_div.innerHTML = "<img src='Rank " + e.rank + ".png'>";
+                if (e.username === user_data.username) {
+                    if (e.rank === 1) {
+                        document.dispatchEvent(new CustomEvent("1st_place", {
+                            detail: {}
+                        }));
+                    }
+                    
+                    document.dispatchEvent(new CustomEvent("podium", {
                         detail: {}
                     }));
                 }
-                
-                document.dispatchEvent(new CustomEvent("podium", {
-                    detail: {}
-                }));
+            } else {
+                rank_div.innerHTML = "<strong>" + e.rank + ".</strong>";
             }
-        } else {
-            rank_div.innerHTML = "<strong>" + e.rank + ".</strong>";
-        }
 
-        let username_div = document.createElement("div");
-        username_div.innerHTML = e.username;
-        username_div.style.display = "flex";
-        username_div.style.alignItems = "center";
-        if (user_data.username === e.username) {
-            username_div.style.textDecoration = "underline";
-        }
-        if (e.username === "Alban") {
-            username_div.style.textShadow = "2px 2px 2px gold";
-        }
+            let username_div = document.createElement("div");
+            username_div.innerHTML = e.username;
+            username_div.style.display = "flex";
+            username_div.style.alignItems = "center";
+            if (user_data.username === e.username) {
+                username_div.style.textDecoration = "underline";
+            }
+            if (e.username === "Alban") {
+                username_div.style.textShadow = "2px 2px 2px gold";
+            }
 
-        let type_div = document.createElement("div");
-        type_div.innerHTML = e.Informations[getID("first_row").querySelector("select").value];
-        type_div.style.display = "flex";
-        type_div.style.alignItems = "center";
+            let type_div = document.createElement("div");
+            type_div.innerHTML = e.Informations[getID("first_row").querySelector("select").value];
+            type_div.style.display = "flex";
+            type_div.style.alignItems = "center";
 
-        row.appendChild(rank_div);
-        row.appendChild(username_div);
-        row.appendChild(type_div);
-        leaderboard_div.appendChild(row);
+            row.appendChild(rank_div);
+            row.appendChild(username_div);
+            row.appendChild(type_div);
+            leaderboard_div.appendChild(row);
+        }   
     });
 }
 
