@@ -405,8 +405,10 @@ function actu_files() {
         pack_title_ask.querySelector("#menu").removeChild(e);
     });
 
+    contain_files.style.justifyContent = "flex-start";
     if (!hasLessons) {
-        contain_files.innerHTML = "<p>Il n'y a aucune leçon</p>"
+        contain_files.innerHTML = "<p>Il n'y a aucune leçon</p>";
+        contain_files.style.justifyContent = "center";
         toggle_add_def();
         toggle_ask_def();
         return;

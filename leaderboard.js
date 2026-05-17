@@ -42,7 +42,6 @@ if (user) {
                     "last_action_date": null,
                     "skips": 1,
                     "last_skip_reward": null,
-                    "achievements" : 3,
                     "all_achievements" : {
                         "candidat": {
                             "name": "Candidat",
@@ -157,6 +156,17 @@ async function participate() {
     location.reload();
 }
 
+function getValue(entry, what) {
+
+    const value = entry.Informations[what];
+
+    if (what === "all_achievements") {
+        console.log(value);
+        return Object.keys(value).length;
+    }
+
+    return value;
+}
 
 getID("first_row").querySelector("select").addEventListener("change", () => {
     create_leaderboard(getID("first_row").querySelector("select").value);
@@ -167,15 +177,17 @@ function create_leaderboard(what) {
     leaderboard = all_data;
 
     leaderboard.sort((a, b) =>
-        b.Informations[what] - a.Informations[what]
+        getValue(b, what) - getValue(a, what)
     );
 
     let rank = 1;
 
     for (let i = 0; i < leaderboard.length; i++) {
+
         if (
             i > 0 &&
-            leaderboard[i].Informations[what] < leaderboard[i - 1].Informations[what]
+            getValue(leaderboard[i], what) <
+            getValue(leaderboard[i - 1], what)
         ) {
             rank++;
         }
@@ -231,7 +243,12 @@ function render_leaderboard() {
             }
 
             let type_div = document.createElement("div");
-            type_div.innerHTML = e.Informations[getID("first_row").querySelector("select").value];
+            if (!(getID("first_row").querySelector("select").value === "all_achievements")) {
+               type_div.innerHTML = e.Informations[getID("first_row").querySelector("select").value]; 
+            } else {
+                type_div.innerHTML = Object.keys(e.Informations.all_achievements).length; 
+            }
+            
             type_div.style.display = "flex";
             type_div.style.alignItems = "center";
 

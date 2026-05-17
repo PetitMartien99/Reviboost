@@ -319,17 +319,23 @@ if (user) {
             if (!window.location.pathname.endsWith("secret.html")) {
                 lessons_created_local = user_data.Informations.lessons_created;
 
-                update_streak_state(data[0]);
+                update_streak_state();
             }    
 
-            if (user_data.Informations.achievements >= 5) {
-               await give_achievement("amateur", ACHIEVEMENTS.amateur);
+            if (Object.keys(user_data.Informations.all_achievements).length >= 5) {
+                if ( await give_achievement("amateur", ACHIEVEMENTS.amateur)) {
+                    await update_supabase();
+                }
             }
-            if (user_data.Informations.achievements >= 10) {
-                await give_achievement("collectionneur", ACHIEVEMENTS.collectionneur);
+            if (Object.keys(user_data.Informations.all_achievements).length >= 10) {
+                if ( await give_achievement("collectionneur", ACHIEVEMENTS.collectionneur)) {
+                    await update_supabase();
+                }
             }
-            if (user_data.Informations.achievements === 48) {
-                await give_achievement("completioniste", ACHIEVEMENTS.completioniste);
+            if (Object.keys(user_data.Informations.all_achievements).length === 48) {
+                if ( await give_achievement("completioniste", ACHIEVEMENTS.completioniste)) {
+                    await update_supabase();
+                }
             }
 
             if (!window.location.pathname.endsWith("secret.html")) {
@@ -337,141 +343,74 @@ if (user) {
                 display_achievements(user_data.Informations.all_achievements);
 
                 document.addEventListener("lesson_end", (event) => {
-                    lesson_ending(data[0], event.detail);
+                    lesson_ending(user_data, event.detail);
                 });
             }
         } 
     }
 }
 
-async function lesson_ending(data, details) {
+async function lesson_ending(details) {
 
     console.log("===== WE GOT ACTIVATED =====");
 
-    let new_one = structuredClone(data.Informations);
+    console.log("Informations AVANT :", structuredClone(user_data.Informations));
 
-    console.log("Informations AVANT :", structuredClone(new_one));
-
-    new_one.points += details.points_number;
     user_data.Informations.points += details.points_number;
 
-    console.log(user_data)
+    console.log(user_data);
 
     if (user_data.Informations.points >= 10000) {
-        console.log(10);
-        if (!new_one.all_achievements["picsou"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["picsou"] = ACHIEVEMENTS.picsou;
-        }
         await give_achievement("picsou", ACHIEVEMENTS.picsou);
     }
     if (user_data.Informations.points >= 5000) {
-        console.log(0);
-        if (!new_one.all_achievements["cresus"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["cresus"] = ACHIEVEMENTS.cresus;
-        }
         await give_achievement("cresus", ACHIEVEMENTS.cresus);
     }
     if (user_data.Informations.points >= 1000) {
-        console.log(1);
-        if (!new_one.all_achievements["inarretable"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["inarretable"] = ACHIEVEMENTS.inarretable;
-        }
-        await give_achievement("innaretable", ACHIEVEMENTS.inarretable);
+        await give_achievement("inarretable", ACHIEVEMENTS.inarretable);
     }
     if (user_data.Informations.points >= 500) {
-        console.log(2);
-        if (!new_one.all_achievements["en_route"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["en_route"] = ACHIEVEMENTS.en_route;
-        }
         await give_achievement("en_route", ACHIEVEMENTS.en_route);
     } 
     if (user_data.Informations.points >= 250) {
-        console.log(3);
-        if (!new_one.all_achievements["collectionneur_savoir"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["collectionneur_savoir"] = ACHIEVEMENTS.collectionneur_savoir;
-        }
         await give_achievement("collectionneur_savoir", ACHIEVEMENTS.collectionneur_savoir);
     } 
     if (user_data.Informations.points >= 100) {
-        console.log(4);
-        if (!new_one.all_achievements["bon_debut"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["bon_debut"] = ACHIEVEMENTS.bon_debut;
-        }
         await give_achievement("bon_debut", ACHIEVEMENTS.bon_debut);
     } 
     if (user_data.Informations.points >= 10) {
-        console.log(5);
-        if (!new_one.all_achievements["premiers_points"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["premiers_points"] = ACHIEVEMENTS.premiers_points;
-        }
         await give_achievement("premiers_points", ACHIEVEMENTS.premiers_points);
     } 
 
-    new_one.lessons_done += 1;
     user_data.Informations.lessons_done += 1;
 
     if (user_data.Informations.lessons_done >= 100) {
-        if (!new_one.all_achievements["monstre_revisions"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["monstre_revisions"] = ACHIEVEMENTS.monstre_revisions;
-        }
         await give_achievement("monstre_revisions", ACHIEVEMENTS.monstre_revisions);
     } else if (user_data.Informations.lessons_done >= 50) {
-        if (!new_one.all_achievements["vingt_et_un_sur_vingt"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["vingt_et_un_sur_vingt"] = ACHIEVEMENTS.vingt_et_un_sur_vingt;
-        }
         await give_achievement("vingt_et_un_sur_vingt", ACHIEVEMENTS.vingt_et_un_sur_vingt);
     } else if (user_data.Informations.lessons_done >= 10) {
-        if (!new_one.all_achievements["quinze_sur_vingt"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["quinze_sur_vingt"] = ACHIEVEMENTS.quinze_sur_vingt;
-        }
         await give_achievement("quinze_sur_vingt", ACHIEVEMENTS.quinze_sur_vingt);
     } else if (user_data.Informations.lessons_done >= 1) {
-        if (!new_one.all_achievements["debut_revision"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["debut_revision"] = ACHIEVEMENTS.debut_revision;
-        }
         await give_achievement("debut_revision", ACHIEVEMENTS.debut_revision);
     }  
  
 
     if (details.percentage === 50) {
-        if (!new_one.all_achievements["score_moyen"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["score_moyen"] = ACHIEVEMENTS.score_moyen;
-        }
         await give_achievement("score_moyen", ACHIEVEMENTS.score_moyen);
     }
 
     if (details.percentage === 100 && details.questions_length > 9) {
-        if (!new_one.all_achievements["sans_faute"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["sans_faute"] = ACHIEVEMENTS.sans_faute;
-        }
         await give_achievement("sans_faute", ACHIEVEMENTS.sans_faute);
     }
 
     if (details.time < 15 && details.questions_length > 4) {
-        if (!new_one.all_achievements["speedrunner"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["speedrunner"] = ACHIEVEMENTS.speedrunner;
-        }
         await give_achievement("speedrunner", ACHIEVEMENTS.speedrunner);
     }
 
     console.log("Points ajoutés :", details.points_number);
-    console.log("Total points :", new_one.points);
+    console.log("Total points :", user_data.Informations.points);
 
-    const info = structuredClone(data.Informations);
+    const info = structuredClone(user_data.Informations);
 
     const today = new Date();
 
@@ -581,11 +520,7 @@ async function lesson_ending(data, details) {
                 skips -= missed;
                 streak += 1;
 
-                if (!new_one.all_achievements["sauvetage_in_extremis"]) {
-                    new_one.achievements += 1;
-                    new_one.all_achievements["sauvetage_in_extremis"] = ACHIEVEMENTS.sauvetage_in_extremis;
-                    give_achievement("sauvetage_in_extremis", ACHIEVEMENTS.sauvetage_in_extremis);
-                }
+               await give_achievement("sauvetage_in_extremis", ACHIEVEMENTS.sauvetage_in_extremis)
 
             } else {
 
@@ -594,11 +529,7 @@ async function lesson_ending(data, details) {
                 streak = 1;
                 skips = 0;
                 
-                if (!new_one.all_achievements["coeur_brise"]) {
-                    new_one.achievements += 1;
-                    new_one.all_achievements["coeur_brise"] = ACHIEVEMENTS.coeur_brise;
-                    give_achievement("coeur_brise", ACHIEVEMENTS.coeur_brise);
-                }
+                await give_achievement("coeur_brise", ACHIEVEMENTS.coeur_brise);
             }
 
             const fixedDate = new Date(today);
@@ -612,81 +543,37 @@ async function lesson_ending(data, details) {
     console.log("Skips finaux :", skips);
 
     // --- SAVE ---
-    new_one.streak = streak;
-    new_one.skips = skips;
-    new_one.last_action_date = today.toISOString();
-    new_one.last_skip_reward = lastSkipReward.toISOString();
+    user_data.Informations.streak = streak;
+    user_data.Informations.skips = skips;
+    user_data.Informations.last_action_date = today.toISOString();
+    user_data.Informations.last_skip_reward = lastSkipReward.toISOString();
 
-    console.log("OBJET FINAL ENVOYÉ :", structuredClone(new_one));
+    console.log("OBJET FINAL ENVOYÉ :", structuredClone(user_data.Informations));
 
     const hour = new Date().getHours();
 
     if (hour >= 23 || hour < 4) {
-        if (!new_one.all_achievements["insomniaque"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["insomniaque"] = ACHIEVEMENTS.insomniaque;
-            give_achievement("insomniaque", ACHIEVEMENTS.insomniaque);
-        }
+        await give_achievement("insomniaque", ACHIEVEMENTS.insomniaque);
     }
 
     if (hour >= 5 && hour < 7) {
-        if (!new_one.all_achievements["insomniaque"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["insomniaque"] = ACHIEVEMENTS.insomniaque;
-            give_achievement("insomniaque", ACHIEVEMENTS.insomniaque);
-        }
+        await give_achievement("leve_tot", ACHIEVEMENTS.leve_tot);
     }
 
-
-
-    user_data.Informations.streak = streak;
-
     if (streak >= 100) {
-        if (!new_one.all_achievements["soleil"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["soleil"] = ACHIEVEMENTS.soleil;
-        }
-        await give_achievement("brasier", ACHIEVEMENTS.brasier);
+        await give_achievement("soleil", ACHIEVEMENTS.soleil);
     } else if (streak >= 75) {
-        if (!new_one.all_achievements["brasier"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["brasier"] = ACHIEVEMENTS.brasier;
-        }
         await give_achievement("brasier", ACHIEVEMENTS.brasier);
     } else if (streak >= 50) {
-        if (!new_one.all_achievements["incendie"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["incendie"] = ACHIEVEMENTS.incendie;
-        }
         await give_achievement("incendie", ACHIEVEMENTS.incendie);
     } else if (streak >= 25) {
-        if (!new_one.all_achievements["feu_de_camp"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["feu_de_camp"] = ACHIEVEMENTS.feu_de_camp;
-        }
         await give_achievement("feu_de_camp", ACHIEVEMENTS.feu_de_camp);
     } else if (streak >= 7) {
-        if (!new_one.all_achievements["briquet"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["briquet"] = ACHIEVEMENTS.briquet;
-        }
         await give_achievement("briquet", ACHIEVEMENTS.briquet);
     }
 
 
-    const { error: err } = await supabase
-        .from("leaderboard_data")
-        .update({ Informations: new_one })
-        .eq('user_id', user_let.id);
-
-    if (err) {
-
-        console.error("ERREUR SUPABASE :", err);
-
-    } else {
-
-        console.log("Update Supabase réussi");
-    }
+    await update_supabase();
 
     console.log("===== FIN =====");
 }
@@ -737,22 +624,13 @@ async function give_achievement(key, new_achievement) {
     }
 
     console.log(user_data.Informations)
-    let newObject = structuredClone(user_data.Informations);
-    newObject.achievements += 1;
-    newObject.all_achievements[key] = new_achievement;
-    user_data.Informations.achievements += 1;
     user_data.Informations.all_achievements[key] = new_achievement;
 
-    console.log(newObject)
-
-    const { error: err } = await supabase
-    .from("leaderboard_data")
-    .update({ Informations: newObject })
-    .eq('user_id', user_let.id);
-
-    if (err) console.log(err);
+    console.log(user_data.Informations)
 
     render_achievement(new_achievement);
+
+    return true;
 }
 
 function render_achievement(achievement) {
@@ -785,7 +663,6 @@ function render_achievement(achievement) {
 
     if (sonor_effects === true) {
         playSound(notification);
-        console.log("here");
     }
 
     setTimeout(() => {
@@ -798,137 +675,114 @@ function render_achievement(achievement) {
 
 /* ----- ACHIEVEMENTS LISTENERS ------ */
 
-if (window.location.pathname.endsWith("leaderboard.html")) {
-    document.getElementById("achievements_button").addEventListener("click", () => {
-        give_achievement("curieux", ACHIEVEMENTS.curieux);
-    });
-}
-
 document.addEventListener("lesson_create", async (event) => {
-    let newObject = structuredClone(user_data);
-    console.log(newObject.Informations.lessons_created);
-    newObject.Informations.lessons_created = lessons_created_local + 1;
+    console.log(user_data.Informations.lessons_created);
+    user_data.Informations.lessons_created = lessons_created_local + 1;
     lessons_created_local += 1;
-    user_data.Informations.lessons_created += 1;
-    console.log(newObject.Informations.lessons_created);
+    console.log(user_data.Informations.lessons_created);
 
     console.log("lessons_created");
-    console.log(newObject.Informations);
-
-    const { error: err } = await supabase
-    .from("leaderboard_data")
-    .update({ Informations: newObject.Informations })
-    .eq('user_id', user_let.id);
-
-    if (err) console.log(err);
+    console.log(user_data.Informations);
 
     /*lessons_created_local est pas ultra nécessaire, mais dans le doute je le garde parce qu'il fait pas de mal*/
 
     if (lessons_created_local === 1) {
-        give_achievement("premier_pas", ACHIEVEMENTS.premier_pas);
+        await give_achievement("premier_pas", ACHIEVEMENTS.premier_pas);
     } else if (lessons_created_local === 10) {
-        give_achievement("eleve_applique", ACHIEVEMENTS.eleve_applique);
+        await give_achievement("eleve_applique", ACHIEVEMENTS.eleve_applique);
     } else if (lessons_created_local === 50) {
-        give_achievement("bientot_professeur", ACHIEVEMENTS.bientot_professeur);
+        await give_achievement("bientot_professeur", ACHIEVEMENTS.bientot_professeur);
     } else if (lessons_created_local === 100) {
-        give_achievement("capes_reussi", ACHIEVEMENTS.capes_reussi);
+        await give_achievement("capes_reussi", ACHIEVEMENTS.capes_reussi);
     }
+
+    await update_supabase();
 });
 
 document.addEventListener("lesson_add", async (event) => {
-    console.log("hhehehehehjjed")
 
-    let newObject = structuredClone(user_data);
     user_data.Informations.lessons_added += 1;
-    newObject.Informations.lessons_added += 1;
-    
-    const { error: err } = await supabase
-    .from("leaderboard_data")
-    .update({ Informations: newObject.Informations })
-    .eq('user_id', user_let.id);
-
-    if (err) console.log(err);
 
     if (user_data.Informations.lessons_added >= 1) {
-        give_achievement("premiere_def", ACHIEVEMENTS.premiere_def);
+        await give_achievement("premiere_def", ACHIEVEMENTS.premiere_def);
     }
     if (user_data.Informations.lessons_added >= 10) {
-        give_achievement("prise_en_main", ACHIEVEMENTS.prise_en_main);
+        await give_achievement("prise_en_main", ACHIEVEMENTS.prise_en_main);
     }
     if (user_data.Informations.lessons_added >= 50) {
-        give_achievement("collection_naissante", ACHIEVEMENTS.collection_naissante);
+        await give_achievement("collection_naissante", ACHIEVEMENTS.collection_naissante);
     } 
     if (user_data.Informations.lessons_added >= 100) {
-        give_achievement("bibliotheque_locale", ACHIEVEMENTS.bibliotheque_locale);
+        await give_achievement("bibliotheque_locale", ACHIEVEMENTS.bibliotheque_locale);
     }
     if (user_data.Informations.lessons_added >= 250) {
-        give_achievement("archive_professionelle", ACHIEVEMENTS.archive_professionelle);
+        await give_achievement("archive_professionelle", ACHIEVEMENTS.archive_professionelle);
     }
     if (user_data.Informations.lessons_added >= 500) {
-        give_achievement("maitre_des_defs", ACHIEVEMENTS.maitre_des_defs);
+        await give_achievement("maitre_des_defs", ACHIEVEMENTS.maitre_des_defs);
     }
+
+    await update_supabase();
 });
 
 document.addEventListener("lang_end", async (event) => {
-    console.log("hhehehehehjjeefeef454543LANGd")
 
-    let newObject = structuredClone(user_data);
     user_data.Informations.langs_done += 1;
-    newObject.Informations.langs_done += 1;
-    
-    const { error: err } = await supabase
-    .from("leaderboard_data")
-    .update({ Informations: newObject.Informations })
-    .eq('user_id', user_let.id);
-
-    if (err) console.log(err);
 
     if (user_data.Informations.langs_done >= 1) {
-        give_achievement("a1", ACHIEVEMENTS.a1);
+        await give_achievement("a1", ACHIEVEMENTS.a1);
     }
     if (user_data.Informations.langs_done >= 10) {
-        give_achievement("a2", ACHIEVEMENTS.a2);
+        await give_achievement("a2", ACHIEVEMENTS.a2);
     }
     if (user_data.Informations.langs_done >= 25) {
-        give_achievement("b1", ACHIEVEMENTS.b1);
+        await give_achievement("b1", ACHIEVEMENTS.b1);
     } 
     if (user_data.Informations.langs_done >= 50) {
-        give_achievement("b2", ACHIEVEMENTS.b2);
+        await give_achievement("b2", ACHIEVEMENTS.b2);
     }
     if (user_data.Informations.langs_done >= 100) {
-        give_achievement("c1", ACHIEVEMENTS.c1);
+        await give_achievement("c1", ACHIEVEMENTS.c1);
     }
     if (user_data.Informations.langs_done >= 250) {
-        give_achievement("bilingue", ACHIEVEMENTS.bilingue);
+        await give_achievement("bilingue", ACHIEVEMENTS.bilingue);
+    }
+
+    await update_supabase();
+});
+
+document.addEventListener("1st_place", async (event) => {
+    if (await give_achievement("legende", ACHIEVEMENTS.legende)) {
+        await update_supabase();
     }
 });
 
-document.addEventListener("1st_place", (event) => {
-    give_achievement("legende", ACHIEVEMENTS.legende);
+document.addEventListener("podium", async (event) => {
+    if (await give_achievement("champion", ACHIEVEMENTS.champion)) {
+        await update_supabase();
+    }
 });
 
-document.addEventListener("podium", (event) => {
-    give_achievement("champion", ACHIEVEMENTS.champion);
+document.addEventListener("10_right_in_row", async (event) => {
+    if (await give_achievement("tireur_elite", ACHIEVEMENTS.tireur_elite)) {
+        await update_supabase();
+    }
 });
 
-document.addEventListener("10_right_in_row", (event) => {
-    give_achievement("tireur_elite", ACHIEVEMENTS.tireur_elite);
-});
-
-document.addEventListener("10_wrong_in_row", (event) => {
-    give_achievement("tireur_dans_le_pied", ACHIEVEMENTS.tireur_dans_le_pied);
+document.addEventListener("10_wrong_in_row", async (event) => {
+    if (await give_achievement("tireur_dans_le_pied", ACHIEVEMENTS.tireur_dans_le_pied)) {
+        await update_supabase();
+    }
 });
 
 /* ----- UPDATE DE STREAK ------ */
-async function update_streak_state(data) {
+async function update_streak_state() {
 
     console.log("===== STREAK UPDATE =====");
 
-    let new_one = structuredClone(data.Informations);
+    console.log("AVANT :", structuredClone(user_data.Informations));
 
-    console.log("AVANT :", structuredClone(new_one));
-
-    const info = structuredClone(data.Informations);
+    const info = structuredClone(user_data.Informations);
 
     const now = new Date();
 
@@ -1026,51 +880,29 @@ async function update_streak_state(data) {
     }
 
     // --- SAVE ---
-    new_one.streak = streak;
-    new_one.skips = skips;
-    new_one.last_action_date = lastAction;
-    new_one.last_skip_reward = lastSkipReward.toISOString();
+    user_data.Informations.streak = streak;
+    user_data.Informations.skips = skips;
+    user_data.Informations.last_action_date = lastAction;
+    user_data.Informations.last_skip_reward = lastSkipReward.toISOString();
 
     // IMPORTANT :
     // on ne touche PAS last_action_date ici
 
-    console.log("FINAL :", structuredClone(new_one));
-
-
-    user_data.Informations.streak = streak;
+    console.log("FINAL :", structuredClone(user_data.Informations));
 
     if (streak >= 100) {
-        if (!new_one.all_achievements["brasier"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["brasier"] = ACHIEVEMENTS.brasier;
-        }
+        await give_achievement("soleil", ACHIEVEMENTS.soleil);
+    } else if (streak >= 75) {
         await give_achievement("brasier", ACHIEVEMENTS.brasier);
     } else if (streak >= 50) {
-        if (!new_one.all_achievements["incendie"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["incendie"] = ACHIEVEMENTS.incendie;
-        }
         await give_achievement("incendie", ACHIEVEMENTS.incendie);
-    } else if (streak >= 20) {
-        if (!new_one.all_achievements["feu_de_camp"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["feu_de_camp"] = ACHIEVEMENTS.feu_de_camp;
-        }
+    } else if (streak >= 25) {
         await give_achievement("feu_de_camp", ACHIEVEMENTS.feu_de_camp);
     } else if (streak >= 7) {
-        if (!new_one.all_achievements["briquet"]) {
-            new_one.achievements += 1;
-            new_one.all_achievements["briquet"] = ACHIEVEMENTS.briquet;
-        }
         await give_achievement("briquet", ACHIEVEMENTS.briquet);
     }
 
-    const { error } = await supabase
-        .from("leaderboard_data")
-        .update({ Informations: new_one })
-        .eq("user_id", user_let.id);
-
-    if (error) console.error(error);
+    await update_supabase();
 
     console.log("===== END UPDATE =====");
 }
@@ -1078,5 +910,17 @@ async function update_streak_state(data) {
 
 
 if (window.location.pathname.endsWith("secret.html")) {
-    give_achievement("the_end", ACHIEVEMENTS.the_end);
+    if (await give_achievement("the_end", ACHIEVEMENTS.the_end)) {
+        update_supabase();
+    }
+}
+
+
+async function update_supabase() {
+    const { error: err } = await supabase
+    .from("leaderboard_data")
+    .update({ Informations: user_data.Informations })
+    .eq('user_id', user_let.id);
+
+    if (err) console.log(err);
 }
