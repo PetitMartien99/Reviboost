@@ -1065,6 +1065,7 @@ function askQuestion() {
         document.getElementById("quit_lesson").className = "hide";
 
         let points = Math.round((right_answers * percent * asked.length) / 150);
+        console.log(points);
         document.dispatchEvent(new CustomEvent("lesson_end", {
             detail: {
                 points_number: points,

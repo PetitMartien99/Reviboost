@@ -343,7 +343,7 @@ if (user) {
                 display_achievements(user_data.Informations.all_achievements);
 
                 document.addEventListener("lesson_end", (event) => {
-                    lesson_ending(user_data, event.detail);
+                    lesson_ending(event.detail);
                 });
             }
         } 
