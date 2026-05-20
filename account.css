@@ -149,7 +149,7 @@ button:disabled {
     padding: 10px;
 }
 
-#see_data_container h2 {
+#see_data_container #ok_h2 {
     position: fixed;
     z-index: 2;
     top: 380px;

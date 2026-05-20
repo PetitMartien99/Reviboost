@@ -30,6 +30,11 @@ if (params.has("vaA5")) {
     redirect(3);
 }
 
+if (params.has("veTa3")) {
+    redirect(5);
+}
+
+
 async function redirect(id) {
     const { data, error } = await supabase
         .from('public_data')
@@ -718,6 +723,16 @@ async function see_profile() {
                     lang: 'fr',
                     semantic: false,
                     disabled: true,
+                    btnsDef: {
+                        spoiler: {
+                            title: 'Spoiler',
+                            text: '👁 Spoiler',
+                            hasIcon: false,
+                            fn: function () {
+                                console.log("🟢 spoiler clicked");
+                            }
+                        }
+                    },
                     btns: [
                         ['h1', 'h2'],
                         ['bold', 'italic', 'underline'],

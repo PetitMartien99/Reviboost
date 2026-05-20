@@ -347,6 +347,7 @@ option {
 .trumbowyg-editor li,
 .trumbowyg-editor p {
     all: unset;
+    display: inline;
 }
 
 .trumbowyg-editor h1 {
@@ -405,6 +406,25 @@ option {
 
 .trumbowyg-button-pane {
     z-index: 0;
+}
+
+.spoiler {
+    background: #525252 !important;
+    color: transparent !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    transition: 0.2s !important;
+}
+
+.spoiler.revealed {
+    color: black !important;
+    background: #cfcfcf !important;
+}
+
+.trumbowyg-editor span {
+    transform: none !important;
+    transition: none !important;
+    position: static !important;
 }
 
 /* ----- RENDERER ------ */

@@ -54,7 +54,6 @@ const victory = new Audio("Victoire.mp3");
 const correct = new Audio("Correct.mp3");
 
 
-
 function updateTypeUI_add() {
     if (document.getElementById('def_title') === null) {
         return;
@@ -396,6 +395,8 @@ function actu_files() {
 
     document.getElementById("lessons").innerText = "Leçons ouvertes";
 
+    let old_select_value = selects_lessons.options[selects_lessons.selectedIndex];
+    console.log(old_select_value);
     selects_lessons.innerHTML = "";
     let old_checked_inputs = [];
     pack_title_ask.querySelector("#menu").querySelectorAll("label").forEach((e) => {
@@ -604,10 +605,73 @@ function actu_files() {
             $(editor).trumbowyg({
                 lang: 'fr',
                 semantic: false,
+            
+                btnsDef: {
+                    spoiler: {
+                        title: 'Spoiler',
+                        text: 'Spoiler',
+                        hasIcon: false,
+                        fn: function () {
+                            console.log("🟢 spoiler clicked");
+                        
+                            const $ed = $(this.$c).find('.trumbowyg-editor');
+                            console.log("1 - editor found:", $ed.length);
+                        
+                            $ed.focus();
+                            console.log("2 - editor focused");
+                        
+                            const restoreResult = $(this.$ed).trumbowyg('restoreRange');
+                            console.log("3 - restoreRange called:", restoreResult);
+                        
+                            const sel = window.getSelection();
+                            console.log("4 - selection:", sel);
+                        
+                            if (!sel) {
+                                console.log("❌ no selection object");
+                                return;
+                            }
+                        
+                            if (sel.rangeCount === 0) {
+                                console.log("❌ no range in selection");
+                                return;
+                            }
+                        
+                            const range = sel.getRangeAt(0);
+                            console.log("5 - range:", range);
+                        
+                            const text = range.toString();
+                            console.log("6 - selected text:", text);
+                        
+                            if (!text) {
+                                console.log("❌ empty selection text");
+                                return;
+                            }
+                        
+                            const span = document.createElement('span');
+                            span.className = 'spoiler';
+                            span.textContent = text;
+                        
+                            console.log("7 - span created:", span);
+                        
+                            range.deleteContents();
+                            console.log("8 - contents deleted");
+                        
+                            range.insertNode(span);
+                            console.log("9 - span inserted");
+                        
+                            sel.removeAllRanges();
+                            console.log("10 - selection cleared");
+                        
+                            console.log("✅ spoiler finished");
+                        }
+                    }
+                },
+            
                 btns: [
                     ['h1', 'h2'],
-                    ['bold', 'italic', 'underline'],
+                    ['strong', 'em', 'underline'],
                     ['foreColor', 'backColor'],
+                    ['spoiler'],
                     ['removeformat']
                 ]
             }).on('tbwinit', function () {
@@ -699,6 +763,12 @@ function actu_files() {
 
     if (document.querySelector('.trumbowyg-editor') !== null) {
         document.querySelector('.trumbowyg-editor').style.userSelect = 'text';
+    }
+
+    if (old_select_value !== undefined && old_select_value !== null) {
+        if (selects_lessons.querySelector(`option[value="${old_select_value.value}"]`)) {
+            selects_lessons.value = old_select_value.value;
+        }
     }
 }
 
@@ -1850,3 +1920,27 @@ function playSound(name) {
     name.currentTime = 0; 
     name.play();
 }
+
+/* Le truc marche pas, mais bon je laisse si ça sert un jour; c'est un prototype pour passer de l'éditeur trumbo à du PDF
+
+let iii = 0;
+
+function get_pdf(html_editor) {
+    const html = html_editor.innerHTML;
+    console.log(JSON.stringify(html));
+    console.log(iii);
+
+    iii += 1;
+    const win = window.open('', '_blank');
+
+    win.document.write(`
+    <html>
+        <body>
+        ${html}
+        </body>
+    </html>
+    `);
+
+    win.document.close();
+    win.print();
+}*/
