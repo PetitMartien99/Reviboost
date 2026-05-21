@@ -34,6 +34,16 @@ if (params.has("veTa3")) {
     redirect(5);
 }
 
+if (params.has("veTr3")) {
+    redirect(6);
+}
+
+
+if (params.has("vaEr3")) {
+    redirect(7);
+}
+
+
 
 async function redirect(id) {
     const { data, error } = await supabase
